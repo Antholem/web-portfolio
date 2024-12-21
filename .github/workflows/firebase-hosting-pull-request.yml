@@ -5,12 +5,12 @@ permissions:
   contents: read
   pull-requests: write
 jobs:
-  build_and_preview_web_next_app:
+  build_and_preview_web_react_app:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: web/client
+        working-directory: portfolio/client
     steps:
       - uses: actions/checkout@v4
       - run: npm ci && npm run build
