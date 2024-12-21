@@ -33,10 +33,16 @@ app.post('/', (req, res) => {
     subject: req.body.subject,
     html: `
       <div>
-        <p>Name: ${req.body.name}</p>
-        <p>Email: ${req.body.email}</p>
-        <p>Phone Number: ${req.body.phoneNumber}</p>
-        <p>Message: ${req.body.message}</p>
+      updated
+        <p><strong>Name:</strong> ${req.body.name}</p>
+        <p><strong>Email:</strong> ${req.body.email}</p>
+        <p><strong>Phone Number:</strong> ${req.body.phoneNumber}</p>
+        <p><strong>Message:</strong> ${req.body.message}</p>
+        Photo Url: ${req.body.photo}
+        <div>
+          <p><strong>Photo:</strong></p>
+          <img src="${req.body.photo}" alt="User Photo" style="width:100px; height:auto; border-radius:50%;"/>
+        </div>
       </div>
     `,
   };
