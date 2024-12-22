@@ -32,29 +32,31 @@ app.post('/', (req, res) => {
     to: process.env.TO_EMAIL,
     subject: req.body.subject,
     html: `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-sizing: border-box;">
-      <div style="display: flex; align-items: flex-start; gap: 10px; flex-wrap: nowrap;">
-        <img
-          src="${req.body.photo}"
-          alt="${req.body.email}"
-          style="width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0; margin: 0;"
-        />
-        <div style="flex: 1; min-width: 0;">
-          <p style="margin: 0 0 5px; font-weight: bold; word-break: break-word;">
-            ${req.body.name}
-          </p>
-          <p style="margin: 0; font-size: 0.9em; color: #555; word-break: break-word;">
-            ${req.body.email}
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; padding: 15px; width: 100%; box-sizing: border-box;">
+        <div style="display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+          <img
+            src="${req.body.photo}"
+            alt="${req.body.email}"
+            style="width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;"
+          />
+          <div style="flex: 1; min-width: 200px;">
+              <p style="margin: 0; font-weight: bold; word-break: break-word;">
+                &nbsp;
+                ${req.body.name}
+              </p>
+              <p style="margin: 0; font-size: 0.9em; color: #555; word-break: break-word;">
+                &nbsp;
+                ${req.body.email}
+              </p>
+          </div>
+        </div>
+        <div style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
+          <p style="margin: 0; font-size: 1em; color: #333; word-break: break-word;">
+            ${req.body.message}
           </p>
         </div>
       </div>
-      <div style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
-        <p style="margin: 0; font-size: 1em; color: #333; word-break: break-word;">
-          ${req.body.message}
-        </p>
-      </div>
-    </div>
-  `,
+    `,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
