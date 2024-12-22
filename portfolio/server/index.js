@@ -32,16 +32,26 @@ app.post('/', (req, res) => {
     to: process.env.TO_EMAIL,
     subject: req.body.subject,
     html: `
-      <div>
-      updated
-        <p><strong>Name:</strong> ${req.body.name}</p>
-        <p><strong>Email:</strong> ${req.body.email}</p>
-        <p><strong>Phone Number:</strong> ${req.body.phoneNumber}</p>
-        <p><strong>Message:</strong> ${req.body.message}</p>
-        Photo Url: ${req.body.photo}
-        <div>
-          <p><strong>Photo:</strong></p>
-          <img src="${req.body.photo}" alt="User Photo" style="width:100px; height:auto; border-radius:50%;"/>
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; padding: 15px; width: 100%; box-sizing: border-box;">
+        <div style="display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+          <img
+            src="${req.body.photo}"
+            alt="${req.body.email}"
+            style="width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;"
+          />
+          <div style="flex: 1; min-width: 200px;">
+              <p style="margin: 0; font-weight: bold; word-break: break-word;">
+                ${req.body.name}
+              </p>
+              <p style="margin: 0; font-size: 0.9em; color: #555; word-break: break-word;">
+                ${req.body.email}
+              </p>
+          </div>
+        </div>
+        <div style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
+          <p style="margin: 0; font-size: 1em; color: #333; word-break: break-word;">
+            ${req.body.message}
+          </p>
         </div>
       </div>
     `,

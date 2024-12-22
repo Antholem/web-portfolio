@@ -6,7 +6,6 @@ import { auth } from "../config/firebase";
 const Email = () => {
     const [email, setEmail] = useState("");
     const [photo, setPhoto] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
     const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -42,7 +41,6 @@ const Email = () => {
             name: auth.currentUser?.displayName,
             photo: auth.currentUser?.photoURL,
             email: email,
-            phoneNumber: phoneNumber,
             subject: subject,
             message: message,
         };
@@ -73,15 +71,6 @@ const Email = () => {
                 </div>
             )}
             <form onSubmit={handleSend}>
-                <div>
-                    <input
-                        type="text"
-                        value={phoneNumber}
-                        placeholder="Enter your phone number"
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-                    />
-                </div>
                 <div>
                     <input
                         type="text"
