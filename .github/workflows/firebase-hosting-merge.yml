@@ -1,17 +1,29 @@
 name: Deploy to Firebase Hosting on merge
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build_and_deploy_web_react_app:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: portfolio/client 
+        working-directory: portfolio/client
     steps:
+      # Checkout the repository
       - uses: actions/checkout@v4
-      - run: npm ci && npm run build
+      
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+      
+      # Build the project
+      - name: Build Project
+        run: npm run build
+
+      # Deploy to Firebase
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
