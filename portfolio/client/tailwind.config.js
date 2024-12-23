@@ -21,8 +21,40 @@ module.exports = {
       },
       colors: {
         brand: "#ff014f",
-        dark: "#1a1a1a",
-        light: "#f5f5f5",
+        dark: {
+          DEFAULT: "#121212",
+          paper: "#121212",
+          divider: "#1F1F1F",
+          text: {
+            primary: "#ffffff",
+            secondary: "#B3B3B3",
+            disabled: "#808080",
+          },
+          action: {
+            active: "#ffffff",
+            hover: "#141414",
+            selected: "#292929",
+            disabled: "#4D4D4D",
+            disabledBackground: "#1F1F1F",
+          },
+        },
+        light: {
+          DEFAULT: "#f5f5f5",
+          paper: "#ffffff",
+          divider: "#E0E0E0",
+          text: {
+            primary: "#000000",
+            secondary: "#757575",
+            disabled: "#BDBDBD",
+          },
+          action: {
+            active: "#000000",
+            hover: "#F5F5F5",
+            selected: "#E8E8E8",
+            disabled: "#E0E0E0",
+            disabledBackground: "#F5F5F5",
+          },
+        },
       },
     },
   },

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { MdDarkMode, MdMenu, MdClose } from "react-icons/md";
+import { MdDarkMode, MdSunny, MdMenu, MdClose } from "react-icons/md";
 import { Link } from "react-scroll";
+import { useThemeStore } from "../store/themeStore";
 
 const NavigationBar = () => {
-    // State for managing the mobile menu
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { theme, toggleTheme } = useThemeStore();
 
-    // Navigation items
     const navItems = [
         { name: "About", to: "about" },
         { name: "Features", to: "features" },
@@ -16,7 +16,9 @@ const NavigationBar = () => {
     ];
 
     return (
-        <nav className="bg-white text-black border-b border-gray-300 py-4">
+        <nav
+            className={`border-b-2 ${theme === "dark" ? "border-dark-divider" : "border-light-divider"} py-4`}
+        >
             <div className="container mx-auto flex justify-between items-center px-4">
                 {/* Mobile Menu Toggle */}
                 <div className="block md:hidden text-xl cursor-pointer">
@@ -29,20 +31,15 @@ const NavigationBar = () => {
 
                 {/* Logo */}
                 <div className="flex items-center justify-center w-full md:w-auto">
-                    <img
-                        src="/logo.svg"
-                        alt="Logo"
-                        className="h-8 w-auto"
-                    />
+                    <img src="/logo.svg" alt="Logo" className="h-8 w-auto" />
                 </div>
 
                 {/* Navigation Items */}
                 <ul
-                    className={`${isMobileMenuOpen ? "block" : "hidden"
-                        } absolute top-16 left-0 w-full bg-white md:static md:flex md:space-x-6 md:w-auto md:bg-transparent text-lg font-medium`}
+                    className={`${isMobileMenuOpen ? "block" : "hidden"} absolute top-16 left-0 w-full md:static md:flex md:space-x-6 md:w-auto md:bg-transparent`}
                 >
                     {navItems.map((item) => (
-                        <li key={item.to} className="py-2 md:py-0 md:inline-block">
+                        <li key={item.to} className="font-sans py-2 md:py-0 md:inline-block text-base font-normal tracking-wide">
                             <Link
                                 to={item.to}
                                 smooth={true}
@@ -56,9 +53,13 @@ const NavigationBar = () => {
                     ))}
                 </ul>
 
-                {/* Dark Mode Icon */}
-                <div className="text-xl cursor-pointer block">
-                    <MdDarkMode />
+                {/* Theme Toggle */}
+                <div
+                    className="text-xl cursor-pointer block"
+                    onClick={toggleTheme}
+                    title="Toggle Theme"
+                >
+                    {theme === "dark" ? <MdSunny /> : <MdDarkMode />}
                 </div>
             </div>
         </nav>
