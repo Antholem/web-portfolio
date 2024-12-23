@@ -1,13 +1,12 @@
 import React from "react";
-import Email from "./views/Email";
+import NavigationBar from "./components/Navigations";
 
-function App() {
+const App = () => {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-light text-dark">
-      App
-      <Email />
+    <main className="min-h-screen flex flex-col bg-light text-dark">
+      <NavigationBar />
     </main>
   );
-}
+};
 
 export default App;
