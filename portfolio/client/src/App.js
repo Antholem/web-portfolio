@@ -1,11 +1,11 @@
 import React from "react";
-import Email from "./views/Email";
+import NavigationBar from "./components/Navigations";
 
 function App() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-light text-dark">
-      App
-      <Email />
+    <main className="min-h-screen flex flex-col bg-light text-dark">
+      <NavigationBar />
+      {/* Other components like About, Features, etc. */}
     </main>
   );
 }
