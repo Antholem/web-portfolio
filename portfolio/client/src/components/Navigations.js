@@ -17,7 +17,8 @@ const NavigationBar = () => {
 
     return (
         <nav
-            className={`border-b-2 ${theme === "dark" ? "border-dark-divider" : "border-light-divider"} py-4`}
+            className={`sticky top-0 z-50 border-b-2 ${theme === "dark" ? "bg-dark text-light border-dark-divider" : "bg-light text-dark border-light-divider"
+                } py-6`}
         >
             <div className="container mx-auto flex justify-between items-center px-4">
                 {/* Mobile Menu Toggle */}
@@ -31,19 +32,24 @@ const NavigationBar = () => {
 
                 {/* Logo */}
                 <div className="flex items-center justify-center w-full md:w-auto">
-                    <img src="/logo.svg" alt="Logo" className="h-8 w-auto" />
+                    <img src="/logo.svg" alt="Logo" className="h-10 w-auto" />
                 </div>
 
                 {/* Navigation Items */}
                 <ul
-                    className={`${isMobileMenuOpen ? "block" : "hidden"} absolute top-16 left-0 w-full md:static md:flex md:space-x-6 md:w-auto md:bg-transparent`}
+                    className={`${isMobileMenuOpen ? "block" : "hidden"} absolute top-16 left-0 w-full md:static md:flex md:space-x-6 md:w-auto`}
                 >
                     {navItems.map((item) => (
-                        <li key={item.to} className="font-sans py-2 md:py-0 md:inline-block text-base font-normal tracking-wide">
+                        <li
+                            key={item.to}
+                            className="font-sans py-2 md:py-0 md:inline-block text-base font-normal tracking-wide hover:text-brand transition-colors"
+                        >
                             <Link
                                 to={item.to}
                                 smooth={true}
                                 duration={500}
+                                spy={true}
+                                activeClass="text-brand font-bold"
                                 className="cursor-pointer block md:inline-block"
                                 onClick={() => setMobileMenuOpen(false)}
                             >
