@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useThemeStore } from "./store/themeStore";
-import NavigationBar from "./components/Navigations";
+import { About } from "./views";
+import { NavigationBar } from "./components";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -10,9 +11,9 @@ const App = () => {
   }, [theme]);
 
   return (
-    <div className={`${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"} min-h-screen`}>
-      <NavigationBar />
-    </div>
+    <NavigationBar>
+      <About />
+    </NavigationBar>
   );
 };
 
