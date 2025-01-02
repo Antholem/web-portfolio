@@ -11,16 +11,16 @@ const Button = ({
 
     // Base styles for all buttons
     const baseStyles =
-        "font-heading px-6 py-2 rounded focus:outline-none transition-all duration-300";
+        "font-heading px-6 py-2 rounded-md focus:outline-none transition-all duration-300";
 
     // Styles for each variant
     const variantStyles = {
         outlined: theme === "dark"
-            ? "border border-white text-white hover:bg-white hover:text-dark"
-            : "border border-dark text-dark hover:bg-dark hover:text-white",
+            ? "border border-white text-white hover:bg-white hover:bg-opacity-10"
+            : "border border-dark text-dark hover:bg-dark hover:bg-opacity-10",
         text: theme === "dark"
-            ? "text-white hover:underline hover:text-gray-300"
-            : "text-dark hover:underline hover:text-gray-700",
+            ? "text-white hover:bg-white hover:bg-opacity-10"
+            : "text-dark hover:bg-dark hover:bg-opacity-10",
         contained: theme === "dark"
             ? "bg-white text-dark hover:bg-gray-200"
             : "bg-dark text-white hover:bg-gray-800",
