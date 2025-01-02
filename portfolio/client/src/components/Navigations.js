@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { MdDarkMode, MdSunny, MdMenu, MdClose } from "react-icons/md";
 import { Link } from "react-scroll";
 import { useThemeStore } from "../store/themeStore";
@@ -16,9 +16,10 @@ const NavigationBar = ({ children }) => {
     ];
 
     return (
-        <Fragment>
+        <>
+            {/* Top Navigation Bar */}
             <nav
-                className={`sticky top-0 z-50 border-b-2 ${theme === "dark" ? "bg-dark border-dark-divider" : "bg-light border-light-divider"} py-4 px-8`}
+                className={`sticky top-0 z-50 border-b-2 py-4 md:px-8 ${theme === "dark" ? "bg-dark border-dark-divider" : "bg-light border-light-divider"}`}
             >
                 <div className="container mx-auto flex justify-between items-center px-6">
                     {/* Mobile Menu Toggle */}
@@ -31,7 +32,7 @@ const NavigationBar = ({ children }) => {
                         <img src="/logo.svg" alt="Logo" className="h-10 w-auto" />
                     </div>
 
-                    {/* Navigation Items */}
+                    {/* Desktop Navigation Items */}
                     <ul className="hidden md:flex space-x-6">
                         {navItems.map((item) => (
                             <li
@@ -54,7 +55,7 @@ const NavigationBar = ({ children }) => {
 
                     {/* Theme Toggle */}
                     <div
-                        className="text-xl cursor-pointer block"
+                        className="text-xl cursor-pointer"
                         onClick={toggleTheme}
                         title="Toggle Theme"
                     >
@@ -65,8 +66,7 @@ const NavigationBar = ({ children }) => {
 
             {/* Mobile Navigation Menu */}
             <div
-                className={`fixed inset-0 z-50 ${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"} transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-                    } transition-transform duration-300 ease-in-out md:hidden`}
+                className={`fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} ${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"}`}
             >
                 <div className="relative flex flex-col h-full py-10">
                     {/* Close Button */}
@@ -82,7 +82,7 @@ const NavigationBar = ({ children }) => {
                         <img src="/logo.svg" alt="Logo" className="h-16 w-auto" />
                     </div>
 
-                    {/* Navigation Items */}
+                    {/* Mobile Navigation Items */}
                     <div className="flex flex-col items-center space-y-6">
                         {navItems.map((item) => (
                             <Link
@@ -102,8 +102,11 @@ const NavigationBar = ({ children }) => {
                 </div>
             </div>
 
-            <main className="container mx-auto px-4">{children}</main>
-        </Fragment>
+            {/* Main Content */}
+            <main className="container mx-auto px-4 py-2 md:px-16 lg:px-28">
+                {children}
+            </main>
+        </>
     );
 };
 
