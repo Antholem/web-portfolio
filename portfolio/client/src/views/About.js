@@ -1,5 +1,6 @@
 import React from "react";
 import antholemPhoto from "../antholem.png";
+import { Button } from "../components";
 
 const About = () => {
     return (
@@ -24,14 +25,9 @@ const About = () => {
                         specialize in creating captivating online experiences.
                     </p>
                     <div>
-                        <a
-                            href="/resume.pdf"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-dark text-light font-medium py-3 px-6 rounded-lg shadow-md hover:bg-opacity-90 transition-all duration-300"
-                        >
+                        <Button>
                             Resume
-                        </a>
+                        </Button>
                     </div>
                 </div>
 
