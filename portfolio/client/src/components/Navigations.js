@@ -18,40 +18,33 @@ const NavigationBar = ({ children }) => {
     return (
         <Fragment>
             <nav
-                className={`sticky top-0 z-50 border-b-2 ${theme === "dark" ? "bg-dark border-dark-divider" : "bg-light border-light-divider"} py-4`}
+                className={`sticky top-0 z-50 border-b-2 ${theme === "dark" ? "bg-dark border-dark-divider" : "bg-light border-light-divider"} py-4 px-8`}
             >
                 <div className="container mx-auto flex justify-between items-center px-6">
                     {/* Mobile Menu Toggle */}
                     <div className="block md:hidden text-xl cursor-pointer">
-                        {isMobileMenuOpen ? (
-                            <MdClose onClick={() => setMobileMenuOpen(false)} />
-                        ) : (
-                            <MdMenu onClick={() => setMobileMenuOpen(true)} />
-                        )}
+                        <MdMenu onClick={() => setMobileMenuOpen(true)} />
                     </div>
 
                     {/* Logo */}
-                    <div className="flex items-center justify-center w-full md:w-auto">
+                    <div className="flex items-center">
                         <img src="/logo.svg" alt="Logo" className="h-10 w-auto" />
                     </div>
 
                     {/* Navigation Items */}
-                    <ul
-                        className={`${isMobileMenuOpen ? "block" : "hidden"} absolute top-16 left-0 w-full md:static md:flex md:space-x-6 md:w-auto md:bg-transparent`}
-                    >
+                    <ul className="hidden md:flex space-x-6">
                         {navItems.map((item) => (
                             <li
                                 key={item.to}
-                                className="font-sans py-2 md:py-0 md:inline-block text-base font-normal tracking-wide hover:text-brand"
+                                className="text-base font-normal tracking-wide hover:text-brand cursor-pointer"
                             >
                                 <Link
                                     to={item.to}
                                     smooth={true}
                                     duration={500}
                                     spy={true}
-                                    activeClass="text-brand border-brand"
-                                    className="cursor-pointer block md:inline-block"
-                                    onClick={() => setMobileMenuOpen(false)}
+                                    activeClass="text-brand"
+                                    className="block"
                                 >
                                     {item.name}
                                 </Link>
@@ -69,9 +62,47 @@ const NavigationBar = ({ children }) => {
                     </div>
                 </div>
             </nav>
-            <main className="container mx-auto px-4">
-                {children}
-            </main>
+
+            {/* Mobile Navigation Menu */}
+            <div
+                className={`fixed inset-0 z-50 ${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"} transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+                    } transition-transform duration-300 ease-in-out md:hidden`}
+            >
+                <div className="relative flex flex-col h-full py-10">
+                    {/* Close Button */}
+                    <button
+                        className="absolute top-4 right-4 text-2xl"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        <MdClose />
+                    </button>
+
+                    {/* Logo */}
+                    <div className="flex justify-center mt-12 mb-8">
+                        <img src="/logo.svg" alt="Logo" className="h-16 w-auto" />
+                    </div>
+
+                    {/* Navigation Items */}
+                    <div className="flex flex-col items-center space-y-6">
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.to}
+                                to={item.to}
+                                smooth={true}
+                                duration={500}
+                                spy={true}
+                                activeClass="text-brand"
+                                className="cursor-pointer text-lg font-medium hover:text-brand"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <main className="container mx-auto px-4">{children}</main>
         </Fragment>
     );
 };

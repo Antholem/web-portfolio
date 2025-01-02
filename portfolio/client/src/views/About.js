@@ -6,7 +6,7 @@ const About = () => {
     return (
         <section
             id="about"
-            className="min-h-screen flex flex-col items-center justify-center px-4 py-4 md:justify-between md:px-12 md:py-10 lg:px-24"
+            className="min-h-screen flex flex-col items-center justify-center py-4 md:justify-between md:px-12 md:py-10 lg:px-24"
         >
             <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 {/* Image Section */}
