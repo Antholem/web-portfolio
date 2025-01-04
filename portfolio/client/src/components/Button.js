@@ -3,6 +3,7 @@ import { useThemeStore } from "../store/themeStore";
 
 const Button = ({
     variant = "contained", // Default variant
+    size = "md", // Default size
     children, // Button content
     className = "", // Optional additional classes
     ...props // All other props like type, disabled, onClick, etc.
@@ -11,7 +12,7 @@ const Button = ({
 
     // Base styles for all buttons
     const baseStyles =
-        "font-heading px-6 py-2 rounded-md focus:outline-none transition-all duration-300";
+        "font-heading rounded-md focus:outline-none transition-all duration-300";
 
     // Styles for each variant
     const variantStyles = {
@@ -26,12 +27,22 @@ const Button = ({
             : "bg-dark text-white hover:bg-gray-800",
     };
 
-    // Determine styles based on the variant
-    const appliedStyles = variantStyles[variant] || variantStyles["contained"];
+    // Padding styles for each size
+    const sizeStyles = {
+        xs: "px-2 py-1",
+        sm: "px-4 py-2",
+        md: "px-6 py-2",
+        lg: "px-8 py-3",
+        xl: "px-10 py-4",
+    };
+
+    // Determine styles based on the variant and size
+    const appliedVariantStyles = variantStyles[variant] || variantStyles["contained"];
+    const appliedSizeStyles = sizeStyles[size] || sizeStyles["md"];
 
     return (
         <button
-            className={`${baseStyles} ${appliedStyles} ${className}`}
+            className={`${baseStyles} ${appliedVariantStyles} ${appliedSizeStyles} ${className}`}
             {...props} // Spread all other props onto the button
         >
             {children}
