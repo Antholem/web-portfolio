@@ -4,6 +4,9 @@ import { useThemeStore } from "../store/themeStore";
 const Button = ({
     variant = "contained", // Default variant
     size = "md", // Default size
+    leftIcon, // Icon before the button label
+    rightIcon, // Icon after the button label
+    iconSpacing = 2, // Default spacing between icon and label
     children, // Button content
     className = "", // Optional additional classes
     ...props // All other props like type, disabled, onClick, etc.
@@ -11,20 +14,19 @@ const Button = ({
     const { theme } = useThemeStore();
 
     // Base styles for all buttons
-    const baseStyles =
-        "font-heading rounded-md focus:outline-none transition-all duration-300";
+    const baseStyles = "font-heading rounded-md focus:outline-none transition-all duration-300 flex items-center justify-center";
 
     // Styles for each variant
     const variantStyles = {
         outlined: theme === "dark"
-            ? "border border-white text-white hover:bg-white hover:bg-opacity-10"
-            : "border border-dark text-dark hover:bg-dark hover:bg-opacity-10",
+            ? "border border-white text-white hover:bg-white hover:bg-opacity-5 active:bg-opacity-10"
+            : "border border-dark text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10",
         text: theme === "dark"
-            ? "text-white hover:bg-white hover:bg-opacity-10"
-            : "text-dark hover:bg-dark hover:bg-opacity-10",
+            ? "text-white hover:bg-white hover:bg-opacity-5 active:bg-opacity-10"
+            : "text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10",
         contained: theme === "dark"
-            ? "bg-white text-dark hover:bg-gray-200"
-            : "bg-dark text-white hover:bg-gray-800",
+            ? "bg-white text-dark hover:bg-gray-200 active:bg-gray-50"
+            : "bg-dark text-white hover:bg-gray-800 active:bg-gray-900",
     };
 
     // Padding styles for each size
@@ -45,7 +47,13 @@ const Button = ({
             className={`${baseStyles} ${appliedVariantStyles} ${appliedSizeStyles} ${className}`}
             {...props} // Spread all other props onto the button
         >
+            {leftIcon && (
+                <span style={{ marginRight: `${iconSpacing / 4}rem` }}>{leftIcon}</span>
+            )}
             {children}
+            {rightIcon && (
+                <span style={{ marginLeft: `${iconSpacing / 4}rem` }}>{rightIcon}</span>
+            )}
         </button>
     );
 };

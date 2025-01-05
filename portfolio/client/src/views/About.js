@@ -1,6 +1,7 @@
 import React from "react";
 import antholemPhoto from "../antholem.png";
 import { Button } from "../components";
+import { MdAttachFile, MdCall } from "react-icons/md";
 
 const About = () => {
     return (
@@ -29,8 +30,12 @@ const About = () => {
                         I am a passionate Software Engineer and React Developer dedicated to crafting visually engaging and user-focused websites. With expertise in modern technologies like HTML5, CSS3, ES6+, and React.js, I excel at delivering seamless and immersive digital experiences that leave a lasting impression.
                     </p>
                     <div className="flex space-x-4 justify-center md:justify-start">
-                        <Button variant="contained">Resume</Button>
-                        <Button variant="outlined">Contact Me</Button>
+                        <Button variant="contained" leftIcon={<MdAttachFile />}>
+                            Resume
+                        </Button>
+                        <Button variant="outlined" leftIcon={<MdCall />}>
+                            Contact Me
+                        </Button>
                     </div>
                 </div>
             </div>
