@@ -5,10 +5,7 @@ import { MdAttachFile, MdCall } from "react-icons/md";
 
 const About = () => {
     return (
-        <section
-            id="about"
-            className="min-h-screen flex flex-col items-center justify-center py-2 md:justify-between md:py-8"
-        >
+        <>
             <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 {/* Image Section */}
                 <div className="flex justify-center order-1 md:order-2">
@@ -39,7 +36,7 @@ const About = () => {
                     </div>
                 </div>
             </div>
-        </section>
+        </>
     );
 };
 

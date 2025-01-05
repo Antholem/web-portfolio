@@ -24,10 +24,7 @@ const features = [
 
 const Features = () => {
     return (
-        <section
-            id="features"
-            className="min-h-screen flex flex-col items-center justify-center py-12"
-        >
+        <>
             <h2 className="text-sm font-heading tracking-widest text-brand mb-2">
                 SERVICES I OFFER AND SPECIALIZE IN
             </h2>
@@ -50,7 +47,7 @@ const Features = () => {
                     </div>
                 ))}
             </div>
-        </section>
+        </>
     );
 };
 

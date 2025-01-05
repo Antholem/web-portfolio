@@ -103,7 +103,7 @@ const NavigationBar = ({ children }) => {
             </div>
 
             {/* Main Content */}
-            <main className="container mx-auto px-4 py-2 md:px-16 lg:px-28">
+            <main className="container mx-auto py-2 px-0 md:px-16 lg:px-20">
                 {children}
             </main>
         </>
