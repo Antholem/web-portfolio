@@ -22,8 +22,8 @@ module.exports = {
       colors: {
         brand: "#ff014f",
         dark: {
-          DEFAULT: "#121212",
-          paper: "#121212",
+          DEFAULT: "#121212", // Main background color for dark mode
+          paper: "#1A1A1A", // Slightly lighter than DEFAULT for elevated elements
           divider: "#1F1F1F",
           text: {
             primary: "#ffffff",

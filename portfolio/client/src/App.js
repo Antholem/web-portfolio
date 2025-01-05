@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useThemeStore } from "./store/themeStore";
-import { About } from "./views";
+import { About, Features } from "./views";
 import { NavigationBar } from "./components";
 
 const App = () => {
@@ -13,6 +13,7 @@ const App = () => {
   return (
     <NavigationBar>
       <About />
+      <Features />
     </NavigationBar>
   );
 };
