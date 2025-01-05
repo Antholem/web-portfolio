@@ -1,5 +1,6 @@
 import React from "react";
 import { useThemeStore } from "../store/themeStore";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Button = ({
     variant = "contained", // Default variant
@@ -7,6 +8,11 @@ const Button = ({
     leftIcon, // Icon before the button label
     rightIcon, // Icon after the button label
     iconSpacing = 2, // Default spacing between icon and label
+    isLoading = false, // Loading state
+    loadingText, // Text to display while loading
+    spinner = <AiOutlineLoading3Quarters className="animate-spin" />, // Default spinner
+    spinnerPlacement = "start", // Spinner position
+    isDisabled = false, // Disabled state
     children, // Button content
     className = "", // Optional additional classes
     ...props // All other props like type, disabled, onClick, etc.
@@ -38,20 +44,31 @@ const Button = ({
         xl: "px-10 py-4",
     };
 
+    // Disabled styles
+    const disabledStyles = "opacity-50 cursor-not-allowed";
+
     // Determine styles based on the variant and size
     const appliedVariantStyles = variantStyles[variant] || variantStyles["contained"];
     const appliedSizeStyles = sizeStyles[size] || sizeStyles["md"];
+    const appliedDisabledStyles = isLoading || isDisabled ? disabledStyles : "";
 
     return (
         <button
-            className={`${baseStyles} ${appliedVariantStyles} ${appliedSizeStyles} ${className}`}
+            className={`${baseStyles} ${appliedVariantStyles} ${appliedSizeStyles} ${appliedDisabledStyles} ${className}`}
+            disabled={isLoading || isDisabled} // Disable button when isLoading or isDisabled is true
             {...props} // Spread all other props onto the button
         >
-            {leftIcon && (
+            {isLoading && spinnerPlacement === "start" && (
+                <span style={{ marginRight: `${iconSpacing / 4}rem` }}>{spinner}</span>
+            )}
+            {!isLoading && leftIcon && (
                 <span style={{ marginRight: `${iconSpacing / 4}rem` }}>{leftIcon}</span>
             )}
-            {children}
-            {rightIcon && (
+            {isLoading ? loadingText || children : children}
+            {isLoading && spinnerPlacement === "end" && (
+                <span style={{ marginLeft: `${iconSpacing / 4}rem` }}>{spinner}</span>
+            )}
+            {!isLoading && rightIcon && (
                 <span style={{ marginLeft: `${iconSpacing / 4}rem` }}>{rightIcon}</span>
             )}
         </button>
