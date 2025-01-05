@@ -13,6 +13,8 @@ const Button = ({
     spinner = <AiOutlineLoading3Quarters className="animate-spin" />, // Default spinner
     spinnerPlacement = "start", // Spinner position
     isDisabled = false, // Disabled state
+    fileView, // File URL to view in a new tab
+    fileDownload, // File URL to download
     children, // Button content
     className = "", // Optional additional classes
     ...props // All other props like type, disabled, onClick, etc.
@@ -52,11 +54,26 @@ const Button = ({
     const appliedSizeStyles = sizeStyles[size] || sizeStyles["md"];
     const appliedDisabledStyles = isLoading || isDisabled ? disabledStyles : "";
 
+    // Handle file-related actions
+    const handleClick = (e) => {
+        if (fileView) {
+            window.open(fileView, "_blank");
+            e.preventDefault();
+        } else if (fileDownload) {
+            const link = document.createElement("a");
+            link.href = fileDownload;
+            link.download = fileDownload.split("/").pop();
+            link.click();
+            e.preventDefault();
+        }
+    };
+
     return (
         <button
             className={`${baseStyles} ${appliedVariantStyles} ${appliedSizeStyles} ${appliedDisabledStyles} ${className}`}
-            disabled={isLoading || isDisabled} // Disable button when isLoading or isDisabled is true
-            {...props} // Spread all other props onto the button
+            disabled={isLoading || isDisabled}
+            onClick={handleClick}
+            {...props}
         >
             {isLoading && spinnerPlacement === "start" && (
                 <span style={{ marginRight: `${iconSpacing / 4}rem` }}>{spinner}</span>
