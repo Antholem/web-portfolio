@@ -1,5 +1,7 @@
 import React from "react";
 import { FaLaptopCode, FaMobileAlt, FaPaintBrush } from "react-icons/fa";
+import { useThemeStore } from "../store/themeStore";
+import { Card } from "../components";
 
 const features = [
     {
@@ -19,10 +21,12 @@ const features = [
         title: "Mobile Development",
         description:
             "Building innovative and intuitive mobile applications for diverse platforms.",
-    },
+    }
 ];
 
 const Features = () => {
+    const { theme } = useThemeStore();
+
     return (
         <>
             <h2 className="text-sm font-heading tracking-widest text-brand mb-2">
@@ -33,9 +37,11 @@ const Features = () => {
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
                 {features.map((feature, index) => (
-                    <div
+                    <Card
+                        variant="elevated"
+                        size="lg"
                         key={index}
-                        className="flex flex-col items-center justify-center p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                        className={`flex flex-col items-center justify-center gap-4 ${theme === "dark" ? "bg-dark-paper" : "bg-light-paper"}`}
                     >
                         {feature.icon}
                         <h3 className="text-xl font-semibold mb-2">
@@ -44,7 +50,7 @@ const Features = () => {
                         <p className="text-center">
                             {feature.description}
                         </p>
-                    </div>
+                    </Card>
                 ))}
             </div>
         </>

@@ -31,7 +31,7 @@ const About = () => {
                             Resume
                         </Button>
                         <Button variant="outlined" leftIcon={<MdCall />}>
-                            Contact Me
+                            Contact
                         </Button>
                     </div>
                 </div>
