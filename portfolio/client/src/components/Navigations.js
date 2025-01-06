@@ -19,7 +19,7 @@ const NavigationBar = ({ children }) => {
         <>
             {/* Top Navigation Bar */}
             <nav
-                className={`sticky top-0 z-50 border-b-2 py-4 md:px-8 ${theme === "dark" ? "bg-dark border-dark-divider" : "bg-light border-light-divider"}`}
+                className={`sticky top-0 z-50 border-b-2 py-4 md:px-8 ${theme === "dark" ? "bg-dark-paper border-dark-divider" : "bg-light-paper border-light-divider"}`}
             >
                 <div className="container mx-auto flex justify-between items-center px-6">
                     {/* Mobile Menu Toggle */}
@@ -103,7 +103,7 @@ const NavigationBar = ({ children }) => {
             </div>
 
             {/* Main Content */}
-            <main className="container mx-auto px-4 py-2 md:px-16 lg:px-28">
+            <main className="container mx-auto py-4 px-0 md:px-16 lg:px-20">
                 {children}
             </main>
         </>
