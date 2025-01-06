@@ -12,7 +12,9 @@ const App = () => {
   ];
 
   useEffect(() => {
-    document.body.className = theme === "dark" ? "bg-dark text-light" : "bg-light text-dark";
+    // Set the theme classes for the body
+    document.body.className =
+      theme === "dark" ? "bg-dark text-light" : "bg-light text-dark";
   }, [theme]);
 
   return (

@@ -1,6 +1,5 @@
 import React from "react";
 import { FaLaptopCode, FaMobileAlt, FaPaintBrush } from "react-icons/fa";
-import { useThemeStore } from "../store/themeStore";
 import { Card } from "../components";
 
 const features = [
@@ -21,39 +20,46 @@ const features = [
         title: "Mobile Development",
         description:
             "Building innovative and intuitive mobile applications for diverse platforms.",
-    }
+    },
 ];
 
 const Features = () => {
-    const { theme } = useThemeStore();
 
     return (
-        <>
-            <h2 className="text-sm font-heading tracking-widest text-brand mb-2">
-                SERVICES I OFFER AND SPECIALIZE IN
+        <div className="text-center">
+            {/* Section Heading */}
+            <h2 className="text-sm font-heading tracking-widest uppercase text-brand mb-2">
+                Services I offer and specaliaze in
             </h2>
             <h1 className="text-4xl font-heading font-bold mb-8">
                 Features
             </h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
+
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 {features.map((feature, index) => (
                     <Card
+                        key={index}
                         variant="elevated"
                         size="lg"
-                        key={index}
-                        className={`flex flex-col items-center justify-center gap-4 ${theme === "dark" ? "bg-dark-paper" : "bg-light-paper"}`}
+                        className={`flex flex-col items-center justify-center gap-4`}
                     >
+                        {/* Feature Icon */}
                         {feature.icon}
+
+                        {/* Feature Title */}
                         <h3 className="text-xl font-semibold mb-2">
                             {feature.title}
                         </h3>
+
+                        {/* Feature Description */}
                         <p className="text-center">
                             {feature.description}
                         </p>
                     </Card>
                 ))}
             </div>
-        </>
+        </div>
     );
 };
 

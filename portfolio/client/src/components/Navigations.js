@@ -7,6 +7,7 @@ const NavigationBar = ({ children }) => {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { theme, toggleTheme } = useThemeStore();
 
+    // Navigation Items
     const navItems = [
         { name: "About", to: "about" },
         { name: "Features", to: "features" },
@@ -15,17 +16,25 @@ const NavigationBar = ({ children }) => {
         { name: "Contacts", to: "contacts" },
     ];
 
+    // Theme-based styles
+    const navBarStyles = theme === "dark" ? "bg-dark-paper border-dark-divider" : "bg-light-paper border-light-divider";
+    const mobileMenuStyles = theme === "dark" ? "bg-dark text-light" : "bg-light text-dark";
+
     return (
         <>
             {/* Top Navigation Bar */}
             <nav
-                className={`sticky top-0 z-50 border-b-2 py-4 md:px-8 ${theme === "dark" ? "bg-dark-paper border-dark-divider" : "bg-light-paper border-light-divider"}`}
+                className={`sticky top-0 z-50 border-b-2 py-4 md:px-8 ${navBarStyles}`}
             >
                 <div className="container mx-auto flex justify-between items-center px-6">
                     {/* Mobile Menu Toggle */}
-                    <div className="block md:hidden text-xl cursor-pointer">
-                        <MdMenu onClick={() => setMobileMenuOpen(true)} />
-                    </div>
+                    <button
+                        className="block md:hidden text-xl cursor-pointer"
+                        onClick={() => setMobileMenuOpen(true)}
+                        aria-label="Open Mobile Menu"
+                    >
+                        <MdMenu />
+                    </button>
 
                     {/* Logo */}
                     <div className="flex items-center">
@@ -54,25 +63,27 @@ const NavigationBar = ({ children }) => {
                     </ul>
 
                     {/* Theme Toggle */}
-                    <div
+                    <button
                         className="text-xl cursor-pointer"
                         onClick={toggleTheme}
                         title="Toggle Theme"
+                        aria-label="Toggle Theme"
                     >
                         {theme === "dark" ? <MdSunny /> : <MdDarkMode />}
-                    </div>
+                    </button>
                 </div>
             </nav>
 
             {/* Mobile Navigation Menu */}
             <div
-                className={`fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} ${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"}`}
+                className={`fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} ${mobileMenuStyles}`}
             >
                 <div className="relative flex flex-col h-full py-10">
                     {/* Close Button */}
                     <button
                         className="absolute top-4 right-4 text-2xl"
                         onClick={() => setMobileMenuOpen(false)}
+                        aria-label="Close Mobile Menu"
                     >
                         <MdClose />
                     </button>
