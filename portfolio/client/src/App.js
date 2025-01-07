@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useThemeStore } from "./store/themeStore";
-import { About, Features } from "./views";
+import { About, Features, Skills } from "./views";
 import { NavigationBar } from "./components";
 
 const App = () => {
@@ -9,6 +9,7 @@ const App = () => {
   const sections = [
     { component: <About />, id: "about" },
     { component: <Features />, id: "features" },
+    { component: <Skills />, id: "skills" },
   ];
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const App = () => {
           <section
             key={id}
             id={id}
-            className={`flex flex-col items-center justify-center px-4 ${paddingClasses}`}
+            className={`flex flex-col items-stretch px-4 ${paddingClasses}`}
           >
             {component}
           </section>
