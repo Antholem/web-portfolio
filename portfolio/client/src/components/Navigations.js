@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { MdDarkMode, MdSunny, MdMenu, MdClose } from "react-icons/md";
 import { Link } from "react-scroll";
 import { useThemeStore } from "../store/themeStore";
-import { IconButton } from "../components";
+import { IconButton, Tooltip } from "../components";
 
 const NavigationBar = ({ children }) => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -68,13 +68,19 @@ const NavigationBar = ({ children }) => {
           </ul>
 
           {/* Theme Toggle */}
-          <IconButton
-            isRound
-            onClick={toggleTheme}
-            ariaLabel={theme === "dark" ? "Light Mode" : "Dark Mode"}
-            icon={theme === "dark" ? <MdSunny /> : <MdDarkMode />}
-            variant="text"
-          />
+          <Tooltip 
+            placement="bottom" 
+            label={theme === "dark" ? "Light Mode" : "Dark Mode"} 
+            ariaLabel={theme === "dark" ? "Switch to Light Mode Tooltip" : "Switch to Dark Mode Tooltip"} 
+            >
+            <IconButton
+                isRound
+                onClick={toggleTheme}
+                ariaLabel={theme === "dark" ? "Light Mode" : "Dark Mode"}
+                icon={theme === "dark" ? <MdSunny /> : <MdDarkMode />}
+                variant="text"
+            />
+          </Tooltip>
         </div>
       </nav>
 
@@ -86,6 +92,11 @@ const NavigationBar = ({ children }) => {
       >
         <div className="relative flex flex-col h-full py-10">
           {/* Close Button */}
+          <Tooltip 
+            placement="bottom" 
+            label={theme === "dark" ? "Light Mode" : "Dark Mode"} 
+            ariaLabel={theme === "dark" ? "Switch to Light Mode Tooltip" : "Switch to Dark Mode Tooltip"} 
+            >
           <IconButton
             className="absolute top-4 right-4 text-2xl transition-transform transform duration-300"
             isRound
@@ -94,6 +105,7 @@ const NavigationBar = ({ children }) => {
             icon={<MdClose />}
             variant="text"
           />
+          </Tooltip>
 
           {/* Logo */}
           <div className="flex justify-center mt-12 mb-8">
