@@ -5,31 +5,22 @@ import { MdAttachFile, MdCall } from "react-icons/md";
 
 const About = () => {
     return (
-        <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Image Section */}
-            <div className="flex justify-center order-1 md:order-2">
-                <img
-                    src={antholemPhoto}
-                    alt="Sam Manalo"
-                    className="relative z-10 rounded-lg object-cover max-h-96 w-auto"
-                />
-            </div>
-
+        <div className="w-full mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {/* Text Section */}
-            <div className="space-y-6 order-2 md:order-1 text-center md:text-left">
+            <div className="order-2 md:order-1 text-center md:text-left mx-auto md:mx-0">
                 <h2 className="text-lg tracking-wide">HELLO!</h2>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
                     I'm <span className="text-brand">Sam Manalo</span>
                 </h1>
                 <h3 className="text-xl md:text-2xl font-medium">Software Engineer.</h3>
-                <p className="text-base md:text-lg font-light leading-relaxed">
+                <p className="text-base md:text-lg font-light leading-relaxed mt-4">
                     I am a passionate Software Engineer and React Developer dedicated to
                     crafting visually engaging and user-focused websites. With expertise
                     in modern technologies like HTML5, CSS3, ES6+, and React.js, I excel
                     at delivering seamless and immersive digital experiences that leave
                     a lasting impression.
                 </p>
-                <div className="flex space-x-4 justify-center md:justify-start">
+                <div className="flex justify-center md:justify-start space-x-4 mt-6">
                     <Button variant="contained" leftIcon={<MdAttachFile />}>
                         Resume
                     </Button>
@@ -37,6 +28,15 @@ const About = () => {
                         Contact
                     </Button>
                 </div>
+            </div>
+
+            {/* Image Section */}
+            <div className="order-1 md:order-2 flex justify-center md:justify-end">
+                <img
+                    src={antholemPhoto}
+                    alt="Sam Manalo"
+                    className="rounded-lg object-cover w-full max-w-md"
+                />
             </div>
         </div>
     );

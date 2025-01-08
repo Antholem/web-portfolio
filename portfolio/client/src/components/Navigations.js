@@ -26,7 +26,7 @@ const NavigationBar = ({ children }) => {
             <nav
                 className={`sticky top-0 z-50 border-b-2 py-4 md:px-8 ${navBarStyles}`}
             >
-                <div className="container mx-auto flex justify-between items-center px-0">
+                <div className="mx-auto flex justify-between items-center px-6">
                     {/* Mobile Menu Toggle */}
                     <button
                         className="block md:hidden text-xl cursor-pointer"
