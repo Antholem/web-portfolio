@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useThemeStore } from "./store/themeStore";
-import { About, Features, Skills } from "./views";
+import { About, Features, Footer, Skills } from "./views";
 import { NavigationBar } from "./components";
 
 const App = () => {
@@ -19,26 +19,29 @@ const App = () => {
   }, [theme]);
 
   return (
-    <NavigationBar>
-      {sections.map(({ id, component }, index) => {
-        const paddingClasses =
-          index === 0
-            ? "pt-4 pb-12"
-            : index === sections.length - 1
-              ? "pt-12 pb-4"
-              : "py-12";
+    <>
+      <NavigationBar>
+        {sections.map(({ id, component }, index) => {
+          const paddingClasses =
+            index === 0
+              ? "pt-4 pb-12"
+              : index === sections.length - 1
+                ? "pt-12 pb-4"
+                : "py-12";
 
-        return (
-          <section
-            key={id}
-            id={id}
-            className={`flex flex-col items-stretch px-4 ${paddingClasses}`}
-          >
-            {component}
-          </section>
-        );
-      })}
-    </NavigationBar>
+          return (
+            <section
+              key={id}
+              id={id}
+              className={`flex flex-col items-stretch px-4 ${paddingClasses}`}
+            >
+              {component}
+            </section>
+          );
+        })}
+      </NavigationBar>
+      <Footer />
+    </>
   );
 };
 

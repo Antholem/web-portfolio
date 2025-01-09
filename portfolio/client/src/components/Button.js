@@ -13,11 +13,14 @@ const Button = ({
     spinner = <AiOutlineLoading3Quarters className="animate-spin" />, // Default spinner
     spinnerPlacement = "start",    // Spinner position
     isDisabled = false,            // Disabled state
+    href,                          // Link URL (renders as <a> if provided)
+    target = "_blank",             // Target for link
+    rel = "noopener noreferrer",   // Security attributes for link
     fileView,                      // File URL to view in a new tab
     fileDownload,                  // File URL to download
     children,                      // Button content
     className = "",                // Optional additional classes
-    ...props                       // All other props like type, disabled, onClick, etc.
+    ...props                       // Other props like type, disabled, onClick, etc.
 }) => {
     const { theme } = useThemeStore();
 
@@ -67,6 +70,43 @@ const Button = ({
             e.preventDefault();
         }
     };
+
+    /** Render <a> if href is provided */
+    if (href) {
+        return (
+            <a
+                href={href}
+                target={target}
+                rel={rel}
+                className={`${baseStyles} ${appliedVariantStyles} ${appliedSizeStyles} ${appliedDisabledStyles} ${className}`}
+                aria-disabled={isDisabled || isLoading}
+                {...props}
+            >
+                {/* Spinner (if loading and spinnerPlacement is "start") */}
+                {isLoading && spinnerPlacement === "start" && (
+                    <span style={{ marginRight: `${iconSpacing / 4}rem` }}>{spinner}</span>
+                )}
+
+                {/* Left Icon */}
+                {!isLoading && leftIcon && (
+                    <span style={{ marginRight: `${iconSpacing / 4}rem` }}>{leftIcon}</span>
+                )}
+
+                {/* Button Content */}
+                {isLoading ? loadingText || children : children}
+
+                {/* Spinner (if loading and spinnerPlacement is "end") */}
+                {isLoading && spinnerPlacement === "end" && (
+                    <span style={{ marginLeft: `${iconSpacing / 4}rem` }}>{spinner}</span>
+                )}
+
+                {/* Right Icon */}
+                {!isLoading && rightIcon && (
+                    <span style={{ marginLeft: `${iconSpacing / 4}rem` }}>{rightIcon}</span>
+                )}
+            </a>
+        );
+    }
 
     return (
         <button

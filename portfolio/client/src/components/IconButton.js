@@ -11,13 +11,16 @@ const IconButton = ({
   spinner,                // Custom spinner
   spinnerPlacement = "start", // Spinner position
   ariaLabel,              // Accessible label
+  href,                   // Link URL (if present, render as <a>)
+  target = "_blank",      // Target for the link
+  rel = "noopener noreferrer", // Security attributes for links
   className = "",         // Optional additional classes
   ...props                // Other props
 }) => {
   const { theme } = useThemeStore();
 
   // Base styles
-  const baseStyles = `flex items-center justify-center rounded focus:outline-none transition-all duration-300 ${className}`;
+  const baseStyles = `flex items-center justify-center focus:outline-none transition-all duration-300 ${className}`;
 
   // Variant styles
   const variantStyles = {
@@ -48,6 +51,30 @@ const IconButton = ({
   const appliedVariantStyles = variantStyles[variant] || variantStyles["contained"];
   const appliedSizeStyles = sizeStyles[size] || sizeStyles["md"];
   const appliedShapeStyles = isRound ? "rounded-full" : "rounded-md";
+
+  // Render <a> or <button> based on href
+  if (href) {
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        className={`${baseStyles} ${appliedVariantStyles} ${appliedSizeStyles} ${appliedShapeStyles} ${disabledStyles}`}
+        aria-label={ariaLabel}
+        {...props}
+      >
+        {/* Spinner */}
+        {isLoading && spinnerPlacement === "start" && (
+          <span className="absolute">
+            {spinner || <span className="animate-spin">...</span>}
+          </span>
+        )}
+
+        {/* Icon */}
+        {!isLoading && icon}
+      </a>
+    );
+  }
 
   return (
     <button
