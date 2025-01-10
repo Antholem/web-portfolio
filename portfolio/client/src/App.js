@@ -19,7 +19,7 @@ const App = () => {
   }, [theme]);
 
   return (
-    <>
+    <div className="w-full h-auto">
       <NavigationBar>
         {sections.map(({ id, component }, index) => {
           const paddingClasses =
@@ -41,7 +41,7 @@ const App = () => {
         })}
       </NavigationBar>
       <Footer />
-    </>
+    </div>
   );
 };
 

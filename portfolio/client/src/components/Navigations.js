@@ -137,7 +137,7 @@ const NavigationBar = ({ children }) => {
                 </div>
             </div>
 
-            <main className="mx-auto py-2 px-2 md:px-10 lg:px-16">{children}</main>
+            <main className="container min-h-screen mx-auto py-2 px-2 md:px-10 lg:px-16">{children}</main>
         </>
     );
 };
