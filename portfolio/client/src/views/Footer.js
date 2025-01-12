@@ -12,22 +12,22 @@ const Footer = () => {
         {
             href: "https://facebook.com",
             ariaLabel: "Facebook",
-            icon: <FaFacebook size={25} />,
+            icon: <FaFacebook size={20} />,
         },
         {
             href: "https://twitter.com",
             ariaLabel: "Twitter",
-            icon: <FaTwitter size={25} />,
+            icon: <FaTwitter size={20} />,
         },
         {
             href: "https://linkedin.com",
             ariaLabel: "LinkedIn",
-            icon: <FaLinkedin size={25} />,
+            icon: <FaLinkedin size={20} />,
         },
         {
             href: "https://github.com",
             ariaLabel: "GitHub",
-            icon: <FaGithub size={25} />,
+            icon: <FaGithub size={20} />,
         },
     ];
 
@@ -47,7 +47,7 @@ const Footer = () => {
                             isRound
                             icon={icon}
                             variant="text"
-                            size="sm"
+                            size="xs"
                             href={href}
                             ariaLabel={ariaLabel}
                         />

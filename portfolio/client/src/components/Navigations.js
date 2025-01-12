@@ -31,7 +31,7 @@ const NavigationBar = ({ children }) => {
                     {/* Mobile Menu Toggle */}
                     <span className="block md:hidden">
                         <Tooltip
-                            placement="botto"
+                            placement="bottom"
                             label="Open Menu"
                             ariaLabel="Open Mobile Menu Tooltip"
                         >

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useThemeStore } from "./store/themeStore";
-import { About, Features, Footer, Skills } from "./views";
+import { About, Contacts, Features, Footer, Skills } from "./views";
 import { NavigationBar } from "./components";
 
 const App = () => {
@@ -10,6 +10,7 @@ const App = () => {
     { component: <About />, id: "about" },
     { component: <Features />, id: "features" },
     { component: <Skills />, id: "skills" },
+    { component: <Contacts />, id: "contacts" },
   ];
 
   useEffect(() => {
