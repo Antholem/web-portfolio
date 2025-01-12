@@ -56,9 +56,9 @@ const skills = [
 
 const Skills = () => {
     return (
-        <div className="text-center">
+        <div>
             {/* Section Heading */}
-            <header className="mb-8">
+            <header className="mb-8 text-center">
                 <h2 className="text-sm font-heading tracking-widest uppercase text-brand mb-2">
                     Comprehensive technical skill set
                 </h2>
@@ -80,7 +80,7 @@ const Skills = () => {
                         </span>
 
                         {/* Skill Title */}
-                        <h3 className="text-xs">
+                        <h3 className="text-sm font-light">
                             {skill.title}
                         </h3>
                     </Card>

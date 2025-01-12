@@ -23,9 +23,9 @@ const features = [
 
 const Features = () => {
     return (
-        <div className="text-center">
+        <div>
             {/* Section Heading */}
-            <header className="mb-8">
+            <header className="mb-8 text-center">
                 <h2 className="text-sm font-heading tracking-widest uppercase text-brand mb-2">
                     Services I Offer and Specialize In
                 </h2>
@@ -48,7 +48,7 @@ const Features = () => {
                         <h3 className="text-xl font-semibold">{feature.title}</h3>
 
                         {/* Feature Description */}
-                        <p className="text-center">{feature.description}</p>
+                        <p className="text-center font-light">{feature.description}</p>
                     </Card>
                 ))}
             </div>
