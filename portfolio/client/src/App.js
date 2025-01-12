@@ -34,7 +34,7 @@ const App = () => {
             <section
               key={id}
               id={id}
-              className={`flex flex-col items-stretch px-4 ${paddingClasses}`}
+              className={`flex flex-col items-stretch px-2 ${paddingClasses}`}
             >
               {component}
             </section>

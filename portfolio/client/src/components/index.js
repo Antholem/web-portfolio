@@ -3,6 +3,7 @@ import Button from "./Button";
 import Card from "./Card";
 import Icon from "./Icon";
 import IconButton from "./IconButton";
+import Input from "./Input";
 import Tooltip from "./Tooltip";
 
 export {
@@ -10,6 +11,7 @@ export {
     Button,
     Card,
     Icon, 
-    IconButton,
+    IconButton, 
+    Input,
     Tooltip
 };
