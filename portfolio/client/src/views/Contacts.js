@@ -99,7 +99,7 @@ const Contacts = () => {
             {/* Main Content */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Contact Details Section */}
-                <Card className="space-y-8" size="sm">
+                <Card className="space-y-8">
                     <div>
                         <h2 className="text-2xl font-bold">Get in Touch</h2>
                         <p className="text-sm font-light">
