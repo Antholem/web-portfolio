@@ -101,7 +101,7 @@ const Contacts = () => {
                 {/* Contact Details Section */}
                 <Card className="space-y-8">
                     <div>
-                        <h2 className="text-2xl font-bold">Get in Touch</h2>
+                        <h2 className="text-2xl font-bold uppercase">Get in Touch</h2>
                         <p className="text-sm font-light">
                             I'm available to answer any questions or discuss potential collaborations.
                         </p>
@@ -124,7 +124,7 @@ const Contacts = () => {
 
                     {/* Social Links */}
                     <div>
-                        <h3 className="text-sm font-bold uppercase mb-4">Find Me In</h3>
+                        <h3 className="text-md font-bold uppercase mb-4">Find Me In</h3>
                         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-6">
                             {socialLinks.map((link, index) => (
                                 <Tooltip
@@ -161,7 +161,7 @@ const Contacts = () => {
                                 </div>
                             </div>
                         )}
-                        <form className="space-y-4" onSubmit={handleSend}>
+                        <form className="space-y-3" onSubmit={handleSend}>
                             <div>
                                 <label htmlFor="subject" className="block text-sm font-medium mb-2">
                                     Subject

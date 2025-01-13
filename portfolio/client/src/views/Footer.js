@@ -1,7 +1,7 @@
 import React from "react";
 import { useThemeStore } from "../store/themeStore";
 import { FaFacebook, FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
-import { IconButton } from "../components";
+import { IconButton, Tooltip } from "../components";
 
 const Footer = () => {
     const { theme } = useThemeStore();
@@ -42,15 +42,22 @@ const Footer = () => {
                 {/* Social Media Links */}
                 <div className="flex justify-center space-x-6 mb-4">
                     {socialMediaLinks.map(({ href, ariaLabel, icon }, index) => (
-                        <IconButton
+                        <Tooltip
                             key={index}
-                            isRound
-                            icon={icon}
-                            variant="text"
-                            size="xs"
-                            href={href}
+                            placement="bottom"
+                            label={ariaLabel}
                             ariaLabel={ariaLabel}
-                        />
+                        >
+                            <IconButton
+                                key={index}
+                                isRound
+                                icon={icon}
+                                variant="text"
+                                size="xs"
+                                href={href}
+                                ariaLabel={ariaLabel}
+                            />
+                        </Tooltip>
                     ))}
                 </div>
 
