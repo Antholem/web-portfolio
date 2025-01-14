@@ -13,7 +13,7 @@ import { IoMdSend } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { Button, Card, Icon, IconButton, Input, Tooltip } from "../components";
+import { Button, Card, Icon, IconButton, Input, TextArea, Tooltip } from "../components";
 
 const Contacts = () => {
     /** Contact Details */
@@ -99,53 +99,55 @@ const Contacts = () => {
             {/* Main Content */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Contact Details Section */}
-                <Card className="space-y-8">
-                    <div>
-                        <h2 className="text-2xl font-bold uppercase">Get in Touch</h2>
-                        <p className="text-sm font-light">
-                            I'm available to answer any questions or discuss potential collaborations.
-                        </p>
-                    </div>
+                <div>
+                    <Card className="space-y-6">
+                        <div>
+                            <h2 className="text-2xl font-bold uppercase">Get in Touch</h2>
+                            <p className="text-sm font-light">
+                                I'm available to answer any questions or discuss potential collaborations.
+                            </p>
+                        </div>
 
-                    {/* Contact List */}
-                    <div className="space-y-4">
-                        {contactDetails.map(({ label, icon, text }, index) => (
-                            <div key={index} className="flex items-center gap-4">
-                                <div className="flex items-center justify-center w-8 h-8 text-brand">
-                                    <Icon icon={icon} size="md" />
+                        {/* Contact List */}
+                        <div className="space-y-4">
+                            {contactDetails.map(({ label, icon, text }, index) => (
+                                <div key={index} className="flex items-center gap-4">
+                                    <div className="flex items-center justify-center w-8 h-8 text-brand">
+                                        <Icon icon={icon} size="md" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold uppercase">{label}</h3>
+                                        <p className="text-sm font-light">{text}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-sm font-bold uppercase">{label}</h3>
-                                    <p className="text-sm font-light">{text}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Social Links */}
-                    <div>
-                        <h3 className="text-md font-bold uppercase mb-4">Find Me In</h3>
-                        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-6">
-                            {socialLinks.map((link, index) => (
-                                <Tooltip
-                                    key={index}
-                                    placement="bottom"
-                                    label={link.ariaLabel}
-                                    ariaLabel={link.ariaLabel}
-                                >
-                                    <IconButton
-                                        icon={link.icon}
-                                        variant="text"
-                                        size="sm"
-                                        href={link.href}
-                                        ariaLabel={link.ariaLabel}
-                                        className="flex items-center justify-center mx-auto"
-                                    />
-                                </Tooltip>
                             ))}
                         </div>
-                    </div>
-                </Card>
+
+                        {/* Social Links */}
+                        <div>
+                            <h3 className="text-md font-bold uppercase mb-4">Find Me In</h3>
+                            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-6">
+                                {socialLinks.map((link, index) => (
+                                    <Tooltip
+                                        key={index}
+                                        placement="bottom"
+                                        label={link.ariaLabel}
+                                        ariaLabel={link.ariaLabel}
+                                    >
+                                        <IconButton
+                                            icon={link.icon}
+                                            variant="text"
+                                            size="sm"
+                                            href={link.href}
+                                            ariaLabel={link.ariaLabel}
+                                            className="flex items-center justify-center mx-auto"
+                                        />
+                                    </Tooltip>
+                                ))}
+                            </div>
+                        </div>
+                    </Card>
+                </div>
 
                 {/* Contact Form Section */}
                 <div>
@@ -179,11 +181,13 @@ const Contacts = () => {
                                 <label htmlFor="message" className="block text-sm font-medium mb-2">
                                     Message
                                 </label>
-                                <Input
-                                    type="text"
-                                    id="message"
+                                <TextArea
+                                    className="h-52"
                                     placeholder="Write your message here..."
-                                    variant="outlined"
+                                    size="md"
+                                    variant="outline"
+                                    isRequired={true}
+                                    resize="none"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                 />
@@ -203,7 +207,7 @@ const Contacts = () => {
                                 <Button
                                     className="w-full"
                                     leftIcon={<IoMdSend />}
-                                    isDisabled={!isLoggedIn}
+                                    isDisabled={!isLoggedIn || !subject.trim() || !message.trim()}
                                     isLoading={isSendLoading}
                                     loadingText="Sending..."
                                     type="submit"
