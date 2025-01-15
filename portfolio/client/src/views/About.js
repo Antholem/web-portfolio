@@ -2,6 +2,7 @@ import React from "react";
 import antholemPhoto from "../antholem.png";
 import { Button } from "../components";
 import { MdAttachFile, MdCall } from "react-icons/md";
+import { Link } from "react-scroll";                                
 
 const About = () => {
     return (
@@ -24,9 +25,18 @@ const About = () => {
                     <Button variant="contained" leftIcon={<MdAttachFile />}>
                         Resume
                     </Button>
-                    <Button variant="outlined" leftIcon={<MdCall />}>
-                        Contact
-                    </Button>
+                    <Link
+                        to={"contacts"}
+                        smooth
+                        duration={500}
+                        spy
+                        activeClass="text-brand"
+                        className="block"
+                    >
+                        <Button variant="outlined" leftIcon={<MdCall />}>
+                            Contact
+                        </Button>
+                    </Link>
                 </div>
             </div>
 
