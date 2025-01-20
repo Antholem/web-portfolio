@@ -13,7 +13,7 @@ import { IoMdSend } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { Button, Card, Icon, IconButton, Input, TextArea, Tooltip } from "../components";
+import { Button, Card, Icon, IconButton, Input, TextArea, TextEditor, Tooltip } from "../components";
 
 const Contacts = () => {
     /** Contact Details */
@@ -181,7 +181,7 @@ const Contacts = () => {
                                 <label htmlFor="message" className="block text-sm font-medium mb-2">
                                     Message
                                 </label>
-                                <TextArea
+                                {/* <TextArea
                                     className="h-52"
                                     placeholder="Write your message here..."
                                     size="md"
@@ -190,6 +190,13 @@ const Contacts = () => {
                                     resize="none"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
+                                /> */}
+                                <TextEditor
+                                    placeholder="Write your message here..."
+                                    size="md"
+                                    isRequired={true}
+                                    value={message}
+                                    onChange={(newValue) => setMessage(newValue)} // Ensure onChange is a function
                                 />
                             </div>
                             <div className="space-y-2">

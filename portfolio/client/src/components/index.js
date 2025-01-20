@@ -5,6 +5,7 @@ import Icon from "./Icon";
 import IconButton from "./IconButton";
 import Input from "./Input";
 import TextArea from "./TextArea";
+import TextEditor from "./TextEditor";
 import Tooltip from "./Tooltip";
 
 export {
@@ -15,5 +16,6 @@ export {
     IconButton, 
     Input,
     TextArea,
+    TextEditor,
     Tooltip
 };
