@@ -189,8 +189,7 @@ const Contacts = () => {
                                     Message
                                 </label>
                                 <TextEditor
-                                    placeholder="Write your message here..."
-                                    size="md"
+                                    placeholder="Enter your message here..."
                                     isRequired={true}
                                     value={message}
                                     onChange={setMessage}
