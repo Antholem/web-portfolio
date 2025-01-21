@@ -13,7 +13,9 @@ import { IoMdSend } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { Button, Card, Icon, IconButton, Input, TextArea, TextEditor, Tooltip } from "../components";
+import { Button, Card, Icon, IconButton, Input, TextEditor, Tooltip } from "../components";
+import { EditorState } from "draft-js";
+import { stateToHTML } from "draft-js-export-html";
 
 const Contacts = () => {
     /** Contact Details */
@@ -35,7 +37,7 @@ const Contacts = () => {
     const [email, setEmail] = useState("");
     const [photo, setPhoto] = useState("");
     const [subject, setSubject] = useState("");
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState(EditorState.createEmpty());
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [isSendLoading, setIsSendLoading] = useState(false);
@@ -61,14 +63,17 @@ const Contacts = () => {
     /** Handle Form Submission */
     const handleSend = (e) => {
         e.preventDefault();
-        setIsSendLoading(true); // Start loading state
+        setIsSendLoading(true);
+
+        // Convert EditorState to HTML
+        const messageHtml = stateToHTML(message.getCurrentContent());
 
         const formData = {
             name: auth.currentUser?.displayName,
             photo: auth.currentUser?.photoURL,
             email,
             subject,
-            message,
+            message: messageHtml,
         };
 
         axios
@@ -78,13 +83,15 @@ const Contacts = () => {
                 console.error("Error sending email:", err);
                 alert("Failed to send message. Please try again.");
             })
-            .finally(() => setIsSendLoading(false)); // End loading state
+            .finally(() => setIsSendLoading(false));
     };
 
     /** Log User Data on Login */
     useEffect(() => {
         if (isLoggedIn) console.log("User Logged In:", { email, photo });
     }, [isLoggedIn, email, photo]);
+
+    const isMessageEmpty = !message.getCurrentContent().getPlainText().trim();
 
     return (
         <div className="w-full mx-auto">
@@ -181,22 +188,12 @@ const Contacts = () => {
                                 <label htmlFor="message" className="block text-sm font-medium mb-2">
                                     Message
                                 </label>
-                                {/* <TextArea
-                                    className="h-52"
-                                    placeholder="Write your message here..."
-                                    size="md"
-                                    variant="outline"
-                                    isRequired={true}
-                                    resize="none"
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                /> */}
                                 <TextEditor
                                     placeholder="Write your message here..."
                                     size="md"
                                     isRequired={true}
                                     value={message}
-                                    onChange={(newValue) => setMessage(newValue)} // Ensure onChange is a function
+                                    onChange={setMessage}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -214,7 +211,7 @@ const Contacts = () => {
                                 <Button
                                     className="w-full"
                                     leftIcon={<IoMdSend />}
-                                    isDisabled={!isLoggedIn || !subject.trim() || !message.trim()}
+                                    isDisabled={!isLoggedIn || !subject.trim() || isMessageEmpty}
                                     isLoading={isSendLoading}
                                     loadingText="Sending..."
                                     type="submit"
