@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useThemeStore } from "../store/themeStore";
-import { IconButton } from "./";
 import * as Icon from "react-icons/fa";
-import { Editor, EditorState, RichUtils } from "draft-js";
+import { IconButton } from "./";
+import { Editor as DraftEditor, EditorState, RichUtils } from "draft-js";
 import "draft-js/dist/Draft.css";
 
 const TextEditor = ({
-  placeholder = ".",
+  placeholder = "",
   isRequired = false,
   value = EditorState.createEmpty(),
   onChange = () => {},
@@ -21,15 +21,31 @@ const TextEditor = ({
 
   useEffect(() => {
     setEditorState((prevState) =>
-      value.getCurrentContent().getPlainText() !== prevState.getCurrentContent().getPlainText() ? value : prevState
+      value.getCurrentContent().getPlainText() !==
+      prevState.getCurrentContent().getPlainText()
+        ? value
+        : prevState
     );
   }, [value]);
-
-  const isBoldActive = editorState.getCurrentInlineStyle().has("BOLD");
 
   const toggleBold = (event) => {
     event.preventDefault();
     setEditorState(RichUtils.toggleInlineStyle(editorState, "BOLD"));
+  };
+
+  const toggleItalic = (event) => {
+    event.preventDefault();
+    setEditorState(RichUtils.toggleInlineStyle(editorState, "ITALIC"));
+  };
+
+  const toggleUnderline = (event) => {
+    event.preventDefault();
+    setEditorState(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
+  };
+
+  const toggleStrikethrough = (event) => {
+    event.preventDefault();
+    setEditorState(RichUtils.toggleInlineStyle(editorState, "STRIKETHROUGH"));
   };
 
   const handleEditorChange = (newEditorState) => {
@@ -49,40 +65,94 @@ const TextEditor = ({
 
   const isEditorEmpty = !editorState.getCurrentContent().hasText();
 
-  return (
-    <div ref={editorContainerRef} className={`rounded-md ${theme === "dark" ? "bg-dark-paper" : "bg-light-paper"} ${className}`}>
-      <div className={`p-2 border-t border-r border-l rounded-t-md ${theme === "dark" ? "bg-dark- border-dark-text-disabled" : "bg-light-paper border-light-text-disabled"}`}>
-        <IconButton
-          type="button"
-          onMouseDown={toggleBold}
-          aria-label="bold"
-          icon={<Icon.FaBold className={isBoldActive && "text-brand"} />}
-          variant="text"
-          size="xs"
-        />
-      </div>
-      <div
-        className={`border rounded-b-md p-2 min-h-52 max-h-52 overflow-y-auto cursor-text relative ${
-          isFocused ? "border-brand" :
-          theme === "dark" ? "border-dark-text-disabled hover:border-dark-text-primary" 
+  const isBoldActive = editorState.getCurrentInlineStyle().has("BOLD");
+  const isItalicActive = editorState.getCurrentInlineStyle().has("ITALIC");
+  const isUnderlineActive = editorState.getCurrentInlineStyle().has("UNDERLINE");
+  const isStrikethroughActive = editorState.getCurrentInlineStyle().has("STRIKETHROUGH");
+
+  const Tools = () => (
+    <div
+      className={`p-2 border-t border-r border-l rounded-t-md flex gap-2 ${
+        theme === "dark"
+          ? "bg-dark-paper border-dark-text-disabled"
+          : "bg-light-paper border-light-text-disabled"
+      }`}
+    >
+      <IconButton
+        type="button"
+        onMouseDown={toggleBold}
+        aria-label="bold"
+        icon={<Icon.FaBold className={isBoldActive && "text-brand"} />}
+        variant="text"
+        size="xs"
+      />
+      <IconButton
+        type="button"
+        onMouseDown={toggleItalic}
+        aria-label="italic"
+        icon={<Icon.FaItalic className={isItalicActive && "text-brand"} />}
+        variant="text"
+        size="xs"
+      />
+      <IconButton
+        type="button"
+        onMouseDown={toggleUnderline}
+        aria-label="underline"
+        icon={<Icon.FaUnderline className={isUnderlineActive && "text-brand"} />}
+        variant="text"
+        size="xs"
+      />
+      <IconButton
+        type="button"
+        onMouseDown={toggleStrikethrough}
+        aria-label="strikethrough"
+        icon={<Icon.FaStrikethrough className={isStrikethroughActive && "text-brand"} />}
+        variant="text"
+        size="xs"
+      />
+    </div>
+  );
+
+  const EditorWrapper = () => (
+    <div
+      className={`border rounded-b-md p-2 min-h-52 max-h-52 overflow-y-auto cursor-text relative ${
+        isFocused
+          ? "border-brand"
+          : theme === "dark"
+          ? "border-dark-text-disabled hover:border-dark-text-primary"
           : "border-light-text-disabled hover:border-light-text-primary"
-        } `}
-        tabIndex="0"
-        onClick={() => editorRef.current.focus()}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      >
-        {isEditorEmpty && (
-          <div className="absolute top-2 left-2 text-gray-400 pointer-events-none">
-            {placeholder}
-          </div>
-        )}
-        <Editor 
-            ref={editorRef} 
-            editorState={editorState} 
-            onChange={handleEditorChange} 
-            {...props} 
-        />
+      }`}
+      tabIndex="0"
+      onClick={() => editorRef.current.focus()}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    >
+      {isEditorEmpty && (
+        <div className="absolute top-2 left-2 text-gray-400 pointer-events-none">
+          {placeholder}
+        </div>
+      )}
+      <DraftEditor
+        ref={editorRef}
+        editorState={editorState}
+        onChange={handleEditorChange}
+        {...props}
+      />
+    </div>
+  );
+
+  return (
+    <div
+      ref={editorContainerRef}
+      className={`rounded-md ${
+        theme === "dark" ? "bg-dark-paper" : "bg-light-paper"
+      } ${className}`}
+    >
+      <div>
+        <Tools />
+      </div>
+      <div>
+        <EditorWrapper />
       </div>
     </div>
   );
