@@ -1,21 +1,21 @@
 import React from "react";
-import { FaLaptopCode, FaMobileAlt, FaPaintBrush } from "react-icons/fa";
+import * as Icon from "react-icons/fa";
 import { Card } from "../components";
 
 // Features data
 const features = [
     {
-        icon: <FaLaptopCode className="text-brand text-5xl mb-4" />,
+        icon: <Icon.FaLaptopCode className="text-brand text-5xl mb-4" />,
         title: "Web Development",
         description: "Creating powerful and responsive websites with precision and creativity.",
     },
     {
-        icon: <FaPaintBrush className="text-brand text-5xl mb-4" />,
+        icon: <Icon.FaPaintBrush className="text-brand text-5xl mb-4" />,
         title: "UX Design",
         description: "Crafting seamless digital experiences through captivating design and usability.",
     },
     {
-        icon: <FaMobileAlt className="text-brand text-5xl mb-4" />,
+        icon: <Icon.FaMobileAlt className="text-brand text-5xl mb-4" />,
         title: "Mobile Development",
         description: "Building innovative and intuitive mobile applications for diverse platforms.",
     },

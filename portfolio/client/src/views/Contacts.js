@@ -1,36 +1,28 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-    FaPhoneAlt,
-    FaEnvelope,
-    FaMapMarkerAlt,
-    FaFacebook,
-    FaGithub,
-    FaLinkedin,
-    FaInstagram,
-} from "react-icons/fa";
+import * as Icon from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { Button, Card, Icon, IconButton, Input, TextEditor, Tooltip } from "../components";
+import { Button, Card, IconText, IconButton, Input, TextEditor, Tooltip } from "../components";
 import { EditorState } from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 
 const Contacts = () => {
     /** Contact Details */
     const contactDetails = [
-        { label: "Contact", icon: <FaPhoneAlt size={20} />, text: "+63 977 333 6314" },
-        { label: "Email", icon: <FaEnvelope size={20} />, text: "antholemlemmanalo@gmail.com" },
-        { label: "Location", icon: <FaMapMarkerAlt size={20} />, text: "Mabalacat, Pampanga, Philippines" },
+        { label: "Contact", icon: <Icon.FaPhoneAlt size={20} />, text: "+63 977 333 6314" },
+        { label: "Email", icon: <Icon.FaEnvelope size={20} />, text: "antholemlemmanalo@gmail.com" },
+        { label: "Location", icon: <Icon.FaMapMarkerAlt size={20} />, text: "Mabalacat, Pampanga, Philippines" },
     ];
 
     /** Social Media Links */
     const socialLinks = [
-        { href: "https://facebook.com", icon: <FaFacebook size={30} />, ariaLabel: "Facebook" },
-        { href: "https://github.com", icon: <FaGithub size={30} />, ariaLabel: "Github" },
-        { href: "https://linkedin.com", icon: <FaLinkedin size={30} />, ariaLabel: "LinkedIn" },
-        { href: "https://instagram.com", icon: <FaInstagram size={30} />, ariaLabel: "Instagram" },
+        { href: "https://facebook.com", icon: <Icon.FaFacebook size={30} />, ariaLabel: "Facebook" },
+        { href: "https://github.com", icon: <Icon.FaGithub size={30} />, ariaLabel: "Github" },
+        { href: "https://linkedin.com", icon: <Icon.FaLinkedin size={30} />, ariaLabel: "LinkedIn" },
+        { href: "https://instagram.com", icon: <Icon.FaInstagram size={30} />, ariaLabel: "Instagram" },
     ];
 
     /** State Management */
@@ -120,7 +112,7 @@ const Contacts = () => {
                             {contactDetails.map(({ label, icon, text }, index) => (
                                 <div key={index} className="flex items-center gap-4">
                                     <div className="flex items-center justify-center w-8 h-8 text-brand">
-                                        <Icon icon={icon} size="md" />
+                                        <IconText icon={icon} size="md" />
                                     </div>
                                     <div>
                                         <h3 className="text-sm font-bold uppercase">{label}</h3>

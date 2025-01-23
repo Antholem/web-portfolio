@@ -1,6 +1,6 @@
 import React from "react";
 
-const Icon = ({
+const IconText = ({
     icon,                 // The icon to render
     isRound = false,      // Whether the icon has a circular shape
     size = "md",          // Icon size (xs, sm, md, lg, xl)
@@ -35,4 +35,4 @@ const Icon = ({
     );
 };
 
-export default Icon;
+export default IconText;

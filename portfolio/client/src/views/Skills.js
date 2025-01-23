@@ -1,56 +1,56 @@
 import React from "react";
-import * as SiIcons from "react-icons/si"
+import * as Icon from "react-icons/si"
 import { Card } from "../components";
 
 // Skills data
 const skills = [
     { 
         title: "HTML", 
-        icon: <SiIcons.SiHtml5 className="text-brand text-7xl" />,
+        icon: <Icon.SiHtml5 className="text-brand text-7xl" />,
     },
     {
         title: "CSS",
-        icon: <SiIcons.SiCss3 className="text-brand text-7xl" />,
+        icon: <Icon.SiCss3 className="text-brand text-7xl" />,
     },
     {
         title: "EJS",
-        icon: <SiIcons.SiJavascript className="text-brand text-7xl" />,
+        icon: <Icon.SiJavascript className="text-brand text-7xl" />,
     },
     {
         title: "Tailwind",
-        icon: <SiIcons.SiTailwindcss className="text-brand text-7xl" />,
+        icon: <Icon.SiTailwindcss className="text-brand text-7xl" />,
     },
     {
         title: "Chakra UI",
-        icon: <SiIcons.SiChakraui className="text-brand text-7xl" />,
+        icon: <Icon.SiChakraui className="text-brand text-7xl" />,
     },
     {
         title: "Material UI",
-        icon: <SiIcons.SiMui className="text-brand text-7xl" />,
+        icon: <Icon.SiMui className="text-brand text-7xl" />,
     },
     {
         title: "NextJS",
-        icon: <SiIcons.SiNextdotjs className="text-brand text-7xl" />,
+        icon: <Icon.SiNextdotjs className="text-brand text-7xl" />,
     },
     {
         title: "ReactJS",
-        icon: <SiIcons.SiReact className="text-brand text-7xl" />,
+        icon: <Icon.SiReact className="text-brand text-7xl" />,
     },
     {
         title: "NodeJS",
-        icon: <SiIcons.SiNodedotjs className="text-brand text-7xl" />,
+        icon: <Icon.SiNodedotjs className="text-brand text-7xl" />,
     },
     {
         title: "ExpressJS",
-        icon: <SiIcons.SiExpress className="text-brand text-7xl" />,
+        icon: <Icon.SiExpress className="text-brand text-7xl" />,
     },
     {
         title: "MongoDB",
-        icon: <SiIcons.SiMongodb className="text-brand text-7xl" />,
+        icon: <Icon.SiMongodb className="text-brand text-7xl" />,
     },
     {
         title: "MySQL",
-        icon: <SiIcons.SiMysql className="text-brand text-7xl" />,
+        icon: <Icon.SiMysql className="text-brand text-7xl" />,
     },
 ];
 

@@ -1,7 +1,7 @@
 import React from "react";
 import antholemPhoto from "../antholem.png";
 import { Button } from "../components";
-import { MdAttachFile, MdCall } from "react-icons/md";
+import * as Icon from "react-icons/md";
 import { Link } from "react-scroll";                                
 
 const About = () => {
@@ -22,7 +22,7 @@ const About = () => {
                     a lasting impression.
                 </p>
                 <div className="flex justify-center md:justify-start space-x-4 mt-6">
-                    <Button variant="contained" leftIcon={<MdAttachFile />}>
+                    <Button variant="contained" leftIcon={<Icon.MdAttachFile />}>
                         Resume
                     </Button>
                     <Link
@@ -33,7 +33,7 @@ const About = () => {
                         activeClass="text-brand"
                         className="block"
                     >
-                        <Button variant="outlined" leftIcon={<MdCall />}>
+                        <Button variant="outlined" leftIcon={<Icon.MdCall />}>
                             Contact
                         </Button>
                     </Link>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useThemeStore } from "../store/themeStore";
-import { FaFacebook, FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
+import * as Icon from "react-icons/fa";
 import { IconButton, Tooltip } from "../components";
 
 const Footer = () => {
@@ -12,22 +12,22 @@ const Footer = () => {
         {
             href: "https://facebook.com",
             ariaLabel: "Facebook",
-            icon: <FaFacebook size={20} />,
+            icon: <Icon.FaFacebook size={20} />,
         },
         {
             href: "https://twitter.com",
             ariaLabel: "Twitter",
-            icon: <FaTwitter size={20} />,
+            icon: <Icon.FaTwitter size={20} />,
         },
         {
             href: "https://linkedin.com",
             ariaLabel: "LinkedIn",
-            icon: <FaLinkedin size={20} />,
+            icon: <Icon.FaLinkedin size={20} />,
         },
         {
             href: "https://github.com",
             ariaLabel: "GitHub",
-            icon: <FaGithub size={20} />,
+            icon: <Icon.FaGithub size={20} />,
         },
     ];
 

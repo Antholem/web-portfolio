@@ -1,8 +1,8 @@
 import NavigationBar from "./Navigations";
 import Button from "./Button";
 import Card from "./Card";
-import Icon from "./Icon";
 import IconButton from "./IconButton";
+import IconText from "./IconText";
 import Input from "./Input";
 import TextArea from "./TextArea";
 import TextEditor from "./TextEditor";
@@ -12,8 +12,8 @@ export {
     NavigationBar,
     Button,
     Card,
-    Icon, 
     IconButton, 
+    IconText, 
     Input,
     TextArea,
     TextEditor,

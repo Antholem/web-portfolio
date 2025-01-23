@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useThemeStore } from "../store/themeStore";
 import { IconButton } from "./";
-import { FaBold } from "react-icons/fa";
+import * as Icon from "react-icons/fa";
 import { Editor, EditorState, RichUtils } from "draft-js";
 import "draft-js/dist/Draft.css";
 
@@ -56,7 +56,7 @@ const TextEditor = ({
           type="button"
           onMouseDown={toggleBold}
           aria-label="bold"
-          icon={<FaBold className={isBoldActive && "text-brand"} />}
+          icon={<Icon.FaBold className={isBoldActive && "text-brand"} />}
           variant="text"
           size="xs"
         />
