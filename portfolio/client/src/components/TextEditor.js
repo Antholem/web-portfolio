@@ -4,6 +4,7 @@ import * as Icon from "react-icons/fa";
 import { IconButton, Select } from "./";
 import { Editor as DraftEditor, EditorState, RichUtils } from "draft-js";
 import "draft-js/dist/Draft.css";
+import Divider from "./Divider";
 
 const TextEditor = ({
   placeholder = "",
@@ -121,6 +122,7 @@ const TextEditor = ({
       <option value="header-five">Heading 5</option>
       <option value="header-six">Heading 6</option>
     </Select>
+    <Divider direction="vertical" />
       <IconButton
         type="button"
         onMouseDown={toggleBold}
@@ -153,6 +155,7 @@ const TextEditor = ({
         variant="text"
         size="xs"
       />
+      <Divider direction="vertical" />
       <IconButton
         type="button"
         onMouseDown={(e) => { e.preventDefault(); toggleBlockType("unordered-list-item"); }}
@@ -182,7 +185,10 @@ const TextEditor = ({
           : "border-light-text-disabled hover:border-light-text-primary"
       }`}
       tabIndex="0"
-      onClick={() => editorRef.current.focus()}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        editorRef.current.focus();
+      }}
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
