@@ -185,10 +185,6 @@ const TextEditor = ({
           : "border-light-text-disabled hover:border-light-text-primary"
       }`}
       tabIndex="0"
-      onMouseDown={(e) => {
-        e.preventDefault();
-        editorRef.current.focus();
-      }}
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
