@@ -44,11 +44,15 @@ const Features = () => {
                         {/* Feature Icon */}
                         {feature.icon}
 
-                        {/* Feature Title */}
-                        <h3 className="text-xl font-semibold">{feature.title}</h3>
-
-                        {/* Feature Description */}
-                        <p className="text-center font-light">{feature.description}</p>
+                        {/* Feature Title and Description */}
+                        <div className="flex flex-col items-center justify-center gap-2">
+                            <h3 className="text-xl font-semibold">
+                                {feature.title}
+                            </h3>
+                            <p className="text-center font-light">
+                                {feature.description}
+                            </p>
+                        </div>
                     </Card>
                 ))}
             </div>

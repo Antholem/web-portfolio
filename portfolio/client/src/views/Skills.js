@@ -80,7 +80,7 @@ const Skills = () => {
                         </span>
 
                         {/* Skill Title */}
-                        <h3 className="text-sm font-light">
+                        <h3 className="font-light">
                             {skill.title}
                         </h3>
                     </Card>
