@@ -1,11 +1,12 @@
 import React from "react";
-import { Button, Card } from "../components";
+import { useThemeStore } from "../store/themeStore";
+import { Button, Card, IconText } from "../components";
 import * as Icon from "react-icons/fa";
 
 // Projects data
 const projects = [
     {
-        image: "https://placehold.co/1200x800",
+        image: "https://fakeimg.pl/1200x800/bf6b6b/8789ff?text=No+image&font=noto",
         name: "Web Development",
         description:
             "Creating powerful and responsive websites with precision and creativity. Elevating web experiences with cutting-edge design and seamless functionality.",
@@ -31,6 +32,8 @@ const projects = [
 ];
 
 const Projects = () => {
+    const { theme } = useThemeStore();
+
     return (
         <section className="py-12">
             {/* Section Heading */}
@@ -52,11 +55,14 @@ const Projects = () => {
                     >
                         
                         {/* Project Image */}
-                        <img
-                            src={project.image}
+                        {/* <img
+                            // src={project.image}
                             alt={project.name}
                             className="w-full h-60 object-cover rounded-lg"
-                        />
+                        /> */}
+                        <div className={`w-full h-60 object-cover rounded-lg flex justify-center items-center ${theme === "dark" ? "bg-dark-action-disabled" : "bg-light-action-disabled"}`}>
+                            <Icon.FaImage className={`text-9xl ${theme === "dark" ? "text-dark-text-disabled" : "text-light-text-disabled"}`} />
+                        </div>
 
                         {/* Project Details */}
                         <div className="flex flex-col gap-2">
