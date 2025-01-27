@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Fragment } from "react";
 import { useThemeStore } from "../store/themeStore";
 import * as Icon from "react-icons/fa";
 import { IconButton, Select } from "./";
@@ -104,10 +104,7 @@ const TextEditor = ({
   const isULActive = currentBlockType === "unordered-list-item";
   const isOLActive = currentBlockType === "ordered-list-item";
 
-  const Tools = () => (
-    <div
-      className={`p-2 border-t border-r border-l rounded-t-md flex gap-2 ${theme === "dark" ? "bg-dark-paper border-dark-text-disabled" : "bg-light-paper border-light-text-disabled"}`}
-    >
+  const BlockType = () => (
     <Select
       variant="flushed"
       size="sm"
@@ -122,60 +119,114 @@ const TextEditor = ({
       <option value="header-five">Heading 5</option>
       <option value="header-six">Heading 6</option>
     </Select>
-    <Divider direction="vertical" />
-      <IconButton
-        type="button"
-        onMouseDown={toggleBold}
-        aria-label="bold"
-        icon={<Icon.FaBold className={isBoldActive && "text-brand"} />}
-        variant="text"
-        size="xs"
-      />
-      <IconButton
-        type="button"
-        onMouseDown={toggleItalic}
-        aria-label="italic"
-        icon={<Icon.FaItalic className={isItalicActive && "text-brand"} />}
-        variant="text"
-        size="xs"
-      />
-      <IconButton
-        type="button"
-        onMouseDown={toggleUnderline}
-        aria-label="underline"
-        icon={<Icon.FaUnderline className={isUnderlineActive && "text-brand"} />}
-        variant="text"
-        size="xs"
-      />
-      <IconButton
-        type="button"
-        onMouseDown={toggleStrikethrough}
-        aria-label="strikethrough"
-        icon={<Icon.FaStrikethrough className={isStrikethroughActive && "text-brand"} />}
-        variant="text"
-        size="xs"
-      />
-      <Divider direction="vertical" />
-      <IconButton
-        type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleBlockType("unordered-list-item"); }}
-        aria-label="UL"
-        icon={<Icon.FaList className={isULActive && "text-brand"} />}
-        variant="text"
-        size="xs"
-      />
-      <IconButton
-        type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleBlockType("ordered-list-item"); }}
-        aria-label="OL"
-        icon={<Icon.FaListOl className={isOLActive && "text-brand"} />}
-        variant="text"
-        size="xs"
-      />
+  );
+
+  const Bold = () => (
+    <IconButton
+      type="button"
+      onMouseDown={toggleBold}
+      aria-label="bold"
+      icon={<Icon.FaBold className={isBoldActive && "text-brand"} />}
+      variant="text"
+      size="xs"
+    />
+  );
+
+  const Italic = () => (
+    <IconButton
+      type="button"
+      onMouseDown={toggleItalic}
+      aria-label="italic"
+      icon={<Icon.FaItalic className={isItalicActive && "text-brand"} />}
+      variant="text"
+      size="xs"
+    />
+  );
+
+  const Underline = () => (
+    <IconButton
+      type="button"
+      onMouseDown={toggleUnderline}
+      aria-label="underline"
+      icon={<Icon.FaUnderline className={isUnderlineActive && "text-brand"} />}
+      variant="text"
+      size="xs"
+    />
+  );
+
+  const Strikethrough = () => (
+    <IconButton
+      type="button"
+      onMouseDown={toggleStrikethrough}
+      aria-label="strikethrough"
+      icon={<Icon.FaStrikethrough className={isStrikethroughActive && "text-brand"} />}
+      variant="text"
+      size="xs"
+    />
+  );
+
+  const UnorderedList = () => (
+    <IconButton
+      type="button"
+      onMouseDown={(e) => { e.preventDefault(); toggleBlockType("unordered-list-item"); }}
+      aria-label="UL"
+      icon={<Icon.FaList className={isULActive && "text-brand"} />}
+      variant="text"
+      size="xs"
+    />
+  );
+
+  const OrderedList = () => (
+    <IconButton
+      type="button"
+      onMouseDown={(e) => { e.preventDefault(); toggleBlockType("ordered-list-item"); }}
+      aria-label="OL"
+      icon={<Icon.FaListOl className={isOLActive && "text-brand"} />}
+      variant="text"
+      size="xs"
+    />
+  );
+
+  const toolsLayout = [
+    [
+      <BlockType />
+    ],
+    [
+      <Bold />,
+      <Italic />,
+      <Underline />,
+      <Strikethrough />
+    ],
+    [
+      <UnorderedList />,
+      <OrderedList />
+    ],
+  ];
+
+  const Tools = () => (
+    <div
+      className={`p-2 border-t border-r border-l rounded-t-md flex gap-2 ${
+        theme === "dark"
+          ? "bg-dark-paper border-dark-text-disabled"
+          : "bg-light-paper border-light-text-disabled"
+      }`}
+    >
+      {toolsLayout.map((group, groupIndex) => (
+        <Fragment key={groupIndex}>
+          {group.map((Tool, toolIndex) => (
+            <Fragment key={toolIndex}>
+              {Tool}
+            </Fragment>
+          ))}
+          {groupIndex < toolsLayout.length - 1 && (
+            <Divider direction="vertical" />
+          )}
+        </Fragment>
+      ))}
     </div>
   );
 
-  const EditorWrapper = () => (
+  const Editor = () => (
     <div
       className={`border rounded-b-md p-2 min-h-52 max-h-52 overflow-y-auto cursor-text relative ${
         isFocused
@@ -212,7 +263,7 @@ const TextEditor = ({
         <Tools />
       </div>
       <div>
-        <EditorWrapper />
+        <Editor />
       </div>
     </div>
   );
