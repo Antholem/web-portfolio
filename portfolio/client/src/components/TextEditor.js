@@ -205,7 +205,7 @@ const TextEditor = ({
 
   const Tools = () => (
     <div
-      className={`p-2 border-t border-r border-l rounded-t-md flex gap-2 ${
+      className={`p-2 border-t border-r border-l rounded-t-md flex flex-wrap gap-2 ${
         theme === "dark"
           ? "bg-dark-paper border-dark-text-disabled"
           : "bg-light-paper border-light-text-disabled"
@@ -213,13 +213,15 @@ const TextEditor = ({
     >
       {toolsLayout.map((group, groupIndex) => (
         <Fragment key={groupIndex}>
-          {group.map((Tool, toolIndex) => (
-            <Fragment key={toolIndex}>
-              {Tool}
-            </Fragment>
-          ))}
+          <div className="flex flex-wrap gap-2">
+            {group.map((Tool, toolIndex) => (
+              <Fragment key={toolIndex}>
+                {Tool}
+              </Fragment>
+            ))}
+          </div>
           {groupIndex < toolsLayout.length - 1 && (
-            <Divider direction="vertical" />
+            <Divider direction="vertical" className="self-stretch" />
           )}
         </Fragment>
       ))}
