@@ -181,10 +181,9 @@ const Contacts = () => {
                                     Message
                                 </label>
                                 <TextEditor
-                                    placeholder="Enter your message here..."
-                                    isRequired={true}
-                                    value={message}
-                                    onChange={setMessage}
+                                    // placeholder="Enter your message here..."
+                                    // value={message}
+                                    // onChange={setMessage}
                                 />
                             </div>
                             <div className="space-y-2">
