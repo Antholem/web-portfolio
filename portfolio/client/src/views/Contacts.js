@@ -6,8 +6,6 @@ import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { Button, Card, IconText, IconButton, Input, TextEditor, Tooltip } from "../components";
-import { EditorState } from "draft-js";
-import { stateToHTML } from "draft-js-export-html";
 
 const Contacts = () => {
     /** Contact Details */
@@ -29,7 +27,7 @@ const Contacts = () => {
     const [email, setEmail] = useState("");
     const [photo, setPhoto] = useState("");
     const [subject, setSubject] = useState("");
-    const [message, setMessage] = useState(EditorState.createEmpty());
+    const [message, setMessage] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [isSendLoading, setIsSendLoading] = useState(false);
@@ -57,15 +55,12 @@ const Contacts = () => {
         e.preventDefault();
         setIsSendLoading(true);
 
-        // Convert EditorState to HTML
-        const messageHtml = stateToHTML(message.getCurrentContent());
-
         const formData = {
             name: auth.currentUser?.displayName,
             photo: auth.currentUser?.photoURL,
             email,
             subject,
-            message: messageHtml,
+            message,
         };
 
         axios
@@ -82,8 +77,6 @@ const Contacts = () => {
     useEffect(() => {
         if (isLoggedIn) console.log("User Logged In:", { email, photo });
     }, [isLoggedIn, email, photo]);
-
-    const isMessageEmpty = !message.getCurrentContent().getPlainText().trim();
 
     return (
         <div className="w-full mx-auto">
@@ -181,9 +174,9 @@ const Contacts = () => {
                                     Message
                                 </label>
                                 <TextEditor
-                                    // placeholder="Enter your message here..."
-                                    // value={message}
-                                    // onChange={setMessage}
+                                    placeholder="Enter your message here..."
+                                    value={message}
+                                    onChange={setMessage}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -201,7 +194,7 @@ const Contacts = () => {
                                 <Button
                                     className="w-full"
                                     leftIcon={<IoMdSend />}
-                                    isDisabled={!isLoggedIn || !subject.trim() || isMessageEmpty}
+                                    isDisabled={!isLoggedIn || !subject.trim() || !message.trim()}
                                     isLoading={isSendLoading}
                                     loadingText="Sending..."
                                     type="submit"
