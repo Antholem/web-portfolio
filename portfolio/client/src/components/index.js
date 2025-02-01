@@ -1,6 +1,7 @@
 import NavigationBar from "./Navigations";
 import Button from "./Button";
 import Card from "./Card";
+import Divider from "./Divider";
 import IconButton from "./IconButton";
 import IconText from "./IconText";
 import Input from "./Input";
@@ -13,6 +14,7 @@ export {
     NavigationBar,
     Button,
     Card,
+    Divider,
     IconButton, 
     IconText, 
     Input,

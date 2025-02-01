@@ -1,16 +1,25 @@
 import React from "react";
 import * as Icon from "react-icons/fa";
-import { IconButton } from "./";
+import { Divider, IconButton } from "./";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { useThemeStore } from "../store/themeStore";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Placeholder } from "@tiptap/extension-placeholder";
+import { BulletList } from "@tiptap/extension-bullet-list";
+import { OrderedList } from "@tiptap/extension-ordered-list";
+import { ListItem } from "@tiptap/extension-list-item";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        bulletList: false,
+        orderedList: false,
+      }),
+      BulletList,
+      OrderedList,
+      ListItem,
       Placeholder.configure({ placeholder }),
     ],
     content: value,
@@ -38,7 +47,17 @@ const TextEditor = ({ placeholder, value, onChange }) => {
 
   const toggleCode = (event) => {
     event.preventDefault();
-    editor.chain().focus().toggleCode().run();  // Corrected the method call
+    editor.chain().focus().toggleCode().run();
+  };
+
+  const toggleBulletList = (event) => {
+    event.preventDefault();
+    editor.chain().focus().toggleBulletList().run();
+  };
+
+  const toggleOrderedList = (event) => {
+    event.preventDefault();
+    editor.chain().focus().toggleOrderedList().run();
   };
 
   return (
@@ -71,7 +90,22 @@ const TextEditor = ({ placeholder, value, onChange }) => {
         <IconButton
           onClick={toggleCode}
           aria-label="Code"
-          icon={<Icon.FaCode className={`${editor.isActive("code") && "text-brand"}`} />} 
+          icon={<Icon.FaCode className={`${editor.isActive("code") && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <Divider direction="vertical" />
+        <IconButton
+          onClick={toggleBulletList}
+          aria-label="Bullet List"
+          icon={<Icon.FaListUl className={`${editor.isActive("bulletList") && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <IconButton
+          onClick={toggleOrderedList}
+          aria-label="Ordered List"
+          icon={<Icon.FaListOl className={`${editor.isActive("orderedList") && "text-brand"}`} />}
           variant="text"
           size="xs"
         />
