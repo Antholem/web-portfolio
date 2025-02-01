@@ -56,7 +56,7 @@ const Select = ({
 
     return (
         <select
-            className={`w ${appliedSizeStyles} ${appliedVariantStyles} ${disabledStyles} ${invalidStyles} ${className} transition duration-200`}
+            className={`w cursor-pointer ${appliedSizeStyles} ${appliedVariantStyles} ${disabledStyles} ${invalidStyles} ${className} transition duration-200`}
             value={value}
             defaultValue={defaultValue}
             onChange={onChange}
