@@ -1,8 +1,8 @@
 import React from "react";
 import * as Icon from "react-icons/fa";
 import { Divider, IconButton, Select } from "./";
-import { EditorContent, useEditor } from "@tiptap/react";
 import { useThemeStore } from "../store/themeStore";
+import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { BulletList } from "@tiptap/extension-bullet-list";
@@ -63,6 +63,16 @@ const TextEditor = ({ placeholder, value, onChange }) => {
   const toggleOrderedList = (event) => {
     event.preventDefault();
     editor.chain().focus().toggleOrderedList().run();
+  };
+
+  const toggleRedo = (event) => {
+    event.preventDefault();
+    editor.chain().focus().redo().run();
+  };
+
+  const toggleUndo = (event) => {
+    event.preventDefault();
+    editor.chain().focus().undo().run();
   };
 
   const handleStyleChange = (event) => {
@@ -175,6 +185,23 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaListOl className={`${editor.isActive("orderedList") && "text-brand"}`} />}
           variant="text"
           size="xs"
+        />
+        <Divider direction="vertical" />
+        <IconButton
+          onClick={toggleUndo}
+          aria-label="Undo"
+          icon={<Icon.FaUndo />}
+          variant="text"
+          size="xs"
+          isDisabled={!editor.can().undo()}
+        />
+        <IconButton
+          onClick={toggleRedo}
+          aria-label="Redo"
+          icon={<Icon.FaRedo />}
+          variant="text"
+          size="xs"
+          isDisabled={!editor.can().redo()}
         />
       </div>
       <EditorContent
