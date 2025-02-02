@@ -10,6 +10,9 @@ import { OrderedList } from "@tiptap/extension-ordered-list";
 import { ListItem } from "@tiptap/extension-list-item";
 import { Heading } from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { Underline } from '@tiptap/extension-underline';
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
@@ -30,6 +33,9 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
+      Underline,
+      Subscript,
+      Superscript
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -94,6 +100,23 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     editor.chain().focus().setTextAlign("right").run();
   };
 
+  const toggleUnderline = (event) => {
+    event.preventDefault();
+    editor.chain().focus().toggleUnderline().run();
+  };
+
+  const toggleSubscript = (event) => {
+    event.preventDefault();
+    editor.chain().focus().toggleSubscript().run();
+    editor.chain().focus().unsetSuperscript().run();
+  };
+
+  const toggleSuperscript = (event) => {
+    event.preventDefault();
+    editor.chain().focus().toggleSuperscript().run()
+    editor.chain().focus().unsetSubscript().run();
+  };
+
   const handleStyleChange = (event) => {
     switch (event.target.value) {
       case "heading-one":
@@ -146,7 +169,8 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       <div
         className={`p-2 border-t border-r border-l rounded-t-md flex flex-wrap gap-1 ${theme === "dark"
           ? "bg-dark-paper border-dark-text-disabled"
-          : "bg-light-paper border-light-text-disabled"}`}
+          : "bg-light-paper border-light-text-disabled"
+          }`}
       >
         <Select
           variant="flushed"
@@ -177,6 +201,14 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           size="xs"
         />
         <IconButton
+          onClick={toggleUnderline}
+          aria-label="Underline"
+          icon={<Icon.FaUnderline className={`${editor.isActive("underline") && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <Divider direction="vertical" />
+        <IconButton
           onClick={toggleStrike}
           aria-label="Strike"
           icon={<Icon.FaStrikethrough className={`${editor.isActive("strike") && "text-brand"}`} />}
@@ -187,6 +219,35 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           onClick={toggleCode}
           aria-label="Code"
           icon={<Icon.FaCode className={`${editor.isActive("code") && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <IconButton
+          onClick={toggleSubscript}
+          aria-label="Subscript"
+          icon={<Icon.FaSubscript className={`${editor.isActive("subscript") && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <IconButton
+          onClick={toggleSuperscript}
+          aria-label="Superscript"
+          icon={<Icon.FaSuperscript className={`${editor.isActive("superscript") && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <Divider direction="vertical" />
+        <IconButton
+          onClick={toggleBulletList}
+          aria-label="Bullet List"
+          icon={<Icon.FaListUl className={`${editor.isActive("bulletList") && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <IconButton
+          onClick={toggleOrderedList}
+          aria-label="Ordered List"
+          icon={<Icon.FaListOl className={`${editor.isActive("orderedList") && "text-brand"}`} />}
           variant="text"
           size="xs"
         />
@@ -209,21 +270,6 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           onClick={toggleAlignRight}
           aria-label="Align Right"
           icon={<Icon.FaAlignRight className={`${editor.isActive({ textAlign: "right" }) && "text-brand"}`} />}
-          variant="text"
-          size="xs"
-        />
-        <Divider direction="vertical" />
-        <IconButton
-          onClick={toggleBulletList}
-          aria-label="Bullet List"
-          icon={<Icon.FaListUl className={`${editor.isActive("bulletList") && "text-brand"}`} />}
-          variant="text"
-          size="xs"
-        />
-        <IconButton
-          onClick={toggleOrderedList}
-          aria-label="Ordered List"
-          icon={<Icon.FaListOl className={`${editor.isActive("orderedList") && "text-brand"}`} />}
           variant="text"
           size="xs"
         />

@@ -50,7 +50,12 @@ code {
     padding-left: 1.5rem;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     line-height: 1.1;
     margin-top: 1rem;
     word-wrap: break-word;
@@ -78,6 +83,12 @@ code {
 
   h6 {
     font-size: 1rem;
+  }
+
+  code {
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    padding: 0.25em 0.3em;
   }
 }
 
