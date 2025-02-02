@@ -9,6 +9,7 @@ import { BulletList } from "@tiptap/extension-bullet-list";
 import { OrderedList } from "@tiptap/extension-ordered-list";
 import { ListItem } from "@tiptap/extension-list-item";
 import { Heading } from "@tiptap/extension-heading";
+import TextAlign from "@tiptap/extension-text-align";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
@@ -25,6 +26,9 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       Placeholder.configure({ placeholder }),
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6],
+      }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
       }),
     ],
     content: value,
@@ -73,6 +77,21 @@ const TextEditor = ({ placeholder, value, onChange }) => {
   const toggleUndo = (event) => {
     event.preventDefault();
     editor.chain().focus().undo().run();
+  };
+
+  const toggleAlignLeft = (event) => {
+    event.preventDefault();
+    editor.chain().focus().setTextAlign("left").run();
+  };
+
+  const toggleAlignCenter = (event) => {
+    event.preventDefault();
+    editor.chain().focus().setTextAlign("center").run();
+  };
+
+  const toggleAlignRight = (event) => {
+    event.preventDefault();
+    editor.chain().focus().setTextAlign("right").run();
   };
 
   const handleStyleChange = (event) => {
@@ -173,6 +192,28 @@ const TextEditor = ({ placeholder, value, onChange }) => {
         />
         <Divider direction="vertical" />
         <IconButton
+          onClick={toggleAlignLeft}
+          aria-label="Align Left"
+          icon={<Icon.FaAlignLeft className={`${editor.isActive({ textAlign: "left" }) && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <IconButton
+          onClick={toggleAlignCenter}
+          aria-label="Align Center"
+          icon={<Icon.FaAlignCenter className={`${editor.isActive({ textAlign: "center" }) && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <IconButton
+          onClick={toggleAlignRight}
+          aria-label="Align Right"
+          icon={<Icon.FaAlignRight className={`${editor.isActive({ textAlign: "right" }) && "text-brand"}`} />}
+          variant="text"
+          size="xs"
+        />
+        <Divider direction="vertical" />
+        <IconButton
           onClick={toggleBulletList}
           aria-label="Bullet List"
           icon={<Icon.FaListUl className={`${editor.isActive("bulletList") && "text-brand"}`} />}
@@ -186,7 +227,18 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           variant="text"
           size="xs"
         />
-        <Divider direction="vertical" />
+      </div>
+      <EditorContent
+        editor={editor}
+        className={`border transition duration-200 ${theme === "dark"
+          ? "bg-dark-paper border-dark-text-disabled hover:border-dark-text-primary"
+          : "bg-light-paper border-light-text-disabled hover:border-light-text-primary"}`}
+      />
+      <div
+        className={`px-2 border-b border-r border-l rounded-b-md flex flex-wrap items-center gap-0 ${theme === "dark"
+          ? "bg-dark-paper border-dark-text-disabled"
+          : "bg-light-paper border-light-text-disabled"}`}
+      >
         <IconButton
           onClick={toggleUndo}
           aria-label="Undo"
@@ -204,12 +256,6 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           isDisabled={!editor.can().redo()}
         />
       </div>
-      <EditorContent
-        editor={editor}
-        className={`border rounded-b-md transition duration-200 ${theme === "dark"
-          ? "bg-dark-paper border-dark-text-disabled hover:border-dark-text-primary"
-          : "bg-light-paper border-light-text-disabled hover:border-light-text-primary"}`}
-      />
     </div>
   );
 };
