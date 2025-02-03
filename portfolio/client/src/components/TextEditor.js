@@ -13,6 +13,8 @@ import TextAlign from "@tiptap/extension-text-align";
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Underline } from '@tiptap/extension-underline';
+import CharacterCount from '@tiptap/extension-character-count';
+import ListKeymap from '@tiptap/extension-list-keymap'
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
@@ -35,7 +37,9 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       }),
       Underline,
       Subscript,
-      Superscript
+      Superscript,
+      CharacterCount,
+      ListKeymap,
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -117,6 +121,16 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     editor.chain().focus().unsetSubscript().run();
   };
 
+  const toggleLiftItem = (event) => {
+    event.preventDefault();
+    editor.chain().focus().liftListItem('listItem').run();
+  };
+
+  const toggleSinkItem = (event) => {
+    event.preventDefault();
+    editor.chain().focus().sinkListItem('listItem').run();
+  };
+
   const handleStyleChange = (event) => {
     switch (event.target.value) {
       case "heading-one":
@@ -192,6 +206,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaBold className={`${editor.isActive("bold") && "text-brand"}`} />}
           variant="text"
           size="xs"
+          isDisabled={editor.isActive("code")}
         />
         <IconButton
           onClick={toggleItalic}
@@ -199,6 +214,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaItalic className={`${editor.isActive("italic") && "text-brand"}`} />}
           variant="text"
           size="xs"
+          isDisabled={editor.isActive("code")}
         />
         <IconButton
           onClick={toggleUnderline}
@@ -206,15 +222,17 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaUnderline className={`${editor.isActive("underline") && "text-brand"}`} />}
           variant="text"
           size="xs"
+          isDisabled={editor.isActive("code")}
         />
-        <Divider direction="vertical" />
         <IconButton
           onClick={toggleStrike}
           aria-label="Strike"
           icon={<Icon.FaStrikethrough className={`${editor.isActive("strike") && "text-brand"}`} />}
           variant="text"
           size="xs"
+          isDisabled={editor.isActive("code")}
         />
+        <Divider direction="vertical" />
         <IconButton
           onClick={toggleCode}
           aria-label="Code"
@@ -228,6 +246,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaSubscript className={`${editor.isActive("subscript") && "text-brand"}`} />}
           variant="text"
           size="xs"
+          isDisabled={editor.isActive("code")}
         />
         <IconButton
           onClick={toggleSuperscript}
@@ -235,6 +254,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaSuperscript className={`${editor.isActive("superscript") && "text-brand"}`} />}
           variant="text"
           size="xs"
+          isDisabled={editor.isActive("code")}
         />
         <Divider direction="vertical" />
         <IconButton
@@ -250,6 +270,22 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaListOl className={`${editor.isActive("orderedList") && "text-brand"}`} />}
           variant="text"
           size="xs"
+        />
+        <IconButton
+          onClick={toggleLiftItem}
+          aria-label="Lift List"
+          icon={<Icon.FaOutdent />}
+          variant="text"
+          size="xs"
+          isDisabled={!editor.can().liftListItem('listItem')}
+        />
+        <IconButton
+          onClick={toggleSinkItem}
+          aria-label="Sink List"
+          icon={<Icon.FaIndent />}
+          variant="text"
+          size="xs"
+          isDisabled={!editor.can().sinkListItem('listItem')}
         />
         <Divider direction="vertical" />
         <IconButton
@@ -281,26 +317,31 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           : "bg-light-paper border-light-text-disabled hover:border-light-text-primary"}`}
       />
       <div
-        className={`px-2 border-b border-r border-l rounded-b-md flex flex-wrap items-center gap-0 ${theme === "dark"
+        className={`px-2 border-b border-r border-l rounded-b-md flex flex-wrap items-center justify-between gap-0 ${theme === "dark"
           ? "bg-dark-paper border-dark-text-disabled"
           : "bg-light-paper border-light-text-disabled"}`}
       >
-        <IconButton
-          onClick={toggleUndo}
-          aria-label="Undo"
-          icon={<Icon.FaUndo />}
-          variant="text"
-          size="xs"
-          isDisabled={!editor.can().undo()}
-        />
-        <IconButton
-          onClick={toggleRedo}
-          aria-label="Redo"
-          icon={<Icon.FaRedo />}
-          variant="text"
-          size="xs"
-          isDisabled={!editor.can().redo()}
-        />
+        <div className="flex flex-wrap items-center justify-center">
+          <IconButton
+            onClick={toggleUndo}
+            aria-label="Undo"
+            icon={<Icon.FaUndo />}
+            variant="text"
+            size="xs"
+            isDisabled={!editor.can().undo()}
+          />
+          <IconButton
+            onClick={toggleRedo}
+            aria-label="Redo"
+            icon={<Icon.FaRedo />}
+            variant="text"
+            size="xs"
+            isDisabled={!editor.can().redo()}
+          />
+        </div>
+        <div className="text-xs">
+          {editor.storage.characterCount.characters()} characters
+        </div>
       </div>
     </div>
   );
