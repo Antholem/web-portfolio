@@ -14,7 +14,8 @@ import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Underline } from '@tiptap/extension-underline';
 import CharacterCount from '@tiptap/extension-character-count';
-import ListKeymap from '@tiptap/extension-list-keymap'
+import ListKeymap from '@tiptap/extension-list-keymap';
+import Typography from '@tiptap/extension-typography';
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
@@ -40,6 +41,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       Superscript,
       CharacterCount,
       ListKeymap,
+      Typography
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -339,7 +341,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
             isDisabled={!editor.can().redo()}
           />
         </div>
-        <div className="text-xs">
+        <div className="text-xs font-light">
           {editor.storage.characterCount.characters()} characters
         </div>
       </div>
