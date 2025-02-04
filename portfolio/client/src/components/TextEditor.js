@@ -10,12 +10,13 @@ import { OrderedList } from "@tiptap/extension-ordered-list";
 import { ListItem } from "@tiptap/extension-list-item";
 import { Heading } from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
-import { Subscript } from '@tiptap/extension-subscript';
-import { Superscript } from '@tiptap/extension-superscript';
-import { Underline } from '@tiptap/extension-underline';
-import CharacterCount from '@tiptap/extension-character-count';
-import ListKeymap from '@tiptap/extension-list-keymap';
-import Typography from '@tiptap/extension-typography';
+import { Subscript } from "@tiptap/extension-subscript";
+import { Superscript } from "@tiptap/extension-superscript";
+import { Underline } from "@tiptap/extension-underline";
+import CharacterCount from "@tiptap/extension-character-count";
+import ListKeymap from "@tiptap/extension-list-keymap";
+import Typography from "@tiptap/extension-typography";
+import Gapcursor from "@tiptap/extension-gapcursor";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
@@ -26,9 +27,6 @@ const TextEditor = ({ placeholder, value, onChange }) => {
         bulletList: false,
         orderedList: false,
       }),
-      BulletList,
-      OrderedList,
-      ListItem,
       Placeholder.configure({ placeholder }),
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6],
@@ -36,12 +34,16 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
+      BulletList,
+      OrderedList,
+      ListItem,
       Underline,
       Subscript,
       Superscript,
       CharacterCount,
       ListKeymap,
-      Typography
+      Typography,
+      Gapcursor
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -125,12 +127,12 @@ const TextEditor = ({ placeholder, value, onChange }) => {
 
   const toggleLiftItem = (event) => {
     event.preventDefault();
-    editor.chain().focus().liftListItem('listItem').run();
+    editor.chain().focus().liftListItem("listItem").run();
   };
 
   const toggleSinkItem = (event) => {
     event.preventDefault();
-    editor.chain().focus().sinkListItem('listItem').run();
+    editor.chain().focus().sinkListItem("listItem").run();
   };
 
   const handleStyleChange = (event) => {
@@ -279,7 +281,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaOutdent />}
           variant="text"
           size="xs"
-          isDisabled={!editor.can().liftListItem('listItem')}
+          isDisabled={!editor.can().liftListItem("listItem")}
         />
         <IconButton
           onClick={toggleSinkItem}
@@ -287,7 +289,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           icon={<Icon.FaIndent />}
           variant="text"
           size="xs"
-          isDisabled={!editor.can().sinkListItem('listItem')}
+          isDisabled={!editor.can().sinkListItem("listItem")}
         />
         <Divider direction="vertical" />
         <IconButton

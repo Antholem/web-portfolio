@@ -7,25 +7,22 @@ import * as Icon from "react-icons/fa";
 const projects = [
     {
         image: "https://fakeimg.pl/1200x800/bf6b6b/8789ff?text=No+image&font=noto",
-        name: "Web Development",
-        description:
-            "Creating powerful and responsive websites with precision and creativity. Elevating web experiences with cutting-edge design and seamless functionality.",
+        name: "Learn Type",
+        description: "A Static Single Page Application that built entirely from Scratch Using HTML, CSS, and VanillaJS.",
         liveUrl: "https://example.com/demo/web-development",
         sourceUrl: "https://github.com/username/web-development",
     },
     {
         image: "https://placehold.co/1200x800",
-        name: "UX Design",
-        description:
-            "Crafting seamless digital experiences through captivating design and usability.",
+        name: "PokéAPI",
+        description: "A Restful Pokémon API Application Using ReactJS and Material UI with customizable.",
         liveUrl: "https://example.com/demo/ux-design",
         sourceUrl: "https://github.com/username/ux-design",
     },
     {
         image: "https://placehold.co/1200x800",
-        name: "Mobile Development",
-        description:
-            "Building innovative and intuitive mobile applications for diverse platforms.",
+        name: "CryptCoin",
+        description: "Real-time cryptocurrency app using ReactJS and Material UI with Coingecko API for live data and dynamic routing.",
         liveUrl: "https://example.com/demo/mobile-development",
         sourceUrl: "https://github.com/username/mobile-development",
     },
