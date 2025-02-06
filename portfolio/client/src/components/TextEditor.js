@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as Icon from "react-icons/fa";
 import { Divider, IconButton, Select } from "./";
 import { useThemeStore } from "../store/themeStore";
@@ -17,9 +17,13 @@ import CharacterCount from "@tiptap/extension-character-count";
 import ListKeymap from "@tiptap/extension-list-keymap";
 import Typography from "@tiptap/extension-typography";
 import Gapcursor from "@tiptap/extension-gapcursor";
+import Compact from '@uiw/react-color-compact';
+import TextStyle from "@tiptap/extension-text-style";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [highlightColor, setHighlightColor] = useState("#ff014f");
 
   const editor = useEditor({
     extensions: [
@@ -43,7 +47,8 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       CharacterCount,
       ListKeymap,
       Typography,
-      Gapcursor
+      Gapcursor,
+      TextStyle
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -182,6 +187,17 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     return "paragraph";
   };
 
+  const toggleColorPicker = (event) => {
+    event.preventDefault();
+    setShowColorPicker((prev) => !prev);
+  };
+
+  const handleColorChange = (color) => {
+    setHighlightColor(color.hex);
+    editor.chain().focus().setMark("textStyle", { backgroundColor: color.hex }).run();
+    setShowColorPicker(false);
+  };
+
   return (
     <div>
       <div
@@ -204,6 +220,29 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           <option value="heading-five">Heading 5</option>
           <option value="heading-six">Heading 6</option>
         </Select>
+        <div className="relative">
+          <IconButton
+            onClick={toggleColorPicker}
+            aria-label="Highlight"
+            icon={<Icon.FaHighlighter style={{ color: highlightColor }} />}
+            variant="text"
+            size="xs"
+          />
+
+          {showColorPicker && (
+            <div className="absolute z-10">
+              <Compact
+                color={highlightColor}
+                onChange={handleColorChange}
+                className="shadow-md"
+                style={{
+                  backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+                }}
+              />
+            </div>
+          )}
+        </div>
         <IconButton
           onClick={toggleBold}
           aria-label="Bold"
@@ -313,6 +352,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           variant="text"
           size="xs"
         />
+        <Divider direction="vertical" />
       </div>
       <EditorContent
         editor={editor}
