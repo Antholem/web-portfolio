@@ -19,11 +19,12 @@ import Typography from "@tiptap/extension-typography";
 import Gapcursor from "@tiptap/extension-gapcursor";
 import Compact from '@uiw/react-color-compact';
 import TextStyle from "@tiptap/extension-text-style";
+import Highlight from "@tiptap/extension-highlight";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [highlightColor, setHighlightColor] = useState("#ff014f");
+  const [highlightColor, setHighlightColor] = useState("#FF014F");
 
   const editor = useEditor({
     extensions: [
@@ -48,7 +49,8 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       ListKeymap,
       Typography,
       Gapcursor,
-      TextStyle
+      TextStyle,
+      Highlight.configure({ multicolor: true }),
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -194,7 +196,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
 
   const handleColorChange = (color) => {
     setHighlightColor(color.hex);
-    editor.chain().focus().setMark("textStyle", { backgroundColor: color.hex }).run();
+    editor.chain().focus().toggleHighlight({ color: color.hex }).run();
     setShowColorPicker(false);
   };
 
