@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import * as Icon from "react-icons/fa";
 import { Divider, IconButton, Select } from "./";
 import { useThemeStore } from "../store/themeStore";
 import { EditorContent, useEditor } from "@tiptap/react";
-import { StarterKit } from "@tiptap/starter-kit";
-import { Placeholder } from "@tiptap/extension-placeholder";
-import { BulletList } from "@tiptap/extension-bullet-list";
-import { OrderedList } from "@tiptap/extension-ordered-list";
-import { ListItem } from "@tiptap/extension-list-item";
-import { Heading } from "@tiptap/extension-heading";
+import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
-import { Subscript } from "@tiptap/extension-subscript";
-import { Superscript } from "@tiptap/extension-superscript";
-import { Underline } from "@tiptap/extension-underline";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import Underline from "@tiptap/extension-underline";
 import CharacterCount from "@tiptap/extension-character-count";
 import ListKeymap from "@tiptap/extension-list-keymap";
 import Typography from "@tiptap/extension-typography";
@@ -20,11 +20,15 @@ import Gapcursor from "@tiptap/extension-gapcursor";
 import Compact from '@uiw/react-color-compact';
 import TextStyle from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
+import Color from "@tiptap/extension-color";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [highlightColor, setHighlightColor] = useState("#FF014F");
+  const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
+  const [highlightColor, setHighlightColor] = useState(null);
+  const [showFontColorPicker, setShowFontColorPicker] = useState(false);
+  const [fontColor, setFontColor] = useState(null);
+  const colorPickerRef = useRef(null);
 
   const editor = useEditor({
     extensions: [
@@ -39,6 +43,9 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
+      Highlight.configure({ 
+        multicolor: true
+      }),
       BulletList,
       OrderedList,
       ListItem,
@@ -50,13 +57,25 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       Typography,
       Gapcursor,
       TextStyle,
-      Highlight.configure({ multicolor: true }),
+      Color
     ],
     content: value,
-    onUpdate: ({ editor }) => {
-      onChange && onChange(editor.getHTML());
-    },
+    onUpdate: ({ editor }) => onChange && onChange(editor.getHTML())
   });
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target)) {
+        setShowHighlightColorPicker(false);
+        setShowFontColorPicker(false);
+      }
+    };
+
+    if (showHighlightColorPicker || showFontColorPicker) document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+  }, [showHighlightColorPicker, showFontColorPicker]);
 
   if (!editor) return null;
 
@@ -189,17 +208,28 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     return "paragraph";
   };
 
-  const toggleColorPicker = (event) => {
+  const toggleHighlightColorPicker = (event) => {
     event.preventDefault();
-    setShowColorPicker((prev) => !prev);
+    setShowHighlightColorPicker((prev) => !prev);
   };
 
-  const handleColorChange = (color) => {
+  const handleHighlightColorChange = (color) => {
     setHighlightColor(color.hex);
     editor.chain().focus().toggleHighlight({ color: color.hex }).run();
-    setShowColorPicker(false);
+    setShowHighlightColorPicker(false);
   };
 
+  const toggleFontColorPicker = (event) => {
+    event.preventDefault();
+    setShowFontColorPicker((prev) => !prev);
+  };
+
+  const handleFontColorChange = (color) => {
+    setFontColor(color.hex);
+    editor.chain().focus().setColor(color.hex).run();
+    setShowFontColorPicker(false);
+  };
+  
   return (
     <div>
       <div
@@ -224,18 +254,42 @@ const TextEditor = ({ placeholder, value, onChange }) => {
         </Select>
         <div className="relative">
           <IconButton
-            onClick={toggleColorPicker}
+            onClick={toggleHighlightColorPicker}
             aria-label="Highlight"
-            icon={<Icon.FaHighlighter style={{ color: highlightColor }} />}
+            icon={<Icon.FaHighlighter style={{ color: editor.getAttributes('highlight')?.color }} />}
+            variant="text"
+            size="xs"
+          />
+          {showHighlightColorPicker && (
+            <div className="absolute z-10">
+              <Compact
+                ref={colorPickerRef}
+                color={highlightColor}
+                onChange={handleHighlightColorChange}
+                className="shadow-md"
+                style={{
+                  backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
+                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+                }}
+              />
+            </div>
+          )}
+        </div>
+        <div className="relative">
+          <IconButton
+            onClick={toggleFontColorPicker}
+            aria-label="FontColor"
+            icon={<Icon.FaFont style={{ color: editor.getAttributes('textStyle').color }} />}
             variant="text"
             size="xs"
           />
 
-          {showColorPicker && (
+          {showFontColorPicker && (
             <div className="absolute z-10">
               <Compact
-                color={highlightColor}
-                onChange={handleColorChange}
+                ref={colorPickerRef}
+                color={fontColor}
+                onChange={handleFontColorChange}
                 className="shadow-md"
                 style={{
                   backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
