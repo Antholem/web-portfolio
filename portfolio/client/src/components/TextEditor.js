@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, forwardRef } from "react";
 import * as Icon from "react-icons/fa";
 import { Divider, IconButton, Select } from "./";
 import { useThemeStore } from "../store/themeStore";
@@ -229,6 +229,20 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     editor.chain().focus().setColor(color.hex).run();
     setShowFontColorPicker(false);
   };
+
+  const ColorPicker = forwardRef(({ color, onChange }, ref) => {
+    return (
+      <Compact
+        ref={ref}
+        color={color}
+        onChange={onChange}
+        style={{
+          backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
+          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+        }}
+      />
+    );
+  });
   
   return (
     <div>
@@ -262,15 +276,10 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           />
           {showHighlightColorPicker && (
             <div className="absolute z-10">
-              <Compact
+              <ColorPicker
                 ref={colorPickerRef}
                 color={highlightColor}
                 onChange={handleHighlightColorChange}
-                className="shadow-md"
-                style={{
-                  backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
-                }}
               />
             </div>
           )}
@@ -283,18 +292,12 @@ const TextEditor = ({ placeholder, value, onChange }) => {
             variant="text"
             size="xs"
           />
-
           {showFontColorPicker && (
             <div className="absolute z-10">
-              <Compact
+              <ColorPicker
                 ref={colorPickerRef}
                 color={fontColor}
                 onChange={handleFontColorChange}
-                className="shadow-md"
-                style={{
-                  backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
-                }}
               />
             </div>
           )}
@@ -408,7 +411,6 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           variant="text"
           size="xs"
         />
-        <Divider direction="vertical" />
       </div>
       <EditorContent
         editor={editor}
@@ -440,7 +442,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           />
         </div>
         <div className="text-xs font-light">
-          {editor.storage.characterCount.characters()} characters
+          {editor.storage.characterCount.characters()} Characters
         </div>
       </div>
     </div>

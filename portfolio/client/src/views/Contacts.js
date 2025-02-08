@@ -157,7 +157,7 @@ const Contacts = () => {
                         )}
                         <form className="space-y-3" onSubmit={handleSend}>
                             <div>
-                                <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                                <label htmlFor="subject" className="block text-sm font-medium mb-2 cursor-text">
                                     Subject
                                 </label>
                                 <Input
@@ -170,7 +170,7 @@ const Contacts = () => {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="message" className="block text-sm font-medium mb-2">
+                                <label htmlFor="message" className="block text-sm font-medium mb-2 cursor-text">
                                     Message
                                 </label>
                                 <TextEditor
@@ -189,7 +189,7 @@ const Contacts = () => {
                                     isLoading={isGoogleLoading}
                                     loadingText="Logging in..."
                                 >
-                                    {isLoggedIn ? "Switch Account" : "Login with Google"}
+                                    {isLoggedIn ? "Change Account" : "Login with Google"}
                                 </Button>
                                 <Button
                                     className="w-full"

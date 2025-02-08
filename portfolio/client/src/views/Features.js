@@ -49,7 +49,7 @@ const Features = () => {
                             <h3 className="text-xl font-semibold">
                                 {feature.title}
                             </h3>
-                            <p className="text-center font-light">
+                            <p className="text-center text-sm font-light">
                                 {feature.description}
                             </p>
                         </div>
