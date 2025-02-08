@@ -47,7 +47,7 @@ const Tooltip = ({
       {children}
       {isVisible && (
         <div
-          className={`absolute z-10 px-3 py-1 text-sm rounded shadow-md whitespace-nowrap ${backgroundColor} ${positionClasses[placement]} ${className}`}
+          className={`absolute hidden sm:block z-10 px-3 py-1 text-sm rounded shadow-md whitespace-nowrap ${backgroundColor} ${positionClasses[placement]} ${className}`}
           {...props}
         >
           {label}
