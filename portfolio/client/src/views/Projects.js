@@ -9,22 +9,22 @@ const projects = [
         image: "https://fakeimg.pl/1200x800/bf6b6b/8789ff?text=No+image&font=noto",
         name: "Learn Type",
         description: "A Static Single Page Application that built entirely from Scratch Using HTML, CSS, and VanillaJS.",
-        liveUrl: "https://example.com/demo/web-development",
-        sourceUrl: "https://github.com/username/web-development",
+        liveUrl: "https://learn-type.vercel.app/",
+        sourceUrl: "https://github.com/Antholem/Learn-Type",
     },
     {
         image: "https://placehold.co/1200x800",
         name: "PokéAPI",
         description: "A Restful Pokémon API Application Using ReactJS and Material UI with customizable.",
-        liveUrl: "https://example.com/demo/ux-design",
-        sourceUrl: "https://github.com/username/ux-design",
+        liveUrl: "https://poke-api-2023.vercel.app/",
+        sourceUrl: "https://github.com/Antholem/PokeAPI",
     },
     {
         image: "https://placehold.co/1200x800",
         name: "CryptCoin",
         description: "Real-time cryptocurrency app using ReactJS and Material UI with Coingecko API for live data and dynamic routing.",
-        liveUrl: "https://example.com/demo/mobile-development",
-        sourceUrl: "https://github.com/username/mobile-development",
+        liveUrl: "https://crypt-coin.vercel.app/",
+        sourceUrl: "https://github.com/Antholem/Crypt-Coin",
     },
 ];
 

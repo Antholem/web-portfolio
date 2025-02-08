@@ -184,7 +184,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
       default:
         editor.chain().focus().setParagraph().run();
         break;
-    }
+    };
   };
 
   const handleActiveStyle = () => {
@@ -203,8 +203,8 @@ const TextEditor = ({ placeholder, value, onChange }) => {
         return "heading-six";
       } else {
         return "paragraph";
-      }
-    }
+      };
+    };
     return "paragraph";
   };
 
