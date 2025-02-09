@@ -89,7 +89,7 @@ const Contacts = () => {
             </header>
 
             {/* Main Content */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_3fr] gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8">
                 {/* Contact Details Section */}
                 <div>
                     <Card className="space-y-6">
@@ -118,7 +118,7 @@ const Contacts = () => {
                         {/* Social Links */}
                         <div>
                             <h3 className="text-md font-bold uppercase mb-4">Find Me In</h3>
-                            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-6 md:gap-12">
+                            <div className="flex flex-wrap gap-4">
                                 {socialLinks.map((link, index) => (
                                     <Tooltip
                                         key={index}

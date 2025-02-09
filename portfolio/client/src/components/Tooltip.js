@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useThemeStore } from "../store/themeStore";
 
 const Tooltip = ({
@@ -12,6 +12,7 @@ const Tooltip = ({
   ...props             // Other props
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const timeoutRef = useRef(null);
   const { theme } = useThemeStore();
 
   if (isDisabled) return children;
@@ -37,17 +38,28 @@ const Tooltip = ({
     right: "left-[-0.5rem] top-1/2 transform -translate-y-1/2",
   };
 
+  const handleMouseEnter = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsVisible(true);
+    }, 500);
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(timeoutRef.current);
+    setIsVisible(false);
+  };
+
   return (
     <div
       className="relative inline-block"
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       aria-label={ariaLabel}
     >
       {children}
       {isVisible && (
         <div
-          className={`absolute hidden sm:block z-10 px-3 py-1 text-sm rounded shadow-md whitespace-nowrap ${backgroundColor} ${positionClasses[placement]} ${className}`}
+          className={`absolute z-10 px-3 py-1 text-sm rounded shadow-md whitespace-nowrap ${backgroundColor} ${positionClasses[placement]} ${className}`}
           {...props}
         >
           {label}

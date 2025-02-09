@@ -40,7 +40,7 @@ const Footer = () => {
         >
             <div className="container mx-auto text-center">
                 {/* Social Media Links */}
-                <div className="flex justify-center space-x-6 mb-4">
+                <div className="flex flex-wrap justify-center space-x-6 mb-4">
                     {socialMediaLinks.map(({ href, ariaLabel, icon }, index) => (
                         <Tooltip
                             key={index}
