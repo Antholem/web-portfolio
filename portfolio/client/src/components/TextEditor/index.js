@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef } from "react";
 import * as Icon from "react-icons/fa";
-import { Divider, IconButton, Select } from "./";
-import { useThemeStore } from "../store/themeStore";
+import { Divider, IconButton, Select } from "..";
+import { useThemeStore } from "../../store/themeStore";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -24,10 +24,10 @@ import Color from "@tiptap/extension-color";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
-  const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
   const [highlightColor, setHighlightColor] = useState(null);
-  const [showFontColorPicker, setShowFontColorPicker] = useState(false);
+  const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
   const [fontColor, setFontColor] = useState(null);
+  const [showFontColorPicker, setShowFontColorPicker] = useState(false);
   const colorPickerRef = useRef(null);
 
   const editor = useEditor({

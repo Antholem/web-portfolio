@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeStore } from "../store/themeStore";
+import { useThemeStore } from "../../store/themeStore";
 
 const Card = ({
     size = "md",                  // Card size: 'xs', 'sm', 'md', 'lg', or 'xl'

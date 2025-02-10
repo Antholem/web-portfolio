@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { MdDarkMode, MdSunny, MdMenu, MdClose } from "react-icons/md";
 import { Link } from "react-scroll";
-import { useThemeStore } from "../store/themeStore";
-import { IconButton, Tooltip } from "../components";
+import { useThemeStore } from "../../store/themeStore";
+import { IconButton, Tooltip } from "..";
 
 const NavigationBar = ({ children }) => {
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useThemeStore } from "../store/themeStore";
+import { useThemeStore } from "../../store/themeStore";
 
 const Tooltip = ({
   label,               // Tooltip text
