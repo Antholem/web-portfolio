@@ -5,4 +5,11 @@ import Footer from "./Footer/index.js";
 import Projects from "./Projects/index.js";
 import Skills from "./Skills/index.js";
 
-export { About, Contacts, Features, Footer, Projects, Skills };
+export { 
+    About, 
+    Contacts, 
+    Features, 
+    Footer, 
+    Projects, 
+    Skills 
+};

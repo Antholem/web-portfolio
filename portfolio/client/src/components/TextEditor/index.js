@@ -256,7 +256,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           <IconButton
             onClick={toggleHighlightColorPicker}
             aria-label="Highlight"
-            icon={<Icon.FaHighlighter style={{ color: editor.getAttributes('highlight')?.color }} />}
+            icon={<Icon.FaHighlighter style={{ color: editor.getAttributes("highlight")?.color }} />}
             variant="text"
             size="xs"
           />
@@ -274,7 +274,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           <IconButton
             onClick={toggleFontColorPicker}
             aria-label="FontColor"
-            icon={<Icon.FaFont style={{ color: editor.getAttributes('textStyle').color }} />}
+            icon={<Icon.FaFont style={{ color: editor.getAttributes("textStyle").color }} />}
             variant="text"
             size="xs"
           />
