@@ -1,7 +1,7 @@
 import React from "react";
-import { useThemeStore } from "../store/themeStore";
+import { useThemeStore } from "../../store/themeStore";
 import * as Icon from "react-icons/fa";
-import { IconButton, Tooltip } from "../components";
+import { IconButton, Tooltip } from "../../components";
 
 const Footer = () => {
     const { theme } = useThemeStore();

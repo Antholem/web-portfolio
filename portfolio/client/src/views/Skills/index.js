@@ -1,6 +1,6 @@
 import React from "react";
 import * as Icon from "react-icons/si"
-import { Card } from "../components";
+import { Card } from "../../components";
 
 // Skills data
 const skills = [

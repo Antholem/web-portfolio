@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import * as Icon from "react-icons/fa";
 import { Divider, IconButton, Select } from "..";
 import { useThemeStore } from "../../store/themeStore";
@@ -17,10 +17,10 @@ import CharacterCount from "@tiptap/extension-character-count";
 import ListKeymap from "@tiptap/extension-list-keymap";
 import Typography from "@tiptap/extension-typography";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import Compact from '@uiw/react-color-compact';
 import TextStyle from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
 import Color from "@tiptap/extension-color";
+import ColorPicker from "./ColorPicker";
 
 const TextEditor = ({ placeholder, value, onChange }) => {
   const { theme } = useThemeStore();
@@ -229,20 +229,6 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     editor.chain().focus().setColor(color.hex).run();
     setShowFontColorPicker(false);
   };
-
-  const ColorPicker = forwardRef(({ color, onChange }, ref) => {
-    return (
-      <Compact
-        ref={ref}
-        color={color}
-        onChange={onChange}
-        style={{
-          backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
-          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
-        }}
-      />
-    );
-  });
   
   return (
     <div>

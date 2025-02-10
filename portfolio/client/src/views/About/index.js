@@ -1,6 +1,6 @@
 import React from "react";
-import antholemPhoto from "../antholem.png";
-import { Button } from "../components";
+import antholemPhoto from "../../antholem.png";
+import { Button } from "../../components";
 import * as Icon from "react-icons/md";
 import { Link } from "react-scroll";                                
 

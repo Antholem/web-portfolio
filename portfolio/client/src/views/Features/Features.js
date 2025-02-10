@@ -1,6 +1,6 @@
 import React from "react";
 import * as Icon from "react-icons/fa";
-import { Card } from "../components";
+import { Card } from "../../components";
 
 // Features data
 const features = [
