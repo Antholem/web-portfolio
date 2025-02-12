@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import * as Icon from "react-icons/fa";
+import BottomBar from "./BottomBar";
 import { Divider, IconButton, Select } from "..";
 import { useThemeStore } from "../../store/themeStore";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -404,33 +405,13 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           ? "bg-dark-paper border-dark-text-disabled hover:border-dark-text-primary"
           : "bg-light-paper border-light-text-disabled hover:border-light-text-primary"}`}
       />
-      <div
-        className={`px-2 border-b border-r border-l rounded-b-md flex flex-wrap items-center justify-between gap-0 ${theme === "dark"
-          ? "bg-dark-paper border-dark-text-disabled"
-          : "bg-light-paper border-light-text-disabled"}`}
-      >
-        <div className="flex flex-wrap items-center justify-center">
-          <IconButton
-            onClick={toggleUndo}
-            aria-label="Undo"
-            icon={<Icon.FaUndo />}
-            variant="text"
-            size="xs"
-            isDisabled={!editor.can().undo()}
-          />
-          <IconButton
-            onClick={toggleRedo}
-            aria-label="Redo"
-            icon={<Icon.FaRedo />}
-            variant="text"
-            size="xs"
-            isDisabled={!editor.can().redo()}
-          />
-        </div>
-        <div className="text-xs font-light">
-          {editor.storage.characterCount.characters()} Characters
-        </div>
-      </div>
+      <BottomBar 
+        onUndo={toggleUndo}
+        isUndoDisabled={!editor.can().undo()}
+        onRedo={toggleRedo}
+        isRedoDisabled={!editor.can().redo()}
+        characterCount={editor.storage.characterCount.characters()}
+      />
     </div>
   );
 };
