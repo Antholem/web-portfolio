@@ -5,6 +5,7 @@ import Divider from "./Divider";
 import IconButton from "./IconButton";
 import IconText from "./IconText";
 import Input from "./Input";
+import OsCommand from "./OsCommand";
 import Select from "./Select";
 import TextArea from "./TextArea";
 import TextEditor from "./TextEditor";
@@ -18,6 +19,7 @@ export {
     IconButton, 
     IconText, 
     Input,
+    OsCommand,
     Select,
     TextArea,
     TextEditor,

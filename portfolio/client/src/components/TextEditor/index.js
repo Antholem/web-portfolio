@@ -110,16 +110,6 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     editor.chain().focus().toggleOrderedList().run();
   };
 
-  const toggleRedo = (event) => {
-    event.preventDefault();
-    editor.chain().focus().redo().run();
-  };
-
-  const toggleUndo = (event) => {
-    event.preventDefault();
-    editor.chain().focus().undo().run();
-  };
-
   const toggleAlignLeft = (event) => {
     event.preventDefault();
     editor.chain().focus().setTextAlign("left").run();
@@ -253,6 +243,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           <option value="heading-five">Heading 5</option>
           <option value="heading-six">Heading 6</option>
         </Select>
+        <Divider direction="vertical" />
         <div className="relative">
           <IconButton
             onClick={toggleHighlightColorPicker}
@@ -260,6 +251,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
             icon={<Icon.FaHighlighter style={{ color: editor.getAttributes("highlight")?.color }} />}
             variant="text"
             size="xs"
+            isDisabled={editor.isActive("code")}
           />
           {showHighlightColorPicker && (
             <div className="absolute z-10">
@@ -278,6 +270,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
             icon={<Icon.FaFont style={{ color: editor.getAttributes("textStyle").color }} />}
             variant="text"
             size="xs"
+            isDisabled={editor.isActive("code")}
           />
           {showFontColorPicker && (
             <div className="absolute z-10">
@@ -406,11 +399,7 @@ const TextEditor = ({ placeholder, value, onChange }) => {
           : "bg-light-paper border-light-text-disabled hover:border-light-text-primary"}`}
       />
       <BottomBar 
-        onUndo={toggleUndo}
-        isUndoDisabled={!editor.can().undo()}
-        onRedo={toggleRedo}
-        isRedoDisabled={!editor.can().redo()}
-        characterCount={editor.storage.characterCount.characters()}
+        editor={editor}
       />
     </div>
   );

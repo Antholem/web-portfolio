@@ -5,7 +5,7 @@ import { IoMdSend } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase";
-import { Button, Card, IconText, IconButton, Input, TextEditor, Tooltip } from "../../components";
+import { Button, Card, IconText, Input, TextEditor } from "../../components";
 
 const Contacts = () => {
     /** Contact Details */
@@ -13,14 +13,6 @@ const Contacts = () => {
         { label: "Contact", icon: <Icon.FaPhoneAlt size={20} />, text: "+63 977 333 6314" },
         { label: "Email", icon: <Icon.FaEnvelope size={20} />, text: "antholemlemmanalo@gmail.com" },
         { label: "Location", icon: <Icon.FaMapMarkerAlt size={20} />, text: "Mabalacat, Pampanga, Philippines" },
-    ];
-
-    /** Social Media Links */
-    const socialLinks = [
-        { href: "https://facebook.com", icon: <Icon.FaFacebook size={30} />, ariaLabel: "Facebook" },
-        { href: "https://github.com", icon: <Icon.FaGithub size={30} />, ariaLabel: "Github" },
-        { href: "https://linkedin.com", icon: <Icon.FaLinkedin size={30} />, ariaLabel: "LinkedIn" },
-        { href: "https://instagram.com", icon: <Icon.FaInstagram size={30} />, ariaLabel: "Instagram" },
     ];
 
     /** State Management */
@@ -113,30 +105,6 @@ const Contacts = () => {
                                     </div>
                                 </div>
                             ))}
-                        </div>
-
-                        {/* Social Links */}
-                        <div>
-                            <h3 className="text-md font-bold uppercase mb-4">Find Me In</h3>
-                            <div className="flex flex-wrap gap-4">
-                                {socialLinks.map((link, index) => (
-                                    <Tooltip
-                                        key={index}
-                                        placement="bottom"
-                                        label={link.ariaLabel}
-                                        ariaLabel={link.ariaLabel}
-                                    >
-                                        <IconButton
-                                            icon={link.icon}
-                                            variant="text"
-                                            size="sm"
-                                            href={link.href}
-                                            ariaLabel={link.ariaLabel}
-                                            className="flex items-center justify-center mx-auto"
-                                        />
-                                    </Tooltip>
-                                ))}
-                            </div>
                         </div>
                     </Card>
                 </div>

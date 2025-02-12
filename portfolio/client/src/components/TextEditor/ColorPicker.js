@@ -12,7 +12,8 @@ const ColorPicker = forwardRef(({ color, onChange }, ref) => {
         onChange={onChange}
         style={{
           backgroundColor: theme === "dark" ? "#1A1A1A" : "#ffffff",
-          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+          width: "100%"
         }}
       />
     );
