@@ -15,9 +15,9 @@ const Footer = () => {
             icon: <Icon.FaFacebook size={20} />,
         },
         {
-            href: "https://twitter.com",
-            ariaLabel: "Twitter",
-            icon: <Icon.FaTwitter size={20} />,
+            href: "https://instagram.com",
+            ariaLabel: "Instagram",
+            icon: <Icon.FaInstagram size={20} />,
         },
         {
             href: "https://linkedin.com",
