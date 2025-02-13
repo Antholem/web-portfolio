@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import * as Icon from "react-icons/fa";
-import { Divider, IconButton, Select } from "../";
-import { useThemeStore } from "../../store/themeStore";
-import ColorPicker from "./ColorPicker";
+import { Divider, IconButton, Select } from "../..";
+import { useThemeStore } from "../../../store/themeStore";
+import ColorPicker from "../ColorPicker";
 
 const ToolBar = ({ editor }) => {
   const { theme } = useThemeStore();
