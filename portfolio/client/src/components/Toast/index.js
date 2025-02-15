@@ -1,11 +1,30 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { useThemeStore } from "../../store/themeStore";
 import { IconText } from "../";
 import * as Icon from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 
-const Toast = ({ title, description, status = "info", isClosable, onClose, icon }) => {
+const Toast = ({ title, description, status = "info", isClosable, onClose, icon, duration = 5000 }) => {
     const { theme } = useThemeStore();
+    const [opacity, setOpacity] = useState(0); // Start hidden
+
+    useEffect(() => {
+        // Faster fade-in
+        const fadeInTimer = setTimeout(() => setOpacity(1), 50);
+
+        // Faster fade-out
+        const fadeOutTimer = setTimeout(() => setOpacity(0), duration - 500);
+
+        return () => {
+            clearTimeout(fadeInTimer);
+            clearTimeout(fadeOutTimer);
+        };
+    }, [duration]);
+
+    const handleClose = () => {
+        setOpacity(0);
+        setTimeout(onClose, 300);
+    };
 
     const statusIcons = {
         success: <IconText icon={<Icon.FaCheckCircle className={`h-5 w-5 ${theme === "dark" ? "text-green-500" : "text-green-300"}`} />} size="xs" />,
@@ -17,8 +36,9 @@ const Toast = ({ title, description, status = "info", isClosable, onClose, icon 
     return (
         <div
             className={`w-[calc(100vw-32px)] md:w-80 p-4 rounded-md shadow-md flex gap-3 transition-opacity duration-300 
-                ${title || "items-center"} 
-                ${theme === "dark" ? "bg-light-paper text-dark" : "bg-dark-paper text-light"}`}
+        ${title ? "" : "items-center"} 
+        ${theme === "dark" ? "bg-light-paper text-dark" : "bg-dark-paper text-light"}`}
+            style={{ opacity }}
         >
             <div className="flex items-center">{icon || statusIcons[status]}</div>
             <div className="flex-1">
@@ -27,7 +47,7 @@ const Toast = ({ title, description, status = "info", isClosable, onClose, icon 
             </div>
             {isClosable && (
                 <IconText
-                    onClick={onClose}
+                    onClick={handleClose}
                     icon={<IoIosClose className={`text-6xl ${theme === "dark" ? "text-dark" : "text-light"}`} />}
                     variant="text"
                     className="cursor-pointer"
@@ -42,7 +62,7 @@ const ToastContext = createContext(null);
 
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
-    
+
     const removeToast = useCallback((id) => {
         setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, []);
@@ -56,7 +76,6 @@ export const ToastProvider = ({ children }) => {
         }
     }, [removeToast]);
 
-    // Position mapping
     const positionClasses = {
         "top": "top-4 left-1/2 transform -translate-x-1/2",
         "top-right": "top-4 right-4",
@@ -69,7 +88,6 @@ export const ToastProvider = ({ children }) => {
     return (
         <ToastContext.Provider value={{ addToast }}>
             {children}
-            {/* Toast Containers for different positions */}
             {Object.keys(positionClasses).map((pos) => (
                 <div key={pos} className={`fixed ${positionClasses[pos]} flex flex-col gap-3 z-50`}>
                     {toasts
@@ -87,6 +105,5 @@ export const ToastProvider = ({ children }) => {
 export const useToast = () => {
     const context = useContext(ToastContext);
     if (!context) throw new Error("useToast must be used within a ToastProvider");
-
     return context;
 };

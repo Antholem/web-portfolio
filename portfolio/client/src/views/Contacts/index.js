@@ -27,29 +27,32 @@ const Contacts = () => {
 
     /** Handle Google Login */
     const handleGoogleLogin = () => {
-        setIsGoogleLoading(true); // Start loading state
+        setIsGoogleLoading(true);
         const provider = new GoogleAuthProvider();
+
         signInWithPopup(auth, provider)
             .then((result) => {
                 const user = result.user;
                 setEmail(user.email);
                 setPhoto(user.photoURL);
                 setIsLoggedIn(true);
+
                 addToast({
-                    description: "Login successful.",
+                    description: "Logged in successfully!",
                     status: "success",
                     position: "bottom-left"
                 });
             })
             .catch((error) => {
                 console.error("Error during Google login:", error);
+
                 addToast({
-                    description: "Failed to log in with Google. Please try again.",
+                    description: "Login failed. Please try again.",
                     status: "error",
                     position: "bottom-left"
                 });
             })
-            .finally(() => setIsGoogleLoading(false)); // End loading state
+            .finally(() => setIsGoogleLoading(false));
     };
 
     /** Handle Form Submission */
@@ -67,17 +70,28 @@ const Contacts = () => {
 
         axios
             .post(process.env.REACT_APP_API_URL, formData)
-            .then(() => alert("Message sent successfully!"))
+            .then(() => {
+                addToast({
+                    description: "Message sent successfully!",
+                    status: "success",
+                    position: "bottom-left"
+                });
+            })
             .catch((err) => {
                 console.error("Error sending email:", err);
-                alert("Failed to send message. Please try again.");
+                
+                addToast({
+                    description: "Failed to send message. Please try again.",
+                    status: "error",
+                    position: "bottom-left"
+                });
             })
             .finally(() => setIsSendLoading(false));
     };
 
     /** Log User Data on Login */
     useEffect(() => {
-        if (isLoggedIn) console.log("User Logged In:", { email, photo });
+        if (isLoggedIn) console.log("User Logged In:", { email });
     }, [isLoggedIn, email, photo]);
 
     return (
