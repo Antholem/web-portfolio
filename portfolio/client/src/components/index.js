@@ -9,6 +9,7 @@ import OsCommand from "./OsCommand";
 import Select from "./Select";
 import TextArea from "./TextArea";
 import TextEditor from "./TextEditor";
+import { ToastProvider, useToast as Toast } from "./Toast";
 import Tooltip from "./Tooltip";
 
 export {
@@ -23,5 +24,7 @@ export {
     Select,
     TextArea,
     TextEditor,
-    Tooltip
+    Toast,
+    ToastProvider,
+    Tooltip,
 };
