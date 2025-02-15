@@ -5,7 +5,7 @@ import { IoMdSend } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../config/firebase";
-import { Button, Card, IconText, Input, TextEditor } from "../../components";
+import { Button, Card, IconText, Input, TextEditor, Toast } from "../../components";
 
 const Contacts = () => {
     /** Contact Details */
@@ -23,6 +23,7 @@ const Contacts = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [isSendLoading, setIsSendLoading] = useState(false);
+    const { addToast } = Toast();
 
     /** Handle Google Login */
     const handleGoogleLogin = () => {
@@ -34,10 +35,19 @@ const Contacts = () => {
                 setEmail(user.email);
                 setPhoto(user.photoURL);
                 setIsLoggedIn(true);
+                addToast({
+                    description: "Login successful.",
+                    status: "success",
+                    position: "bottom-left"
+                });
             })
             .catch((error) => {
                 console.error("Error during Google login:", error);
-                alert("Failed to log in with Google. Please try again.");
+                addToast({
+                    description: "Failed to log in with Google. Please try again.",
+                    status: "error",
+                    position: "bottom-left"
+                });
             })
             .finally(() => setIsGoogleLoading(false)); // End loading state
     };
