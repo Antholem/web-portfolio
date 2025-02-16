@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import * as Icon from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
@@ -24,6 +24,7 @@ const Contacts = () => {
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [isSendLoading, setIsSendLoading] = useState(false);
     const { addToast } = Toast();
+    const editorRef = useRef(null);
 
     /** Handle Google Login */
     const handleGoogleLogin = () => {
@@ -76,6 +77,12 @@ const Contacts = () => {
                     status: "success",
                     position: "bottom-left"
                 });
+
+                if (editorRef.current) {
+                    editorRef.current.commands.setContent("");
+                    setMessage("");
+                    setSubject("");
+                };
             })
             .catch((err) => {
                 console.error("Error sending email:", err);
@@ -169,6 +176,7 @@ const Contacts = () => {
                                     placeholder="Enter your message here..."
                                     value={message}
                                     onChange={setMessage}
+                                    editorRef={editorRef}
                                 />
                             </div>
                             <div className="space-y-2">

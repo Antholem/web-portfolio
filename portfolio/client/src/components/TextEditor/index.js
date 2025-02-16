@@ -21,7 +21,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
 import Color from "@tiptap/extension-color";
 
-const TextEditor = ({ placeholder, value, onChange }) => {
+const TextEditor = ({ placeholder, value, onChange, editorRef }) => {
   const { theme } = useThemeStore();
   const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
   const [showFontColorPicker, setShowFontColorPicker] = useState(false);
@@ -59,6 +59,12 @@ const TextEditor = ({ placeholder, value, onChange }) => {
     content: value,
     onUpdate: ({ editor }) => onChange && onChange(editor.getHTML())
   });
+
+  useEffect(() => {
+    if (editor && editorRef) {
+      editorRef.current = editor;
+    }
+  }, [editor, editorRef]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
