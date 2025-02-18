@@ -37,11 +37,11 @@ const IconButton = ({
 
   // Size styles
   const sizeStyles = {
-    xs: "w-8 h-8 text-sm",
-    sm: "w-10 h-10 text-base",
-    md: "w-12 h-12 text-lg",
-    lg: "w-14 h-14 text-xl",
-    xl: "w-16 h-16 text-2xl",
+    xs: "w-8 h-8 text-xs",
+    sm: "w-10 h-10 text-sm",
+    md: "w-12 h-12 text-base",
+    lg: "w-14 h-14 text-lg",
+    xl: "w-16 h-16 text-xl",
   };
 
   // Disabled styles

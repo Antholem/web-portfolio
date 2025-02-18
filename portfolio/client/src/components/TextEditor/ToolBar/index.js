@@ -159,7 +159,7 @@ const ToolBar = ({ editor }) => {
           onChange={handleStyleChange} 
           value={handleActiveStyle()} 
           variant="unstyled" 
-          size="sm"
+          size="xs"
         >
           <option value="paragraph">Paragraph</option>
           <option value="heading-one">Heading 1</option>

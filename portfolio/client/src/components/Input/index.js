@@ -19,11 +19,11 @@ const Input = ({
 
     /** Styles for size */
     const sizeStyles = {
-        xs: "py-1 px-1 h-6 text-xs",
-        sm: "py-2 px-2 h-8 text-sm",
-        md: "py-3 px-3 h-10 text-base",
-        lg: "py-4 px-4 h-12 text-lg",
-        xl: "py-5 px-5 h-14 text-xl",
+        xs: "py-1 px-1 h-8 text-xs",
+        sm: "py-2 px-2 h-10 text-sm",
+        md: "py-3 px-3 h-12 text-base",
+        lg: "py-4 px-4 h-14 text-lg",
+        xl: "py-5 px-5 h-16 text-xl",
     };
 
     /** Styles for variant */

@@ -4,7 +4,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Button = ({
     variant = "contained",         // Default variant
-    size = "md",                   // Default size
+    size = "sm",                   // Default size
     leftIcon,                      // Icon before the button label
     rightIcon,                     // Icon after the button label
     iconSpacing = 2,               // Spacing between icon and label
@@ -44,9 +44,9 @@ const Button = ({
     const sizeStyles = {
         xs: "px-2 py-1",
         sm: "px-4 py-2",
-        md: "px-6 py-2",
-        lg: "px-8 py-3",
-        xl: "px-10 py-4",
+        md: "px-6 py-3",
+        lg: "px-8 py-4",
+        xl: "px-10 py-5",
     };
 
     /** Disabled styles */
