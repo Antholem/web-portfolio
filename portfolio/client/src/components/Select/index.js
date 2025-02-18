@@ -100,7 +100,7 @@ const Select = ({
                         <button
                             key={option.value}
                             className={`w-full text-left px-2 py-1 hover:bg-brand hover:text-white whitespace-nowrap 
-                                ${index === 0 ? "rounded-t-md" : (index === options.length - 1 ? "rounded-b-md" : "")}
+                                ${options.length > 1 ? (index === 0 ? "rounded-t-md" : (index === options.length - 1 ? "rounded-b-md" : "")) : "rounded-md"}
                                 ${index === highlightedIndex ? (theme === "dark" ? "bg-dark-action-selected" : "bg-light-action-selected") : ""}
                                 ${theme === "dark" ? "bg-dark-paper" : "bg-light-paper"}
                             `}
