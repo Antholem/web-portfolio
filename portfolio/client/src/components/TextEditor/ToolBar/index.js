@@ -158,7 +158,7 @@ const ToolBar = ({ editor }) => {
         <Select 
           onChange={handleStyleChange} 
           value={handleActiveStyle()} 
-          variant="flushed" 
+          variant="unstyled" 
           size="sm"
         >
           <option value="paragraph">Paragraph</option>

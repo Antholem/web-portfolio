@@ -22,15 +22,15 @@ const Card = ({
     /** Variant-based styling classes */
     const variantClasses = {
         elevated: theme === "dark"
-            ? "shadow-lg bg-dark-paper"
-            : "shadow-lg bg-white",
+            ? "bg-dark-paper shadow-lg"
+            : "bg-white shadow-lg",
         outlined: theme === "dark"
-            ? "border border-dark-divider bg-transparent"
-            : "border border-light-divider bg-transparent",
+            ? "bg-transparent border border-dark-divider"
+            : "bg-transparent border border-light-divider",
         filled: theme === "dark"
-            ? "bg-dark-paper text-dark-text-primary"
-            : "bg-light text-dark",
-        unstyled: "", // No additional styling
+            ? "bg-dark-paper"
+            : "bg-white",
+        unstyled: "",
     };
 
     /** Resolve size and variant styles */

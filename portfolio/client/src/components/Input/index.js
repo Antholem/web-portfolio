@@ -19,17 +19,18 @@ const Input = ({
 
     /** Styles for size */
     const sizeStyles = {
-        xs: "h-6 text-xs",
-        sm: "h-8 text-sm",
-        md: "h-10 text-base",
-        lg: "h-12 text-lg",
+        xs: "py-1 px-1 h-6 text-xs",
+        sm: "py-2 px-2 h-8 text-sm",
+        md: "py-3 px-3 h-10 text-base",
+        lg: "py-4 px-4 h-12 text-lg",
+        xl: "py-5 px-5 h-14 text-xl",
     };
 
     /** Styles for variant */
     const variantStyles = {
         outline: theme === "dark"
-            ? "px-2 rounded-md bg-dark-paper border border-dark-text-disabled hover:border-dark-text-primary focus:border-brand"
-            : "px-2 rounded-md bg-light-paper border border-light-text-disabled hover:border-light-text-primary focus:border-brand",
+            ? "px-2 rounded-md bg-transparent border border-dark-text-disabled hover:border-dark-text-primary focus:border-brand"
+            : "px-2 rounded-md bg-transparent border border-light-text-disabled hover:border-light-text-primary focus:border-brand",
         filled: theme === "dark"
             ? "px-2 rounded-md bg-dark border border-dark focus:border-brand hover:bg-dark-action-selected"
             : "px-2 rounded-md bg-light border border-light focus:border-brand hover:bg-light-action-selected",

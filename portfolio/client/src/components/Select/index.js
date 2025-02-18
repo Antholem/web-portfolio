@@ -50,22 +50,23 @@ const Select = ({
 
     const variantStyles = {
         outlined: theme === "dark"
-            ? "px-2 rounded-md bg-dark-paper border border-dark-text-disabled hover:border-dark-text-primary focus:border-brand"
-            : "px-2 rounded-md bg-light-paper border border-light-text-disabled hover:border-light-text-primary focus:border-brand",
+            ? "px-2 rounded-md bg-transparent border border-dark-text-disabled hover:border-dark-text-primary focus:border-brand"
+            : "px-2 rounded-md bg-transparent border border-light-text-disabled hover:border-light-text-primary focus:border-brand",
         filled: theme === "dark"
-            ? "px-2 rounded-md bg-dark-divider border border-dark focus:border-brand hover:bg-dark-action-selected focus:border-brand"
-            : "px-2 rounded-md bg-light-divider border border-light focus:border-brand hover:bg-light-action-selected focus:border-brand",
+            ? "px-2 rounded-md bg-dark border border-dark focus:border-brand hover:bg-dark-action-selected focus:border-brand"
+            : "px-2 rounded-md bg-light border border-light focus:border-brand hover:bg-light-action-selected focus:border-brand",
         flushed: theme === "dark"
-            ? "px-2 border-0 rounded-md bg-dark-paper border border-dark-text-disabled hover:border-dark-text-primary focus:border-brand"
-            : "px-2 border-0 rounded-md bg-light-paper border border-light-text-disabled hover:border-light-text-primary focus:border-brand",
+            ? "border-b rounded-none bg-transparent border-dark-text-disabled hover:border-dark-text-primary focus:border-brand"
+            : "border-b rounded-none bg-transparent border-light-text-disabled hover:border-light-text-primary focus:border-brand",
         unstyled: "border-none bg-transparent focus:ring-0",
     };
 
     const sizeStyles = {
-        xs: "h-6 text-xs",
-        sm: "h-8 text-sm",
-        md: "h-10 text-base",
-        lg: "h-12 text-lg",
+        xs: "py-1 px-1 h-6 text-xs",
+        sm: "py-2 px-2 h-8 text-sm",
+        md: "py-3 px-3 h-10 text-base",
+        lg: "py-4 px-4 h-12 text-lg",
+        xl: "py-5 px-5 h-14 text-xl",
     };
 
     const disabledStyles = isDisabled
@@ -77,17 +78,15 @@ const Select = ({
     return (
         <div className="relative" ref={selectRef}>
             <button
-                className={`block w-full text-start ${variantStyles[variant]} ${sizeStyles[size]} rounded-md cursor-pointer ${disabledStyles} ${invalidStyles} ${className}`}
+                className={`flex items-center justify-between gap-2 w-full ${variantStyles[variant]} ${sizeStyles[size]} rounded-md cursor-pointer ${disabledStyles} ${invalidStyles} ${className}`}
                 onClick={handleToggleDropdown}
                 disabled={isDisabled || isReadOnly}
             >
-                <div className="flex flex-row justify-between items-center gap-2">
-                    <div>
-                        {options.find((opt) => opt.value === value)?.label || (placeholder ? placeholder : "Select option")}
-                    </div>
-                    <div>
-                        {isOpen ? <Icon.MdArrowDropUp /> : <Icon.MdArrowDropDown />}
-                    </div>
+                <div>
+                    {options.find((opt) => opt.value === value)?.label || (placeholder ? placeholder : "Select option")}
+                </div>
+                <div>
+                    {isOpen ? <Icon.MdArrowDropUp /> : <Icon.MdArrowDropDown />}
                 </div>
             </button>
             {isOpen && !isDisabled && !isReadOnly && (
