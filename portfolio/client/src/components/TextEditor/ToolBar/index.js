@@ -86,25 +86,27 @@ const ToolBar = ({ editor }) => {
     editor.chain().focus().sinkListItem("listItem").run();
   };
 
-  const handleStyleChange = (event) => {
-    switch (event.target.value) {
+  const handleStyleChange = (option) => {
+    if (!editor) return;
+
+    switch (option) {
       case "heading-one":
-        editor.chain().focus().toggleHeading({ level: 1 }).run();
+        editor.chain().focus().setHeading({ level: 1 }).run();
         break;
       case "heading-two":
-        editor.chain().focus().toggleHeading({ level: 2 }).run();
+        editor.chain().focus().setHeading({ level: 2 }).run();
         break;
       case "heading-three":
-        editor.chain().focus().toggleHeading({ level: 3 }).run();
+        editor.chain().focus().setHeading({ level: 3 }).run();
         break;
       case "heading-four":
-        editor.chain().focus().toggleHeading({ level: 4 }).run();
+        editor.chain().focus().setHeading({ level: 4 }).run();
         break;
       case "heading-five":
-        editor.chain().focus().toggleHeading({ level: 5 }).run();
+        editor.chain().focus().setHeading({ level: 5 }).run();
         break;
       case "heading-six":
-        editor.chain().focus().toggleHeading({ level: 6 }).run();
+        editor.chain().focus().setHeading({ level: 6 }).run();
         break;
       default:
         editor.chain().focus().setParagraph().run();
@@ -113,23 +115,14 @@ const ToolBar = ({ editor }) => {
   };
 
   const handleActiveStyle = () => {
-    if (editor) {
-      if (editor.isActive("heading", { level: 1 })) {
-        return "heading-one";
-      } else if (editor.isActive("heading", { level: 2 })) {
-        return "heading-two";
-      } else if (editor.isActive("heading", { level: 3 })) {
-        return "heading-three";
-      } else if (editor.isActive("heading", { level: 4 })) {
-        return "heading-four";
-      } else if (editor.isActive("heading", { level: 5 })) {
-        return "heading-five";
-      } else if (editor.isActive("heading", { level: 6 })) {
-        return "heading-six";
-      } else {
-        return "paragraph";
-      };
-    };
+    if (!editor) return "paragraph";
+    if (editor.isActive("heading", { level: 1 })) return "heading-one";
+    if (editor.isActive("heading", { level: 2 })) return "heading-two";
+    if (editor.isActive("heading", { level: 3 })) return "heading-three";
+    if (editor.isActive("heading", { level: 4 })) return "heading-four";
+    if (editor.isActive("heading", { level: 5 })) return "heading-five";
+    if (editor.isActive("heading", { level: 6 })) return "heading-six";
+
     return "paragraph";
   };
 
@@ -162,19 +155,19 @@ const ToolBar = ({ editor }) => {
           : "bg-light-paper border-light-text-disabled"
           }`}
       >
-        <Select
-            variant="flushed"
-            size="sm"
-            value={handleActiveStyle()}
-            onChange={handleStyleChange}
+        <Select 
+          onChange={handleStyleChange} 
+          value={handleActiveStyle()} 
+          variant="flushed" 
+          size="sm"
         >
-            <option value="paragraph">Normal</option>
-            <option value="heading-one">Heading 1</option>
-            <option value="heading-two">Heading 2</option>
-            <option value="heading-three">Heading 3</option>
-            <option value="heading-four">Heading 4</option>
-            <option value="heading-five">Heading 5</option>
-            <option value="heading-six">Heading 6</option>
+          <option value="paragraph">Paragraph</option>
+          <option value="heading-one">Heading 1</option>
+          <option value="heading-two">Heading 2</option>
+          <option value="heading-three">Heading 3</option>
+          <option value="heading-four">Heading 4</option>
+          <option value="heading-five">Heading 5</option>
+          <option value="heading-six">Heading 6</option>
         </Select>
         <Divider direction="vertical" />
         <div className="relative">
