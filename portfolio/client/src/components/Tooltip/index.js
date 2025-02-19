@@ -2,14 +2,14 @@ import React, { useRef, useState } from "react";
 import { useThemeStore } from "../../store/themeStore";
 
 const Tooltip = ({
-  label,               // Tooltip text
-  ariaLabel,           // Accessible name for screen readers
-  placement = "auto",  // Placement of the tooltip, default is 'auto'
-  hasArrow = false,    // Display an arrow
-  isDisabled = false,  // Disable the tooltip
-  children,            // Child element triggering the tooltip
-  className = "",      // Additional classes for styling
-  ...props             // Other props
+  label,
+  ariaLabel,
+  placement = "auto",
+  hasArrow = false,
+  isDisabled = false,
+  children,
+  className = "",
+  ...props
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const timeoutRef = useRef(null);
@@ -17,31 +17,27 @@ const Tooltip = ({
 
   if (isDisabled) return children;
 
-  // Theme-based styles
+  const baseStyles = "absolute z-10 px-3 py-1 text-sm rounded shadow-md whitespace-nowrap transition-all duration-300";
+  const arrowStyles = "absolute h-2 w-2 rotate-45 transition-all duration-300";
   const backgroundColor = theme === "dark" ? "bg-light text-dark" : "bg-dark text-light";
-  const arrowColor = theme === "dark" ? "bg-light" : "bg-dark";
 
-  // Tooltip position classes
   const positionClasses = {
-    auto: "top-full left-1/2 transform -translate-x-1/2 mt-2",
-    top: "bottom-full left-1/2 transform -translate-x-1/2 mb-2",
-    bottom: "top-full left-1/2 transform -translate-x-1/2 mt-2",
-    left: "right-full top-1/2 transform -translate-y-1/2 mr-2",
-    right: "left-full top-1/2 transform -translate-y-1/2 ml-2",
+    auto: "top-full left-1/2 -translate-x-1/2 mt-2",
+    top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+    bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
+    left: "right-full top-1/2 -translate-y-1/2 mr-2",
+    right: "left-full top-1/2 -translate-y-1/2 ml-2",
   };
-
-  // Arrow position classes
+  
   const arrowPosition = {
-    top: "bottom-[-0.5rem] left-1/2 transform -translate-x-1/2",
-    bottom: "top-[-0.5rem] left-1/2 transform -translate-x-1/2",
-    left: "right-[-0.5rem] top-1/2 transform -translate-y-1/2",
-    right: "left-[-0.5rem] top-1/2 transform -translate-y-1/2",
+    top: "bottom-[-0.25rem] left-1/2 -translate-x-1/2",
+    bottom: "top-[-0.25rem] left-1/2 -translate-x-1/2",
+    left: "right-[-0.25rem] top-1/2 -translate-y-1/2",
+    right: "left-[-0.25rem] top-1/2 -translate-y-1/2",
   };
 
   const handleMouseEnter = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsVisible(true);
-    }, 500);
+    timeoutRef.current = setTimeout(() => setIsVisible(true), 500);
   };
 
   const handleMouseLeave = () => {
@@ -59,13 +55,13 @@ const Tooltip = ({
       {children}
       {isVisible && (
         <div
-          className={`absolute z-10 px-3 py-1 text-sm rounded shadow-md whitespace-nowrap ${backgroundColor} ${positionClasses[placement]} ${className}`}
+          className={`${baseStyles} ${backgroundColor} ${positionClasses[placement]} ${className}`}
           {...props}
         >
           {label}
           {hasArrow && (
             <div
-              className={`absolute h-2 w-2 transform rotate-45 ${arrowColor} ${arrowPosition[placement]}`}
+              className={`${arrowStyles} ${backgroundColor} ${arrowPosition[placement]}`}
             />
           )}
         </div>

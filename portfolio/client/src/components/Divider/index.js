@@ -2,36 +2,35 @@ import React from "react";
 import { useThemeStore } from "../../store/themeStore";
 
 const Divider = ({ 
-    direction = "horizontal", // horizontal or vertical
-    size = 1, // border size
-    gap = 1, // padding size
-    className = "", // additional classes
-    ...props // additional props
+    direction = "horizontal", 
+    size = 1, 
+    gap = 1, 
+    className = "", 
+    ...props 
 }) => {
     const { theme } = useThemeStore();
 
-    /** Determine padding styles based on direction */
+    const baseStyles = "flex items-center";
+
     const paddingStyles =
         direction === "horizontal"
-            ? `pb-${gap} mt-${gap}` // padding for horizontal direction
-            : `pr-${gap} ml-${gap}`; // padding for vertical direction
+            ? `pb-${gap} mt-${gap}`
+            : `pr-${gap} ml-${gap}`;
 
-    /** Determine border style based on theme */
     const themeStyles =
         theme === "dark"
             ? "border-dark-text-disabled"
             : "border-light-text-disabled";
 
-    /** Determine direction-specific styles */
     const directionStyles =
         direction === "horizontal"
-            ? `w-full border-t` // horizontal divider
-            : `h-full border-l`; // vertical divider
+            ? `w-full border-t`
+            : `h-full border-l`;
 
     return (
-        <div className="flex items-center">
+        <div className={`${baseStyles}`}>
             <div 
-                className={`flex items-center ${directionStyles} border-${size} ${paddingStyles} ${themeStyles} ${className}`}
+                className={`${baseStyles} ${directionStyles} border-${size} ${paddingStyles} ${themeStyles} ${className}`}
                 {...props}
             />
         </div>

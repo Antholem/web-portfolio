@@ -2,17 +2,14 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { useThemeStore } from "../../store/themeStore";
 import { IconText } from "../";
 import * as Icon from "react-icons/fa";
-import { IoIosClose } from "react-icons/io";
+import { IoIosClose as Close } from "react-icons/io";
 
 const Toast = ({ title, description, status = "info", isClosable, onClose, icon, duration = 5000 }) => {
     const { theme } = useThemeStore();
-    const [opacity, setOpacity] = useState(0); // Start hidden
+    const [opacity, setOpacity] = useState(0);
 
     useEffect(() => {
-        // Faster fade-in
         const fadeInTimer = setTimeout(() => setOpacity(1), 50);
-
-        // Faster fade-out
         const fadeOutTimer = setTimeout(() => setOpacity(0), duration - 500);
 
         return () => {
@@ -26,6 +23,8 @@ const Toast = ({ title, description, status = "info", isClosable, onClose, icon,
         setTimeout(onClose, 300);
     };
 
+    const baseStyles = "w-[calc(100vw-32px)] md:w-80 p-4 rounded-md shadow-md flex gap-3 transition-all duration-300";
+
     const statusIcons = {
         success: <IconText icon={<Icon.FaCheckCircle className={`h-5 w-5 ${theme === "dark" ? "text-green-500" : "text-green-300"}`} />} size="xs" />,
         error: <IconText icon={<Icon.FaTimesCircle className={`h-5 w-5 ${theme === "dark" ? "text-red-500" : "text-red-400"}`} />} size="xs" />,
@@ -34,21 +33,22 @@ const Toast = ({ title, description, status = "info", isClosable, onClose, icon,
     };
 
     return (
-        <div
-            className={`w-[calc(100vw-32px)] md:w-80 p-4 rounded-md shadow-md flex gap-3 transition-opacity duration-300 
-        ${title ? "" : "items-center"} 
-        ${theme === "dark" ? "bg-light-paper text-dark" : "bg-dark-paper text-light"}`}
-            style={{ opacity }}
-        >
-            <div className="flex items-center">{icon || statusIcons[status]}</div>
+        <div style={{ opacity }} className={`${baseStyles} ${title || "items-center"}  ${theme === "dark" ? "bg-light-paper text-dark" : "bg-dark-paper text-light"}`}>
+            <div className="flex items-center">
+                {icon || statusIcons[status]}
+            </div>
             <div className="flex-1">
-                {title && <p className="text-sm font-bold">{title}</p>}
-                {description && <p className={`${title ? "text-xs font-light" : "text-sm"}`}>{description}</p>}
+                {title && 
+                    <p className="text-sm font-bold">{title}</p>
+                }
+                {description && 
+                    <p className={`${title ? "text-xs font-light" : "text-sm"}`}>{description}</p>
+                }
             </div>
             {isClosable && (
                 <IconText
                     onClick={handleClose}
-                    icon={<IoIosClose className={`text-6xl ${theme === "dark" ? "text-dark" : "text-light"}`} />}
+                    icon={<Close className={`text-6xl ${theme === "dark" ? "text-dark" : "text-light"}`} />}
                     variant="text"
                     className="cursor-pointer"
                     size="xs"
@@ -60,7 +60,7 @@ const Toast = ({ title, description, status = "info", isClosable, onClose, icon,
 
 const ToastContext = createContext(null);
 
-export const ToastProvider = ({ children }) => {
+const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
     const removeToast = useCallback((id) => {
@@ -71,18 +71,16 @@ export const ToastProvider = ({ children }) => {
         const id = Math.random().toString(36).substr(2, 9);
         setToasts((prev) => [...prev, { id, title, description, status, duration, isClosable, icon, position }]);
 
-        if (duration) {
-            setTimeout(() => removeToast(id), duration);
-        }
+        if (duration) setTimeout(() => removeToast(id), duration);
     }, [removeToast]);
 
     const positionClasses = {
-        "top": "top-4 left-1/2 transform -translate-x-1/2",
-        "top-right": "top-4 right-4",
-        "top-left": "top-4 left-4",
-        "bottom": "bottom-4 left-1/2 transform -translate-x-1/2",
-        "bottom-right": "bottom-4 right-4",
-        "bottom-left": "bottom-4 left-4",
+        "top": "top-4 left-1/2 transform -translate-x-1/2", 
+        "top-right": "top-4 right-4", 
+        "top-left": "top-4 left-4", 
+        "bottom": "bottom-4 left-1/2 transform -translate-x-1/2", 
+        "bottom-right": "bottom-4 right-4", 
+        "bottom-left": "bottom-4 left-4", 
     };
 
     return (
@@ -101,9 +99,10 @@ export const ToastProvider = ({ children }) => {
     );
 };
 
-// Hook for using Toast
-export const useToast = () => {
+const useToast = () => {
     const context = useContext(ToastContext);
     if (!context) throw new Error("useToast must be used within a ToastProvider");
     return context;
 };
+
+export {ToastProvider, useToast};

@@ -1,46 +1,45 @@
 import React from "react";
 import { useThemeStore } from "../../store/themeStore"; 
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { AiOutlineLoading3Quarters as Spinner } from "react-icons/ai";
 
 const Button = ({
-    variant = "contained",         // Default variant
-    size = "sm",                   // Default size
-    leftIcon,                      // Icon before the button label
-    rightIcon,                     // Icon after the button label
-    iconSpacing = 2,               // Spacing between icon and label
-    isLoading = false,             // Loading state
-    loadingText,                   // Text to display while loading
-    spinner = <AiOutlineLoading3Quarters className="animate-spin" />, // Default spinner
-    spinnerPlacement = "start",    // Spinner position
-    isDisabled = false,            // Disabled state
-    href,                          // Link URL (renders as <a> if provided)
-    target = "_blank",             // Target for link
-    rel = "noopener noreferrer",   // Security attributes for link
-    fileView,                      // File URL to view in a new tab
-    fileDownload,                  // File URL to download
-    children,                      // Button content
-    className = "",                // Optional additional classes
-    ...props                       // Other props like type, disabled, onClick, etc.
+    variant = "contained", 
+    size = "sm", 
+    className = "", 
+    leftIcon, 
+    rightIcon, 
+    iconSpacing = 2, 
+    isLoading = false, 
+    loadingText, 
+    spinner = <Spinner className="animate-spin" />, 
+    spinnerPlacement = "start", 
+    isDisabled = false, 
+    href, 
+    target = "_blank", 
+    rel = "noopener noreferrer", 
+    fileView, 
+    fileDownload, 
+    children, 
+    ...props
 }) => {
     const { theme } = useThemeStore();
 
-    /** Base styles shared across all variants */
     const baseStyles = "font-heading rounded-md focus:outline-none transition-all duration-300 flex items-center justify-center";
 
-    /** Styles for each variant */
     const variantStyles = {
         outlined: theme === "dark"
             ? "border border-white text-white hover:bg-white hover:bg-opacity-5 active:bg-opacity-10"
-            : "border border-dark text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10",
+            : "border border-dark text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10", 
+
         text: theme === "dark"
             ? "text-white hover:bg-white hover:bg-opacity-5 active:bg-opacity-10"
-            : "text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10",
+            : "text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10", 
+
         contained: theme === "dark"
             ? "bg-white text-dark hover:bg-gray-200 active:bg-gray-50"
-            : "bg-dark text-white hover:bg-gray-800 active:bg-gray-900",
+            : "bg-dark text-white hover:bg-gray-800 active:bg-gray-900", 
     };
 
-    /** Padding styles for each size */
     const sizeStyles = {
         xs: "px-2 py-1",
         sm: "px-4 py-2",
@@ -49,15 +48,11 @@ const Button = ({
         xl: "px-10 py-5",
     };
 
-    /** Disabled styles */
     const disabledStyles = "opacity-50 cursor-not-allowed";
-
-    /** Combine applied styles */
     const appliedVariantStyles = variantStyles[variant] || variantStyles["contained"];
     const appliedSizeStyles = sizeStyles[size] || sizeStyles["md"];
-    const appliedDisabledStyles = isLoading || isDisabled ? disabledStyles : "";
+    const appliedDisabledStyles = (isLoading || isDisabled) && disabledStyles;
 
-    /** Handle file-related actions */
     const handleClick = (e) => {
         if (fileView) {
             window.open(fileView, "_blank");
@@ -68,10 +63,9 @@ const Button = ({
             link.download = fileDownload.split("/").pop();
             link.click();
             e.preventDefault();
-        }
+        };
     };
 
-    /** Render <a> if href is provided */
     if (href) {
         return (
             <a
@@ -106,7 +100,7 @@ const Button = ({
                 )}
             </a>
         );
-    }
+    };
 
     return (
         <button
