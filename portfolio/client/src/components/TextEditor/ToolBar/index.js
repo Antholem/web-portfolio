@@ -175,7 +175,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleHighlightColorPicker}
             aria-label="Highlight"
             icon={<Icon.FaHighlighter style={{ color: editor.getAttributes("highlight")?.color }} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
             />
@@ -194,7 +194,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleFontColorPicker}
             aria-label="FontColor"
             icon={<Icon.FaFont style={{ color: editor.getAttributes("textStyle").color }} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
             />
@@ -212,7 +212,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleBold}
             aria-label="Bold"
             icon={<Icon.FaBold className={`${editor.isActive("bold") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
         />
@@ -220,7 +220,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleItalic}
             aria-label="Italic"
             icon={<Icon.FaItalic className={`${editor.isActive("italic") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
         />
@@ -228,7 +228,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleUnderline}
             aria-label="Underline"
             icon={<Icon.FaUnderline className={`${editor.isActive("underline") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
         />
@@ -236,7 +236,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleStrike}
             aria-label="Strike"
             icon={<Icon.FaStrikethrough className={`${editor.isActive("strike") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
         />
@@ -245,14 +245,14 @@ const ToolBar = ({ editor }) => {
             onClick={toggleCode}
             aria-label="Code"
             icon={<Icon.FaCode className={`${editor.isActive("code") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
         />
         <IconButton
             onClick={toggleSubscript}
             aria-label="Subscript"
             icon={<Icon.FaSubscript className={`${editor.isActive("subscript") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
         />
@@ -260,7 +260,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleSuperscript}
             aria-label="Superscript"
             icon={<Icon.FaSuperscript className={`${editor.isActive("superscript") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={editor.isActive("code")}
         />
@@ -269,21 +269,21 @@ const ToolBar = ({ editor }) => {
             onClick={toggleBulletList}
             aria-label="Bullet List"
             icon={<Icon.FaListUl className={`${editor.isActive("bulletList") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
         />
         <IconButton
             onClick={toggleOrderedList}
             aria-label="Ordered List"
             icon={<Icon.FaListOl className={`${editor.isActive("orderedList") && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
         />
         <IconButton
             onClick={toggleLiftItem}
             aria-label="Lift List"
             icon={<Icon.FaOutdent />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={!editor.can().liftListItem("listItem")}
         />
@@ -291,7 +291,7 @@ const ToolBar = ({ editor }) => {
             onClick={toggleSinkItem}
             aria-label="Sink List"
             icon={<Icon.FaIndent />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={!editor.can().sinkListItem("listItem")}
         />
@@ -300,21 +300,21 @@ const ToolBar = ({ editor }) => {
             onClick={toggleAlignLeft}
             aria-label="Align Left"
             icon={<Icon.FaAlignLeft className={`${editor.isActive({ textAlign: "left" }) && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
         />
         <IconButton
             onClick={toggleAlignCenter}
             aria-label="Align Center"
             icon={<Icon.FaAlignCenter className={`${editor.isActive({ textAlign: "center" }) && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
         />
         <IconButton
             onClick={toggleAlignRight}
             aria-label="Align Right"
             icon={<Icon.FaAlignRight className={`${editor.isActive({ textAlign: "right" }) && "text-brand"}`} />}
-            variant="text"
+            variant="ghost"
             size="xs"
         />
     </div>

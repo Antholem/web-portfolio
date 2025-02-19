@@ -31,7 +31,7 @@ const About = () => {
                 </div>
                 <div>
                     <div className="flex justify-center md:justify-start space-x-4 mt-6">
-                    <Button variant="contained" leftIcon={<Icon.MdAttachFile />}>
+                    <Button variant="solid" leftIcon={<Icon.MdAttachFile />}>
                         Resume
                     </Button>
                     <Link

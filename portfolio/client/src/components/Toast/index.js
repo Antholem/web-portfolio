@@ -49,7 +49,6 @@ const Toast = ({ title, description, status = "info", isClosable, onClose, icon,
                 <IconText
                     onClick={handleClose}
                     icon={<Close className={`text-6xl ${theme === "dark" ? "text-dark" : "text-light"}`} />}
-                    variant="text"
                     className="cursor-pointer"
                     size="xs"
                 />

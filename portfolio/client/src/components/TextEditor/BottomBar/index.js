@@ -33,7 +33,7 @@ const BottomBar = ({ editor }) => {
             onClick={toggleUndo}
             aria-label="Undo"
             icon={<Icon.FaUndo />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={!editor.can().undo()}
           />
@@ -47,7 +47,7 @@ const BottomBar = ({ editor }) => {
             onClick={toggleRedo}
             aria-label="Redo"
             icon={<Icon.FaRedo />}
-            variant="text"
+            variant="ghost"
             size="xs"
             isDisabled={!editor.can().redo()}
           />

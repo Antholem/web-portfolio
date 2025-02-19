@@ -41,7 +41,7 @@ const NavigationBar = ({ children }) => {
                                 onClick={() => setMobileMenuOpen(true)}
                                 aria-label="Open Mobile Menu"
                                 icon={<MdMenu />}
-                                variant="text"
+                                variant="ghost"
                             />
                         </Tooltip>
                     </span>
@@ -83,7 +83,7 @@ const NavigationBar = ({ children }) => {
                             onClick={toggleTheme}
                             ariaLabel={theme === "dark" ? "Light Mode" : "Dark Mode"}
                             icon={theme === "dark" ? <MdSunny /> : <MdDarkMode />}
-                            variant="text"
+                            variant="ghost"
                         />
                     </Tooltip>
                 </div>
@@ -107,7 +107,7 @@ const NavigationBar = ({ children }) => {
                                 onClick={() => setMobileMenuOpen(false)}
                                 aria-label="Close Mobile Menu"
                                 icon={<MdClose />}
-                                variant="text"
+                                variant="ghost"
                             />
                         </Tooltip>
                     </div>

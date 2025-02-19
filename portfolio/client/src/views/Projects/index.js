@@ -72,7 +72,7 @@ const Projects = () => {
                         {/* Actions */}
                         <div className="flex gap-4 mt-auto">
                             <Button
-                                variant="contained"
+                                variant="solid"
                                 leftIcon={<Icon.FaGlobe />}
                                 href={project.liveUrl}
                                 target="_blank"

@@ -52,7 +52,7 @@ const Footer = () => {
                                 key={index}
                                 isRound
                                 icon={icon}
-                                variant="text"
+                                variant="ghost"
                                 size="xs"
                                 href={href}
                                 ariaLabel={ariaLabel}

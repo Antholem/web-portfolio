@@ -3,7 +3,7 @@ import { useThemeStore } from "../../store/themeStore";
 import { AiOutlineLoading3Quarters as Spinner } from "react-icons/ai";
 
 const Button = ({
-    variant = "contained", 
+    variant = "solid", 
     size = "sm", 
     className = "", 
     leftIcon, 
@@ -31,13 +31,17 @@ const Button = ({
             ? "border border-white text-white hover:bg-white hover:bg-opacity-5 active:bg-opacity-10"
             : "border border-dark text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10", 
 
-        text: theme === "dark"
+        ghost: theme === "dark"
             ? "text-white hover:bg-white hover:bg-opacity-5 active:bg-opacity-10"
             : "text-dark hover:bg-dark hover:bg-opacity-5 active:bg-opacity-10", 
 
-        contained: theme === "dark"
+        solid: theme === "dark"
             ? "bg-white text-dark hover:bg-gray-200 active:bg-gray-50"
             : "bg-dark text-white hover:bg-gray-800 active:bg-gray-900", 
+
+        text: theme === "dark"
+            ? "text-white active:bg-opacity-10 hover:underline"
+            : "text-dark active:bg-opacity-10 hover:underline", 
     };
 
     const sizeStyles = {
@@ -49,7 +53,7 @@ const Button = ({
     };
 
     const disabledStyles = "opacity-50 cursor-not-allowed";
-    const appliedVariantStyles = variantStyles[variant] || variantStyles["contained"];
+    const appliedVariantStyles = variantStyles[variant] || variantStyles["solid"];
     const appliedSizeStyles = sizeStyles[size] || sizeStyles["md"];
     const appliedDisabledStyles = (isLoading || isDisabled) && disabledStyles;
 
