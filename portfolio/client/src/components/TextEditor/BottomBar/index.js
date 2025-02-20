@@ -3,7 +3,7 @@ import * as Icon from "react-icons/fa";
 import { IconButton, OsCommand, Tooltip } from "../..";
 import { useThemeStore } from "../../../store/themeStore";
 
-const BottomBar = ({ editor }) => {
+const BottomBar = ({ editor, variant }) => {
   const { theme } = useThemeStore();
 
   if (!editor) return null;
@@ -18,10 +18,27 @@ const BottomBar = ({ editor }) => {
     editor.chain().focus().undo().run();
   };
 
+  const baseStyles = "px-2 border-b border-r border-l rounded-b-md flex flex-wrap items-center justify-between gap-0";
+
+  const variantStyles = {
+    outline: theme === "dark"
+      ? "bg-dark border-dark-text-disabled"
+      : "bg-light border-light-text-disabled",
+
+    filled: theme === "dark"
+      ? "bg-dark-paper border-dark-text-disabled"
+      : "bg-light-paper border-light-text-disabled", 
+    
+    flushed: theme === "dark"
+      ? "bg-dark-paper border-dark-paper"
+      : "bg-light-paper border-light-paper", 
+  };
+
+  const appliedVariantStyles = variantStyles[variant] || variantStyles["filled"];
+
   return (
     <div
-      className={`px-2 border-b border-r border-l rounded-b-md flex flex-wrap items-center justify-between gap-0 ${theme === "dark" ? "bg-dark-paper border-dark-text-disabled" : "bg-light-paper border-light-text-disabled"
-        }`}
+      className={`${baseStyles} ${appliedVariantStyles}`}
     >
       <div className="flex flex-wrap items-center justify-center">
         <Tooltip

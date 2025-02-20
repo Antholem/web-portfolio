@@ -21,7 +21,13 @@ import TextStyle from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
 import Color from "@tiptap/extension-color";
 
-const TextEditor = ({ placeholder, value, onChange, editorRef }) => {
+const TextEditor = ({
+  placeholder,
+  value,
+  onChange,
+  editorRef,
+  variant = "outline",
+}) => {
   const { theme } = useThemeStore();
   const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
   const [showFontColorPicker, setShowFontColorPicker] = useState(false);
@@ -34,15 +40,9 @@ const TextEditor = ({ placeholder, value, onChange, editorRef }) => {
         orderedList: false,
       }),
       Placeholder.configure({ placeholder }),
-      Heading.configure({
-        levels: [1, 2, 3, 4, 5, 6],
-      }),
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
-      Highlight.configure({ 
-        multicolor: true
-      }),
+      Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
+      Highlight.configure({ multicolor: true }),
       BulletList,
       OrderedList,
       ListItem,
@@ -54,16 +54,14 @@ const TextEditor = ({ placeholder, value, onChange, editorRef }) => {
       Typography,
       Gapcursor,
       TextStyle,
-      Color
+      Color,
     ],
     content: value,
-    onUpdate: ({ editor }) => onChange && onChange(editor.getHTML())
+    onUpdate: ({ editor }) => onChange && onChange(editor.getHTML()),
   });
 
   useEffect(() => {
-    if (editor && editorRef) {
-      editorRef.current = editor;
-    }
+    if (editor && editorRef) editorRef.current = editor;
   }, [editor, editorRef]);
 
   useEffect(() => {
@@ -74,27 +72,48 @@ const TextEditor = ({ placeholder, value, onChange, editorRef }) => {
       }
     };
 
-    if (showHighlightColorPicker || showFontColorPicker) document.addEventListener("mousedown", handleClickOutside);
+    if (showHighlightColorPicker || showFontColorPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
 
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [showHighlightColorPicker, showFontColorPicker]);
 
   if (!editor) return null;
 
+  const baseStyles = "transition-all duration-300";
+
+  const variantStyles = {
+    outline: theme === "dark"
+      ? "bg-dark border border-dark-text-disabled hover:border-dark-text-primary"
+      : "bg-light border border-light-text-disabled hover:border-light-text-primary",
+
+    filled: theme === "dark"
+      ? "bg-dark-paper border border-dark-text-disabled hover:border-dark-text-primary"
+      : "bg-light-paper border border-light-text-disabled hover:border-light-text-primary",
+
+    flushed: theme === "dark"
+    ? "bg-dark-action-hover border-dark-text-disabled hover:bg-dark"
+    : "bg-light-action-hover border-light-text-disabled hover:bg-light",
+  };
+
+  const appliedVariantStyles = variantStyles[variant] || variantStyles["filled"];
+
   return (
     <div>
-      <ToolBar
-        editor={editor}
+      <ToolBar 
+        variant={variant}
+        editor={editor} 
       />
       <EditorContent
         editor={editor}
-        className={`border transition duration-200 ${theme === "dark"
-          ? "bg-dark-paper border-dark-text-disabled hover:border-dark-text-primary"
-          : "bg-light-paper border-light-text-disabled hover:border-light-text-primary"}`}
+        className={`${baseStyles} ${appliedVariantStyles}`}
       />
       <BottomBar 
-        editor={editor}
+        variant={variant}
+        editor={editor} 
       />
     </div>
   );

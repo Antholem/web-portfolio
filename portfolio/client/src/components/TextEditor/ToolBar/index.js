@@ -4,7 +4,7 @@ import { Divider, IconButton, Select } from "../..";
 import { useThemeStore } from "../../../store/themeStore";
 import ColorPicker from "../ColorPicker";
 
-const ToolBar = ({ editor }) => {
+const ToolBar = ({ editor, variant }) => {
   const { theme } = useThemeStore();
   const [highlightColor, setHighlightColor] = useState(null);
   const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
@@ -147,13 +147,28 @@ const ToolBar = ({ editor }) => {
     editor.chain().focus().setColor(color.hex).run();
     setShowFontColorPicker(false);
   };
+
+  const baseStyles = "p-2 border-t border-r border-l rounded-t-md flex flex-wrap gap-1";
+
+  const variantStyles = {
+    outline: theme === "dark"
+      ? "bg-dark border-dark-text-disabled"
+      : "bg-light border-light-text-disabled",
+
+    filled: theme === "dark"
+      ? "bg-dark-paper border-dark-text-disabled"
+      : "bg-light-paper border-light-text-disabled",
+
+    flushed: theme === "dark"
+      ? "bg-dark-paper border-dark-paper"
+      : "bg-light-paper border-light-paper", 
+  };
+
+  const appliedVariantStyles = variantStyles[variant] || variantStyles["filled"];
   
   return (
     <div
-        className={`p-2 border-t border-r border-l rounded-t-md flex flex-wrap gap-1 ${theme === "dark"
-          ? "bg-dark-paper border-dark-text-disabled"
-          : "bg-light-paper border-light-text-disabled"
-          }`}
+        className={`${baseStyles} ${appliedVariantStyles}`}
       >
         <Select 
           onChange={handleStyleChange} 
