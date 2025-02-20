@@ -173,7 +173,7 @@ const Contacts = () => {
                                     Message
                                 </label>
                                 <TextEditor
-                                    variant="outline"
+                                    variant="filled"
                                     placeholder="Enter your message here..."
                                     value={message}
                                     onChange={setMessage}
