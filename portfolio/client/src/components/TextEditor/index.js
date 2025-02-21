@@ -22,11 +22,14 @@ import Highlight from "@tiptap/extension-highlight";
 import Color from "@tiptap/extension-color";
 
 const TextEditor = ({
+  variant = "outline",
+  className = "", 
+  isInvalid = false, 
   placeholder,
   value,
   onChange,
   editorRef,
-  variant = "outline",
+  ...props
 }) => {
   const { theme } = useThemeStore();
   const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
@@ -100,6 +103,7 @@ const TextEditor = ({
   };
 
   const appliedVariantStyles = variantStyles[variant] || variantStyles["filled"];
+  const invalidStyles = isInvalid && "border-red-500 focus:ring-red-500";
 
   return (
     <div>
@@ -109,7 +113,8 @@ const TextEditor = ({
       />
       <EditorContent
         editor={editor}
-        className={`${baseStyles} ${appliedVariantStyles}`}
+        className={`${baseStyles} ${appliedVariantStyles} ${invalidStyles} ${className}`}
+        {...props}
       />
       <BottomBar 
         variant={variant}
