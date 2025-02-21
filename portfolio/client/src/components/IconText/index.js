@@ -3,7 +3,6 @@ import React from "react";
 const IconText = ({
     size = "md", 
     icon, 
-    isRound = false, 
     className = "", 
     ...props 
 }) => {
@@ -11,19 +10,26 @@ const IconText = ({
     const baseStyles = `flex items-center justify-center focus:outline-none transition-all duration-300`;
 
     const sizeStyles = {
-        xs: "w-8 h-8 text-xs", 
-        sm: "w-10 h-10 text-sm", 
-        md: "w-12 h-12 text-base", 
-        lg: "w-14 h-14 text-lg", 
-        xl: "w-16 h-16 text-xl", 
+        xs: "text-xs", 
+        sm: "text-sm", 
+        md: "text-base", 
+        lg: "text-lg", 
+        xl: "text-xl", 
+        xl2: "text-2xl", 
+        xl3: "text-3xl", 
+        xl4: "text-4xl", 
+        xl5: "text-5xl", 
+        xl6: "text-6xl", 
+        xl7: "text-7xl", 
+        xl8: "text-8xl", 
+        xl9: "text-9xl", 
     };
     
-    const shapeStyles = isRound ? "rounded-full" : "rounded-md";
     const appliedSizeStyles = sizeStyles[size] || sizeStyles["md"];
 
     return (
         <span
-            className={`${baseStyles} ${appliedSizeStyles} ${shapeStyles} ${className}`}
+            className={`${baseStyles} ${appliedSizeStyles} ${className}`}
             {...props}
         >
             {icon}

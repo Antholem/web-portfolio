@@ -1,56 +1,56 @@
 import React from "react";
 import * as Icon from "react-icons/si"
-import { Card } from "../../components";
+import { Card, IconText } from "../../components";
 
 // Skills data
 const skills = [
     { 
         title: "HTML", 
-        icon: <Icon.SiHtml5 className="text-brand text-7xl" />,
+        IconComponent: Icon.SiHtml5, 
     },
     {
         title: "CSS",
-        icon: <Icon.SiCss3 className="text-brand text-7xl" />,
+        IconComponent: Icon.SiCss3,
     },
     {
         title: "EJS",
-        icon: <Icon.SiJavascript className="text-brand text-7xl" />,
+        IconComponent: Icon.SiJavascript, 
     },
     {
         title: "Tailwind",
-        icon: <Icon.SiTailwindcss className="text-brand text-7xl" />,
+        IconComponent: Icon.SiTailwindcss,
     },
     {
         title: "Chakra UI",
-        icon: <Icon.SiChakraui className="text-brand text-7xl" />,
+        IconComponent: Icon.SiChakraui,
     },
     {
         title: "Material UI",
-        icon: <Icon.SiMui className="text-brand text-7xl" />,
+        IconComponent: Icon.SiMui,
     },
     {
         title: "NextJS",
-        icon: <Icon.SiNextdotjs className="text-brand text-7xl" />,
+        IconComponent: Icon.SiNextdotjs,
     },
     {
         title: "ReactJS",
-        icon: <Icon.SiReact className="text-brand text-7xl" />,
+        IconComponent: Icon.SiReact,
     },
     {
         title: "NodeJS",
-        icon: <Icon.SiNodedotjs className="text-brand text-7xl" />,
+        IconComponent: Icon.SiNodedotjs,
     },
     {
         title: "ExpressJS",
-        icon: <Icon.SiExpress className="text-brand text-7xl" />,
+        IconComponent: Icon.SiExpress,
     },
     {
         title: "MongoDB",
-        icon: <Icon.SiMongodb className="text-brand text-7xl" />,
+        IconComponent: Icon.SiMongodb,
     },
     {
         title: "MySQL",
-        icon: <Icon.SiMysql className="text-brand text-7xl" />,
+        IconComponent: Icon.SiMysql,
     },
 ];
 
@@ -67,24 +67,28 @@ const Skills = () => {
 
             {/* Skills Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 mx-auto">
-                {skills.map((skill, index) => (
-                    <Card
-                        key={index}
-                        variant="elevated"
-                        size="sm"
-                        className="flex flex-col items-center justify-center gap-5"
-                    >
-                        {/* Skill Icon */}
-                        <span>
-                            {skill.icon}
-                        </span>
+                {skills.map((skill, index) => {
+                    const IconComponent = skill.IconComponent;
+                    return (
+                        <Card
+                            key={index}
+                            variant="elevated"
+                            size="sm"
+                            className="flex flex-col items-center justify-center gap-5"
+                        >
+                            {/* Skill Icon */}
+                            <IconText 
+                                icon={<IconComponent className="text-brand" />} 
+                                size="xl5" 
+                            />
 
-                        {/* Skill Title */}
-                        <h3 className="font-light">
-                            {skill.title}
-                        </h3>
-                    </Card>
-                ))}
+                            {/* Skill Title */}
+                            <h3 className="font-light">
+                                {skill.title}
+                            </h3>
+                        </Card>
+                    )
+                })}
             </div>
         </div>
     );
