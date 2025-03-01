@@ -10,7 +10,7 @@ const features = [
         description: "Creating powerful and responsive websites with precision and creativity.", 
     },
     {
-        IconComponent: Icon.FaPaintBrush, 
+        IconComponent: Icon.FaPencilRuler, 
         title: "UX Design", 
         description: "Crafting seamless digital experiences through captivating design and usability.", 
     },
@@ -50,7 +50,7 @@ const Features = () => {
                             />
 
                             {/* Feature Title and Description */}
-                            <div className="flex flex-col items-start justify-center gap-2">
+                            <div className="text-center flex flex-col items-center justify-center gap-2">
                                 <h3 className="text-xl font-semibold">
                                     {feature.title}
                                 </h3>

@@ -20,7 +20,7 @@ module.exports = {
         heading: ["Open Sans", "sans-serif"],
       },
       colors: {
-        brand: "#ff014f",
+        brand: "#0073e6",
         dark: {
           DEFAULT: "#121212",
           paper: "#1A1A1A",

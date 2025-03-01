@@ -1,93 +1,77 @@
 import React from "react";
-import * as Icon from "react-icons/si"
-import { Card, IconText } from "../../components";
+import { useThemeStore } from "../../store/themeStore";
 
-// Skills data
 const skills = [
-    { 
-        title: "HTML", 
-        IconComponent: Icon.SiHtml5, 
-    },
-    {
-        title: "CSS",
-        IconComponent: Icon.SiCss3,
-    },
-    {
-        title: "EJS",
-        IconComponent: Icon.SiJavascript, 
-    },
-    {
-        title: "Tailwind",
-        IconComponent: Icon.SiTailwindcss,
-    },
-    {
-        title: "Chakra UI",
-        IconComponent: Icon.SiChakraui,
-    },
-    {
-        title: "Material UI",
-        IconComponent: Icon.SiMui,
-    },
-    {
-        title: "NextJS",
-        IconComponent: Icon.SiNextdotjs,
-    },
-    {
-        title: "ReactJS",
-        IconComponent: Icon.SiReact,
-    },
-    {
-        title: "NodeJS",
-        IconComponent: Icon.SiNodedotjs,
-    },
-    {
-        title: "ExpressJS",
-        IconComponent: Icon.SiExpress,
-    },
-    {
-        title: "MongoDB",
-        IconComponent: Icon.SiMongodb,
-    },
-    {
-        title: "MySQL",
-        IconComponent: Icon.SiMysql,
-    },
+    { name: "HTML", level: "Master", date: 2018 },
+    { name: "CSS", level: "Master", date: 2018 },
+    { name: "EJS", level: "Expert", date: 2020 },
+    { name: "Tailwind", level: "Master", date: 2023 },
+    { name: "Chakra UI", level: "Expert", date: 2023 },
+    { name: "Material UI", level: "Expert", date: 2023 },
+    { name: "NextJS", level: "Expert", date: 2023 },
+    { name: "ReactJS", level: "Expert", date: 2022 },
+    { name: "NodeJS", level: "Advanced", date: 2020 },
+    { name: "ExpressJS", level: "Advanced", date: 2020 },
+    { name: "Firebase", level: "Advanced", date: 2024 },
+    { name: "MongoDB", level: "Expert", date: 2021 },
+    { name: "MySQL", level: "Expert", date: 2021 },
 ];
 
+const levelMapping = {
+    Beginner: 1,
+    Intermediate: 2,
+    Advanced: 3,
+    Expert: 4,
+    Master: 5,
+};
+
 const Skills = () => {
+    const { theme } = useThemeStore();
+    const isDark = theme === "dark";
+    const currentYear = new Date().getFullYear();
+
     return (
         <div>
             {/* Section Heading */}
             <header className="mb-8 text-center">
                 <h2 className="text-sm font-heading tracking-widest uppercase text-brand mb-2">
-                    Comprehensive technical skill set
+                    Comprehensive Technical Skill Set
                 </h2>
                 <h1 className="text-4xl font-heading font-bold">Skills</h1>
             </header>
 
             {/* Skills Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {skills.map((skill, index) => {
-                    const IconComponent = skill.IconComponent;
-                    return (
-                        <Card
-                            key={index}
-                            variant="elevated"
-                            size="sm"
-                            className="flex flex-col items-center justify-center gap-5"
-                        >
-                            {/* Skill Icon */}
-                            <IconText 
-                                icon={<IconComponent className="text-brand" />} 
-                                size="xl5" 
-                            />
+                    const yearsOfExperience = currentYear - skill.date;
+                    const experienceText = yearsOfExperience === 1 ? "1 year" : `${yearsOfExperience} years`;
 
-                            {/* Skill Title */}
-                            <h3 className="font-light">
-                                {skill.title}
-                            </h3>
-                        </Card>
-                    )
+                    return (
+                        <div key={index}>
+                            {/* Skill Name & Level */}
+                            <div className="flex justify-between items-center mb-1">
+                                <span className="text-lg font-semibold">
+                                    {skill.name}{" "}
+                                    <span className="text-xs font-light">
+                                        ({yearsOfExperience > 0 ? experienceText : "Less than a year"})
+                                    </span>
+                                </span>
+                                <span className="text-sm font-light">{skill.level}</span>
+                            </div>
+
+                            {/* Skill Level Bars */}
+                            <div className="flex space-x-2">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`h-2 flex-1 ${i < levelMapping[skill.level] ? "bg-brand" :
+                                                isDark ? "bg-dark-action-disabled" : "bg-light-action-disabled"
+                                            }`}
+                                    ></div>
+                                ))}
+                            </div>
+                        </div>
+                    );
                 })}
             </div>
         </div>
