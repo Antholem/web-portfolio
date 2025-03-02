@@ -41,7 +41,7 @@ const Skills = () => {
             </header>
 
             {/* Skills Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-5">
                 {skills.map((skill, index) => {
                     const yearsOfExperience = currentYear - skill.date;
                     const experienceText = yearsOfExperience === 1 ? "1 year" : `${yearsOfExperience} years`;
@@ -50,8 +50,10 @@ const Skills = () => {
                         <div key={index}>
                             {/* Skill Name & Level */}
                             <div className="flex justify-between items-center mb-1">
-                                <span className="text-lg font-semibold">
-                                    {skill.name}{" "}
+                                <span className="flex flex-row items-center gap-1 text-lg font-semibold">
+                                    <span>
+                                        {skill.name}
+                                    </span>
                                     <span className="text-xs font-light">
                                         ({yearsOfExperience > 0 ? experienceText : "Less than a year"})
                                     </span>

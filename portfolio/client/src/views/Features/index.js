@@ -46,7 +46,7 @@ const Features = () => {
                             {/* Feature Icon */}
                             <IconText 
                                 icon={<IconComponent className="text-brand" />} 
-                                size="xl6" 
+                                size="xl4" 
                             />
 
                             {/* Feature Title and Description */}
