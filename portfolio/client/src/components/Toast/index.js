@@ -42,15 +42,15 @@ const Toast = ({ title, description, status = "info", isClosable, onClose, icon,
                     <p className="text-sm font-bold">{title}</p>
                 }
                 {description && 
-                    <p className={`${title ? "text-xs font-light" : "text-sm"}`}>{description}</p>
+                    <p className={title ? "text-xs font-light" : "text-sm"}>{description}</p>
                 }
             </div>
             {isClosable && (
                 <IconText
                     onClick={handleClose}
-                    icon={<Close className={`text-6xl ${theme === "dark" ? "text-dark" : "text-light"}`} />}
+                    icon={<Close className={`${theme === "dark" ? "text-dark" : "text-light"}`} />}
                     className="cursor-pointer"
-                    size="xs"
+                    size="xl2"
                 />
             )}
         </div>
