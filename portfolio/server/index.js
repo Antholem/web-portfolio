@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.REACT_APP_PORT || 5000;
 
 // CORS configuration
 const corsOptions = {
@@ -22,14 +22,14 @@ app.post('/', (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.FROM_EMAIL,
-      pass: process.env.PASSWORD,
+      user: process.env.REACT_APP_FROM_EMAIL,
+      pass: process.env.REACT_APP_FROM_PASSWORD,
     },
   });
 
   const mailOptions = {
     from: process.env.FROM_EMAIL,
-    to: process.env.TO_EMAIL,
+    to: process.env.REACT_APP_TO_EMAIL,
     subject: req.body.subject,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; padding: 15px; width: 100%; box-sizing: border-box;">
