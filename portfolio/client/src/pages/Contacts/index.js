@@ -4,7 +4,7 @@ import * as Icon from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth } from "../../config/firebase";
+import { auth } from "../../lib/firebase";
 import { Button, Card, IconText, Input, TextEditor, Toast } from "../../components";
 
 const Contacts = () => {

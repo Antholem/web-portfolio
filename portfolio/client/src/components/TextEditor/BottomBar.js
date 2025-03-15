@@ -1,7 +1,8 @@
 import React from "react";
 import * as Icon from "react-icons/fa";
-import { IconButton, OsCommand, Tooltip } from "../..";
-import { useThemeStore } from "../../../store/themeStore";
+import { IconButton, Tooltip } from "../";
+import OsCommand from "../../utils/getOsCommand";
+import { useThemeStore } from "../../stores/useTheme";
 
 const BottomBar = ({ editor, variant }) => {
   const { theme } = useThemeStore();

@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 import * as Icon from "react-icons/fa";
 import { IconButton, Tooltip } from "../../components";
 

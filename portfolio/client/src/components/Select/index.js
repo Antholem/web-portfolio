@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 import * as Icon from "react-icons/md";
 
 const Select = ({

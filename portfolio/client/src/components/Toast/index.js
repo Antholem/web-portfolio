@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 import { IconText } from "../";
 import * as Icon from "react-icons/fa";
 import { IoIosClose as Close } from "react-icons/io";

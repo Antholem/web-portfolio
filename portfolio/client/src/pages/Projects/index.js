@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 import { Button, Card } from "../../components";
 import * as Icon from "react-icons/fa";
 import project_1 from "./project-1.png";

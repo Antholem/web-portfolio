@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { useThemeStore } from "../../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 import Compact from '@uiw/react-color-compact';
 
 const ColorPicker = forwardRef(({ color, onChange }, ref) => {

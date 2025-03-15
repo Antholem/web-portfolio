@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeStore } from "../../store/themeStore"; 
+import { useThemeStore } from "../../stores/useTheme"; 
 import { AiOutlineLoading3Quarters as Spinner } from "react-icons/ai";
 
 const Button = ({

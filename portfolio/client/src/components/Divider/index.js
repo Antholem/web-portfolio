@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 
 const Divider = ({ 
     direction = "horizontal", 

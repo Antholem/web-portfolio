@@ -1,5 +1,5 @@
 import React from "react";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 
 const skills = [
     { name: "HTML", level: "Master", date: 2018 },

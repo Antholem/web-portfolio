@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useThemeStore } from "./store/themeStore";
-import { About, Contacts, Features, Footer, Projects, Skills } from "./views";
+import { useThemeStore } from "./stores/useTheme";
+import { About, Contacts, Features, Footer, Projects, Skills } from "./pages";
 import { NavigationBar, ToastProvider } from "./components";
 
 const App = () => {

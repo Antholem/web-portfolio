@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import BottomBar from "./BottomBar";
 import ToolBar from "./ToolBar";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore } from "../../stores/useTheme";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
