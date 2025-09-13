@@ -10,7 +10,8 @@ import {
 import { Menu } from "lucide-react"
 import { FaMoon, FaSun } from "react-icons/fa"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { useThemeStore } from "@/lib/theme-store"
 
 const links = [
     { href: "/", label: "About" },
@@ -21,21 +22,15 @@ const links = [
 ]
 
 export default function Navbar() {
-    const [theme, setTheme] = useState<"light" | "dark">("light")
+    const theme = useThemeStore((state) => state.theme)
+    const setTheme = useThemeStore((state) => state.setTheme)
+    const toggleTheme = useThemeStore((state) => state.toggleTheme)
 
     useEffect(() => {
         const stored = window.localStorage.getItem("theme") as "light" | "dark" | null
         const initial = stored === "dark" ? "dark" : "light"
-        document.documentElement.classList.toggle("dark", initial === "dark")
         setTheme(initial)
-    }, [])
-
-    const toggleTheme = () => {
-        const next = theme === "light" ? "dark" : "light"
-        document.documentElement.classList.toggle("dark", next === "dark")
-        window.localStorage.setItem("theme", next)
-        setTheme(next)
-    }
+    }, [setTheme])
 
     return (
         <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
