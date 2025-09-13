@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/navbar";
+import { cookies } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,15 +24,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialTheme = cookies().get("theme")?.value === "dark" ? "dark" : "light";
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={initialTheme === "dark" ? "dark" : ""}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(() => { const theme = localStorage.getItem('theme'); if (theme === 'dark') { document.documentElement.classList.add('dark'); } })();`,
-          }}
-        />
-        <Navbar />
+        <Navbar initialTheme={initialTheme} />
         <main>{children}</main>
       </body>
     </html>
