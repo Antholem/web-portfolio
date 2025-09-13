@@ -50,7 +50,7 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                                 <Menu className="h-5 w-5" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent>
+                        <SheetContent side="left">
                             <nav className="grid gap-4 py-4">
                                 {links.map((l) => (
                                     <Button key={l.href} variant="ghost" asChild>
