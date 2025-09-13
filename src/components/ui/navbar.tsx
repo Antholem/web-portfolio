@@ -38,36 +38,15 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
     return (
         <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-                  <Link href="/" className="flex items-center gap-2 font-semibold">
-                      <div className="relative h-6 w-6">
-                          <Image
-                              src={currentTheme === "dark" ? "/logo-light.svg" : "/logo-dark.svg"}
-                              alt="Logo"
-                              fill
-                              sizes="24px"
-                              className="object-contain"
-                          />
-                      </div>
-                  </Link>
-
-                <nav className="hidden md:flex items-center gap-4">
-                    {links.map((l) => (
-                        <Button key={l.href} variant="ghost" asChild>
-                            <Link href={l.href}>{l.label}</Link>
-                        </Button>
-                    ))}
-                </nav>
-
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
-                        {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
-                    </Button>
-                </div>
-
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" aria-label="Open menu">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8"
+                                aria-label="Open menu"
+                            >
                                 <Menu className="h-5 w-5" />
                             </Button>
                         </SheetTrigger>
@@ -81,6 +60,32 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                             </nav>
                         </SheetContent>
                     </Sheet>
+                </div>
+
+                <Link href="/" className="flex items-center gap-2 font-semibold">
+                    <div className="relative h-6 w-6">
+                        <Image
+                            src={currentTheme === "dark" ? "/logo-light.svg" : "/logo-dark.svg"}
+                            alt="Logo"
+                            fill
+                            sizes="24px"
+                            className="object-contain"
+                        />
+                    </div>
+                </Link>
+
+                <nav className="hidden md:flex items-center gap-4">
+                    {links.map((l) => (
+                        <Button key={l.href} variant="ghost" asChild>
+                            <Link href={l.href}>{l.label}</Link>
+                        </Button>
+                    ))}
+                </nav>
+
+                <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
+                        {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
+                    </Button>
                 </div>
             </div>
             <Separator />
