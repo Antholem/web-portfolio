@@ -5,11 +5,10 @@ import { Button } from "@/components/ui/button"
 import {
     Sheet,
     SheetTrigger,
-    SheetContent,
-    SheetClose,
+    SheetContent
 } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
-import { FaMoon, FaSun } from "react-icons/fa";
+import { FaMoon } from "react-icons/fa"
 import Image from "next/image"
 
 const links = [
@@ -30,9 +29,9 @@ export default function Navbar() {
 
                 <nav className="hidden md:flex items-center gap-4">
                     {links.map((l) => (
-                         <Button variant="ghost">
+                        <Button key={l.href} variant="ghost">
                             {l.label}
-                         </Button>
+                        </Button>
                     ))}
                 </nav>
 
