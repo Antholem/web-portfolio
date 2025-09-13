@@ -30,7 +30,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={initialTheme === "dark" ? "dark" : ""}>
-      <body className={`${geistSans.variable} ${geistMono.variable} transition-colors duration-300`}>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Navbar initialTheme={initialTheme} />
         <main>{children}</main>
       </body>

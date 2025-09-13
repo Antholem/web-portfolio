@@ -35,7 +35,7 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
     const currentTheme = mounted ? theme : initialTheme
 
     return (
-        <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur transition-colors duration-300">
+        <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
                   <Link href="/" className="flex items-center gap-2 font-semibold">
                       <div className="relative h-6 w-6">
@@ -57,7 +57,7 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                     ))}
                 </nav>
 
-                <div className="hidden md:flex items-center gap-2">
+                <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
@@ -66,7 +66,7 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="outline" size="icon" aria-label="Open menu">
+                            <Button variant="ghost" size="icon" aria-label="Open menu">
                                 <Menu className="h-5 w-5" />
                             </Button>
                         </SheetTrigger>
@@ -77,9 +77,6 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                                         <Link href={l.href}>{l.label}</Link>
                                     </Button>
                                 ))}
-                                <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                                    {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
-                                </Button>
                             </nav>
                         </SheetContent>
                     </Sheet>
