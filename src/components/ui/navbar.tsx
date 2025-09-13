@@ -12,6 +12,7 @@ import { FaMoon, FaSun } from "react-icons/fa"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
+import { Separator } from "@/components/ui/separator"
 
 const links = [
     { href: "/", label: "About" },
@@ -35,7 +36,7 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
     const currentTheme = mounted ? theme : initialTheme
 
     return (
-        <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
+        <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
                   <Link href="/" className="flex items-center gap-2 font-semibold">
                       <div className="relative h-6 w-6">
@@ -82,6 +83,7 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                     </Sheet>
                 </div>
             </div>
+            <Separator />
         </header>
     )
 }
