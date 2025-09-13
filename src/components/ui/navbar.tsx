@@ -37,9 +37,17 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
     return (
         <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-                <Link href="/" className="flex items-center gap-2 font-semibold">
-                    <Image src={currentTheme === "dark" ? "/logo-light.svg" : "/logo-dark.svg"} alt="Logo" width={24} height={24} />
-                </Link>
+                  <Link href="/" className="flex items-center gap-2 font-semibold">
+                      <div className="relative h-6 w-6">
+                          <Image
+                              src={currentTheme === "dark" ? "/logo-light.svg" : "/logo-dark.svg"}
+                              alt="Logo"
+                              fill
+                              sizes="24px"
+                              className="object-contain"
+                          />
+                      </div>
+                  </Link>
 
                 <nav className="hidden md:flex items-center gap-4">
                     {links.map((l) => (
