@@ -72,7 +72,7 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                     </div>
                 </Link>
 
-                <nav className="hidden md:flex items-center gap-4">
+                <nav className="hidden md:flex items-center gap-4 md:mx-auto">
                     {links.map((l) => (
                         <Button key={l.href} variant="ghost" asChild>
                             <Link href={l.href}>{l.label}</Link>
