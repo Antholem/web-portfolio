@@ -4,6 +4,7 @@ import "./globals.css"
 import Navbar from "@/components/ui/navbar"
 import { cookies } from "next/headers"
 import type { ReactNode } from "react"
+import ThemeScript from "@/components/theme-script"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,9 @@ export default async function RootLayout({
       className={initialTheme === "dark" ? "dark" : ""}
       suppressHydrationWarning
     >
+      <head>
+        <ThemeScript />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable}`}
         suppressHydrationWarning
