@@ -17,8 +17,38 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://antholem.com"),
   title: "Antholem",
   description: "Personal portfolio showcasing projects and skills",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Antholem",
+    description: "Personal portfolio showcasing projects and skills",
+    url: "https://antholem.com",
+    siteName: "Antholem",
+    images: [
+      {
+        url: "/logo-dark.svg",
+        width: 1200,
+        height: 630,
+        alt: "Antholem logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Antholem",
+    description: "Personal portfolio showcasing projects and skills",
+    images: ["/logo-dark.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    sitemap: "https://antholem.com/sitemap.xml",
+  },
+  manifest: "/site.webmanifest",
   icons: {
     icon: [
       {
@@ -31,7 +61,7 @@ export const metadata: Metadata = {
       },
     ],
   },
-};
+}
 
 export default async function RootLayout({
   children,
@@ -73,3 +103,4 @@ export default async function RootLayout({
     </html>
   );
 }
+

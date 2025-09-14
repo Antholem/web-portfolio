@@ -1,6 +1,5 @@
-"use client"
-
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
     Sheet,
@@ -10,11 +9,8 @@ import {
     SheetDescription,
 } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
-import { FaMoon, FaSun } from "react-icons/fa"
-import Image from "next/image"
-import { useEffect, useState } from "react"
-import { useThemeStore } from "@/lib/theme-store"
 import { Separator } from "@/components/ui/separator"
+import ThemeToggle from "@/components/ui/theme-toggle"
 
 const links = [
     { href: "/", label: "About" },
@@ -25,20 +21,6 @@ const links = [
 ]
 
 export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dark" }) {
-    const theme = useThemeStore((state) => state.theme)
-    const setTheme = useThemeStore((state) => state.setTheme)
-    const toggleTheme = useThemeStore((state) => state.toggleTheme)
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        if (initialTheme) {
-            setTheme(initialTheme)
-        }
-        setMounted(true)
-    }, [initialTheme, setTheme])
-
-    const currentTheme = mounted ? theme : initialTheme || theme
-
     return (
         <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
@@ -77,6 +59,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                             alt="Logo"
                             fill
                             sizes="24px"
+                            priority
                             className="object-contain dark:hidden"
                         />
                         <Image
@@ -84,6 +67,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                             alt="Logo"
                             fill
                             sizes="24px"
+                            priority
                             className="hidden object-contain dark:block"
                         />
                     </div>
@@ -98,12 +82,11 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
-                        {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
-                    </Button>
+                    <ThemeToggle initialTheme={initialTheme} />
                 </div>
             </div>
             <Separator />
         </header>
     )
 }
+
