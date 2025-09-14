@@ -32,17 +32,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode
 }>) {
-  const cookieStore = await cookies()
+  const cookieStore = cookies()
   const initialTheme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light"
 
   return (
-    <html lang="en" className={initialTheme === "dark" ? "dark" : ""}>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={initialTheme === "dark" ? "dark" : ""}
+      suppressHydrationWarning
+    >
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        suppressHydrationWarning
+      >
         <Navbar initialTheme={initialTheme} />
         <main>{children}</main>
       </body>
