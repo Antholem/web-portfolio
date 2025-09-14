@@ -6,7 +6,8 @@ import {
     Sheet,
     SheetTrigger,
     SheetContent,
-    SheetTitle
+    SheetTitle,
+    SheetDescription,
 } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import { FaMoon, FaSun } from "react-icons/fa"
@@ -53,6 +54,9 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                         </SheetTrigger>
                         <SheetContent side="left">
                             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                            <SheetDescription className="sr-only">
+                                Site navigation links
+                            </SheetDescription>
                             <nav className="grid gap-4 py-4">
                                 {links.map((l) => (
                                     <Button key={l.href} variant="ghost" asChild>
