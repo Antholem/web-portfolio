@@ -24,18 +24,16 @@ const links = [
     { href: "#contacts", label: "Contacts" },
 ]
 
-export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark" }) {
-    const theme = useThemeStore((state) => state.theme)
-    const setTheme = useThemeStore((state) => state.setTheme)
-    const toggleTheme = useThemeStore((state) => state.toggleTheme)
-    const [mounted, setMounted] = useState(false)
+ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark" }) {
+     const theme = useThemeStore((state) => state.theme)
+     const toggleTheme = useThemeStore((state) => state.toggleTheme)
+     const [mounted, setMounted] = useState(false)
 
-    useEffect(() => {
-        setTheme(initialTheme)
-        setMounted(true)
-    }, [initialTheme, setTheme])
+     useEffect(() => {
+         setMounted(true)
+     }, [])
 
-    const currentTheme = mounted ? theme : initialTheme
+     const currentTheme = mounted ? theme : initialTheme
 
     return (
         <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
