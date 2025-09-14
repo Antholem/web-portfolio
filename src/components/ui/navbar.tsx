@@ -73,11 +73,18 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 <Link href="/" className="flex items-center gap-2 font-semibold">
                     <div className="relative h-6 w-6">
                         <Image
-                            src={currentTheme === "dark" ? "/logo-light.svg" : "/logo-dark.svg"}
+                            src="/logo-dark.svg"
                             alt="Logo"
                             fill
                             sizes="24px"
-                            className="object-contain"
+                            className="object-contain dark:hidden"
+                        />
+                        <Image
+                            src="/logo-light.svg"
+                            alt="Logo"
+                            fill
+                            sizes="24px"
+                            className="hidden object-contain dark:block"
                         />
                     </div>
                 </Link>
