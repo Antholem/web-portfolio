@@ -26,14 +26,12 @@ const links = [
 
 export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark" }) {
     const theme = useThemeStore((state) => state.theme)
-    const setTheme = useThemeStore((state) => state.setTheme)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
-        setTheme(initialTheme)
         setMounted(true)
-    }, [initialTheme, setTheme])
+    }, [])
 
     const currentTheme = mounted ? theme : initialTheme
 
