@@ -10,8 +10,22 @@ interface ThemeState {
   toggleTheme: () => void
 }
 
+const getInitialTheme = (): Theme => {
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem('theme') as Theme | null
+    if (stored) {
+      document.documentElement.classList.toggle('dark', stored === 'dark')
+      return stored
+    }
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    document.documentElement.classList.toggle('dark', prefersDark)
+    return prefersDark ? 'dark' : 'light'
+  }
+  return 'light'
+}
+
 export const useThemeStore = create<ThemeState>((set, get) => ({
-  theme: 'light',
+  theme: getInitialTheme(),
   setTheme: (theme) => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
     set({ theme })

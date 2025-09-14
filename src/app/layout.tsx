@@ -4,6 +4,7 @@ import "./globals.css"
 import Navbar from "@/components/ui/navbar"
 import { cookies } from "next/headers"
 import type { ReactNode } from "react"
+import Script from "next/script"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,19 +39,35 @@ export default async function RootLayout({
   children: ReactNode
 }>) {
   const cookieStore = await cookies()
-  const initialTheme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light"
+  const cookieTheme = cookieStore.get("theme")?.value as 'light' | 'dark' | undefined
 
   return (
     <html
       lang="en"
-      className={initialTheme === "dark" ? "dark" : ""}
+      className={cookieTheme === "dark" ? "dark" : ""}
       suppressHydrationWarning
     >
+      <head>
+        <Script id="theme-script" strategy="beforeInteractive">
+          {`
+            (function() {
+              const cookie = document.cookie.match(/(?:^|; )theme=([^;]+)/)?.[1];
+              const stored = localStorage.getItem('theme') || cookie;
+              if (stored) {
+                document.documentElement.classList.toggle('dark', stored === 'dark');
+              } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.classList.toggle('dark', prefersDark);
+              }
+            })();
+          `}
+        </Script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable}`}
         suppressHydrationWarning
       >
-        <Navbar initialTheme={initialTheme} />
+        <Navbar initialTheme={cookieTheme} />
         <main>{children}</main>
       </body>
     </html>

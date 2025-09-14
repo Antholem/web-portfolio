@@ -24,18 +24,20 @@ const links = [
     { href: "#contacts", label: "Contacts" },
 ]
 
-export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark" }) {
+export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dark" }) {
     const theme = useThemeStore((state) => state.theme)
     const setTheme = useThemeStore((state) => state.setTheme)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
-        setTheme(initialTheme)
+        if (initialTheme) {
+            setTheme(initialTheme)
+        }
         setMounted(true)
     }, [initialTheme, setTheme])
 
-    const currentTheme = mounted ? theme : initialTheme
+    const currentTheme = mounted ? theme : initialTheme || theme
 
     return (
         <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
@@ -71,11 +73,18 @@ export default function Navbar({ initialTheme }: { initialTheme: "light" | "dark
                 <Link href="/" className="flex items-center gap-2 font-semibold">
                     <div className="relative h-6 w-6">
                         <Image
-                            src={currentTheme === "dark" ? "/logo-light.svg" : "/logo-dark.svg"}
+                            src="/logo-dark.svg"
                             alt="Logo"
                             fill
                             sizes="24px"
-                            className="object-contain"
+                            className="object-contain dark:hidden"
+                        />
+                        <Image
+                            src="/logo-light.svg"
+                            alt="Logo"
+                            fill
+                            sizes="24px"
+                            className="hidden object-contain dark:block"
                         />
                     </div>
                 </Link>
