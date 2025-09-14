@@ -1,20 +1,10 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/ui/navbar"
 import { cookies } from "next/headers"
 import type { ReactNode } from "react"
 import Script from "next/script"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Antholem",
@@ -63,10 +53,7 @@ export default async function RootLayout({
           `}
         </Script>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable}`}
-        suppressHydrationWarning
-      >
+      <body className="font-sans" suppressHydrationWarning>
         <Navbar initialTheme={cookieTheme} />
         <main>{children}</main>
       </body>
