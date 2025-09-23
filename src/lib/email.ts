@@ -63,8 +63,7 @@ function buildHtml(name: string, replyTo: string, msg: string) {
   const safeMsg = escapeHtml(msg.trim()).replace(/\r?\n/g, "<br>");
   const replyHref = replyTo ? `mailto:${replyTo}` : "#";
 
-  return normalizeMessageBody(`\
-<!doctype html>
+  return normalizeMessageBody(`<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -82,7 +81,7 @@ function buildHtml(name: string, replyTo: string, msg: string) {
     .label{display:block;font-size:12px;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.02em;}
     .value{font-size:15px;color:#0f172a;margin:0 0 16px;}
     .msg{padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    .btn{display:inline-block;margin-top:16px;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600;border:1px solid #0f172a;color:#0f172a;background:transparent;}
+    .btn{display:inline-block;margin-top:16px;padding:10px 16px;border-radius:8px;text-decoration:none;background:#ffffff;color:#111827;font-weight:600;border:1px solid #e5e7eb;}
     .footer{padding:16px 24px;color:#64748b;font-size:12px;border-top:1px solid #e5e7eb;background:#fafafa;}
     @media (prefers-color-scheme: dark){
       body{background:#0b0c10;color:#e5e7eb;}
@@ -91,8 +90,8 @@ function buildHtml(name: string, replyTo: string, msg: string) {
       .body{color:#e5e7eb;}
       .value{color:#e5e7eb;}
       .msg{background:#0f172a;border-color:#1f2937;color:#e5e7eb;}
-      .btn{color:#e5e7eb;border-color:#e5e7eb;background:transparent;}
       .footer{background:#0f172a;border-top-color:#1f2937;color:#9ca3af;}
+      .btn{background:#000000;color:#ffffff;border-color:#1f2937;}
     }
   </style>
 </head>
@@ -261,11 +260,9 @@ export async function sendContactEmail({
   const replyTo = sanitizeEmail(email);
   const subject = `[Portfolio] New message from ${sanitizedName}`;
 
-  // Build bodies
   const textBody = buildPlainText(sanitizedName, replyTo, message);
   const htmlBody = buildHtml(sanitizedName, replyTo, message);
 
-  // MIME body
   const boundary = `b1_${Date.now().toString(36)}`;
   const mimeBody = [
     `--${boundary}`,
