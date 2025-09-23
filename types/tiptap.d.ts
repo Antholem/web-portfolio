@@ -15,6 +15,7 @@ declare module '@tiptap/react' {
     readonly isEmpty: boolean;
     getHTML(): string;
     getText(options?: { blockSeparator?: string }): string;
+    getJSON(): unknown;
     setEditable(editable: boolean): void;
     isActive(name: string): boolean;
     commands: {

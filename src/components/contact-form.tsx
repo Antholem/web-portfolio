@@ -1,12 +1,40 @@
 'use client';
 
-import { type ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { type ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
 import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
+
+type JSONContent = {
+  type?: string;
+  text?: string;
+  content?: JSONContent[];
+};
+
+const ZERO_WIDTH_SPACE_REGEX = /\u200B/g;
+const NON_BREAKING_SPACE_REGEX = /\u00A0/g;
+
+const sanitizeEditorText = (value: string) =>
+  value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
+
+const nodeHasMeaningfulText = (node: JSONContent | null | undefined): boolean => {
+  if (!node) {
+    return false;
+  }
+
+  if (typeof node.text === 'string' && sanitizeEditorText(node.text).length > 0) {
+    return true;
+  }
+
+  if (Array.isArray(node.content)) {
+    return node.content.some((child) => nodeHasMeaningfulText(child));
+  }
+
+  return false;
+};
 
 interface FormValues {
   name: string;
@@ -40,6 +68,21 @@ export default function ContactForm() {
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [, setEditorStateVersion] = useState(0);
 
+  const updateEditorEmptyState = useCallback(
+    (instance: TiptapEditor) => {
+      const plainText = sanitizeEditorText(instance.getText({ blockSeparator: '\n' }));
+
+      if (plainText.length > 0) {
+        setIsEditorEmpty(false);
+        return;
+      }
+
+      const documentJson = instance.getJSON() as JSONContent;
+      setIsEditorEmpty(!nodeHasMeaningfulText(documentJson));
+    },
+    [setIsEditorEmpty],
+  );
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -60,15 +103,15 @@ export default function ContactForm() {
       },
     },
     onCreate({ editor }) {
-      setIsEditorEmpty(editor.isEmpty);
+      updateEditorEmptyState(editor);
     },
     onUpdate({ editor }) {
-      setIsEditorEmpty(editor.isEmpty);
+      updateEditorEmptyState(editor);
       setEditorStateVersion((count) => count + 1);
     },
     onSelectionUpdate({ editor }) {
+      updateEditorEmptyState(editor);
       setEditorStateVersion((count) => count + 1);
-      setIsEditorEmpty(editor.isEmpty);
     },
   });
 
@@ -79,6 +122,14 @@ export default function ContactForm() {
 
     editor.setEditable(status.state !== 'submitting');
   }, [editor, status.state]);
+
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    updateEditorEmptyState(editor);
+  }, [editor, updateEditorEmptyState]);
 
   const handleChange = (field: keyof FormValues) =>
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +144,7 @@ export default function ContactForm() {
       return;
     }
 
-    const plainMessage = editor.getText({ blockSeparator: '\n' }).trim();
+    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
     const messageHtml = editor.getHTML();
 
     if (!plainMessage) {
@@ -126,7 +177,7 @@ export default function ContactForm() {
 
       setValues(initialValues);
       editor.commands.clearContent(true);
-      setIsEditorEmpty(true);
+      updateEditorEmptyState(editor);
       setStatus({ state: 'success', message: 'Thanks! Your message has been delivered.' });
     } catch (error) {
       const message =
