@@ -66,3 +66,45 @@
     @apply bg-background text-foreground;
   }
 }
+@layer components {
+  .rich-textarea {
+    @apply min-h-[10rem] w-full whitespace-pre-wrap break-words bg-transparent px-3 py-2 text-sm leading-6 text-foreground outline-none;
+  }
+
+  .rich-textarea:empty::before {
+    @apply pointer-events-none text-muted-foreground;
+    content: attr(data-placeholder);
+  }
+
+  .rich-textarea p,
+  .rich-textarea div,
+  .rich-textarea ul,
+  .rich-textarea ol {
+    @apply my-0;
+  }
+
+  .rich-textarea ul,
+  .rich-textarea ol {
+    @apply ml-5;
+  }
+
+  .rich-textarea ul {
+    @apply list-disc;
+  }
+
+  .rich-textarea ol {
+    @apply list-decimal;
+  }
+
+  .rich-textarea li {
+    @apply my-1;
+  }
+
+  .rich-textarea code {
+    @apply rounded bg-muted px-1 py-0.5 font-mono text-sm;
+  }
+
+  .rich-textarea pre {
+    @apply whitespace-pre-wrap rounded-md bg-muted px-3 py-2 font-mono text-sm;
+  }
+}
