@@ -1,13 +1,16 @@
 'use client';
 
-import { type ChangeEvent, FormEvent, useState } from 'react';
+import { type ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import type { LucideIcon } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
 
 interface FormValues {
   name: string;
   email: string;
-  message: string;
 }
 
 type FormStatus =
@@ -19,29 +22,93 @@ type FormStatus =
 const initialValues: FormValues = {
   name: '',
   email: '',
-  message: '',
 };
 
 const initialStatus: FormStatus = { state: 'idle', message: null };
 
+interface FormattingOption {
+  label: string;
+  icon: LucideIcon;
+  action: () => boolean;
+  isActive: boolean;
+  isDisabled: boolean;
+}
+
 export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
+  const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [, setEditorStateVersion] = useState(0);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        bulletList: { keepAttributes: false, keepMarks: true },
+        orderedList: { keepAttributes: false, keepMarks: true },
+      }),
+    ],
+    editorProps: {
+      attributes: {
+        class: 'outline-none',
+      },
+    },
+    onCreate({ editor }) {
+      setIsEditorEmpty(editor.isEmpty);
+    },
+    onUpdate({ editor }) {
+      setIsEditorEmpty(editor.isEmpty);
+      setEditorStateVersion((count) => count + 1);
+    },
+    onSelectionUpdate({ editor }) {
+      setEditorStateVersion((count) => count + 1);
+      setIsEditorEmpty(editor.isEmpty);
+    },
+  });
+
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    editor.setEditable(status.state !== 'submitting');
+  }, [editor, status.state]);
 
   const handleChange = (field: keyof FormValues) =>
-    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (event: ChangeEvent<HTMLInputElement>) => {
       setValues((previous) => ({ ...previous, [field]: event.target.value }));
     };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!editor) {
+      setStatus({ state: 'error', message: 'Editor failed to load. Please refresh the page.' });
+      return;
+    }
+
+    const plainMessage = editor.getText({ blockSeparator: '\n' }).trim();
+    const messageHtml = editor.getHTML();
+
+    if (!plainMessage) {
+      setStatus({ state: 'error', message: 'Please include a message.' });
+      return;
+    }
+
+    if (plainMessage.length > 5000) {
+      setStatus({
+        state: 'error',
+        message: 'Message is too long. Please keep it under 5000 characters.',
+      });
+      return;
+    }
+
     setStatus({ state: 'submitting', message: 'Sending your message…' });
 
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, message: plainMessage, messageHtml }),
       });
 
       const payload = (await response.json()) as { error?: string } | { success?: boolean };
@@ -51,6 +118,8 @@ export default function ContactForm() {
       }
 
       setValues(initialValues);
+      editor.commands.clearContent(true);
+      setIsEditorEmpty(true);
       setStatus({ state: 'success', message: 'Thanks! Your message has been delivered.' });
     } catch (error) {
       const message =
@@ -63,55 +132,123 @@ export default function ContactForm() {
 
   const isSubmitting = status.state === 'submitting';
 
+  const formattingOptions: FormattingOption[] = editor
+    ? [
+        {
+          label: 'Bold',
+          icon: Bold,
+          action: () => editor.chain().focus().toggleBold().run(),
+          isActive: editor.isActive('bold'),
+          isDisabled: !editor.can().chain().focus().toggleBold().run(),
+        },
+        {
+          label: 'Italic',
+          icon: Italic,
+          action: () => editor.chain().focus().toggleItalic().run(),
+          isActive: editor.isActive('italic'),
+          isDisabled: !editor.can().chain().focus().toggleItalic().run(),
+        },
+        {
+          label: 'Bullet list',
+          icon: List,
+          action: () => editor.chain().focus().toggleBulletList().run(),
+          isActive: editor.isActive('bulletList'),
+          isDisabled: !editor.can().chain().focus().toggleBulletList().run(),
+        },
+        {
+          label: 'Numbered list',
+          icon: ListOrdered,
+          action: () => editor.chain().focus().toggleOrderedList().run(),
+          isActive: editor.isActive('orderedList'),
+          isDisabled: !editor.can().chain().focus().toggleOrderedList().run(),
+        },
+        {
+          label: 'Quote',
+          icon: Quote,
+          action: () => editor.chain().focus().toggleBlockquote().run(),
+          isActive: editor.isActive('blockquote'),
+          isDisabled: !editor.can().chain().focus().toggleBlockquote().run(),
+        },
+      ]
+    : [];
+
   return (
-    <form onSubmit={handleSubmit} className="mx-auto flex max-w-xl flex-col gap-4 rounded-lg border border-border bg-background p-6 shadow-sm">
-      <div className="flex flex-col gap-2">
-        <label htmlFor="name" className="text-sm font-medium text-foreground">
-          Your name
-        </label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          required
-          value={values.name}
-          onChange={handleChange('name')}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          placeholder="Juan Dela Cruz"
-        />
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto flex max-w-3xl flex-col gap-6 rounded-lg border border-border bg-background p-6 shadow-sm"
+    >
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="name" className="text-sm font-medium text-foreground">
+            Your name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            value={values.name}
+            onChange={handleChange('name')}
+            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            placeholder="Juan Dela Cruz"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="text-sm font-medium text-foreground">
+            Your email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            value={values.email}
+            onChange={handleChange('email')}
+            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            placeholder="you@example.com"
+          />
+        </div>
+        <div className="flex flex-col gap-2 md:col-span-2">
+          <span className="text-sm font-medium text-foreground">How can I help?</span>
+          <div className="flex flex-col overflow-hidden rounded-md border border-input bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+            <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/60 px-2 py-1">
+              {formattingOptions.map(({ label, icon: Icon, action, isActive, isDisabled }) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={action}
+                  disabled={isSubmitting || isDisabled}
+                  aria-label={label}
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                    isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  } ${isSubmitting || isDisabled ? 'opacity-50' : ''}`}
+                >
+                  <Icon className="h-4 w-4" />
+                </button>
+              ))}
+            </div>
+            <div className="relative">
+              {editor ? (
+                <>
+                  {isEditorEmpty && (
+                    <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
+                      Tell me about your project or question.
+                    </span>
+                  )}
+                  <EditorContent
+                    editor={editor}
+                    className="min-h-[180px] px-3 py-2 text-sm leading-6 text-foreground focus:outline-none [&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-6 [&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground"
+                  />
+                </>
+              ) : (
+                <div className="px-3 py-2 text-sm text-muted-foreground">Loading editor…</div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="text-sm font-medium text-foreground">
-          Your email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          value={values.email}
-          onChange={handleChange('email')}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          placeholder="you@example.com"
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="message" className="text-sm font-medium text-foreground">
-          How can I help?
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          required
-          rows={5}
-          value={values.message}
-          onChange={handleChange('message')}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-          placeholder="Tell me about your project or question."
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Button type="submit" disabled={isSubmitting} className="w-full justify-center">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
           {isSubmitting ? 'Sending…' : 'Send message'}
         </Button>
         {status.message && (

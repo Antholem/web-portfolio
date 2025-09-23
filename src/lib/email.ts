@@ -4,6 +4,7 @@ interface ContactMessage {
   name: string;
   email: string;
   message: string;
+  messageHtml?: string;
 }
 
 class EmailConfigurationError extends Error {
@@ -43,6 +44,67 @@ function escapeHtml(s: string) {
     .replace(/"/g, "&quot;");
 }
 
+const ALLOWED_RICH_TEXT_TAGS = new Set([
+  'p',
+  'br',
+  'strong',
+  'em',
+  's',
+  'u',
+  'blockquote',
+  'code',
+  'pre',
+  'ul',
+  'ol',
+  'li',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'hr',
+]);
+
+function sanitizeRichText(html: string): string {
+  if (!html) {
+    return '';
+  }
+
+  const withoutDangerous = html
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<\s*(script|style)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '');
+
+  const sanitized = withoutDangerous
+    .replace(/<([^>\s\/]+)([^>]*)>/gi, (match, tagName) => {
+      const name = tagName.toLowerCase();
+      if (ALLOWED_RICH_TEXT_TAGS.has(name)) {
+        if (name === 'br' || name === 'hr') {
+          return `<${name}>`;
+        }
+        return `<${name}>`;
+      }
+      return '';
+    })
+    .replace(/<\/([^>\s]+)>/gi, (match, tagName) => {
+      const name = tagName.toLowerCase();
+      return ALLOWED_RICH_TEXT_TAGS.has(name) ? `</${name}>` : '';
+    })
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\u00a0/g, ' ');
+
+  return sanitized.trim();
+}
+
+function extractVisibleText(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function buildPlainText(name: string, replyTo: string, msg: string) {
   return [
     "You received a new message through your portfolio.",
@@ -58,9 +120,12 @@ function buildPlainText(name: string, replyTo: string, msg: string) {
   ].join("\n");
 }
 
-function buildHtml(name: string, replyTo: string, msg: string) {
+function buildHtml(name: string, replyTo: string, msg: string, msgHtml?: string) {
   const preheader = "New message from your portfolio. Open to view.";
-  const safeMsg = escapeHtml(msg.trim()).replace(/\r?\n/g, "<br>");
+  const sanitizedHtml = msgHtml ? sanitizeRichText(msgHtml) : '';
+  const hasRichText = sanitizedHtml && extractVisibleText(sanitizedHtml).length > 0;
+  const fallbackHtml = escapeHtml(msg.trim()).replace(/\r?\n/g, "<br>");
+  const messageMarkup = hasRichText ? sanitizedHtml : `<p>${fallbackHtml}</p>`;
   const replyHref = replyTo ? `mailto:${replyTo}` : "#";
 
   return normalizeMessageBody(`<!doctype html>
@@ -80,7 +145,18 @@ function buildHtml(name: string, replyTo: string, msg: string) {
     .body{padding:20px 24px;font-size:15px;line-height:1.6;}
     .label{display:block;font-size:12px;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.02em;}
     .value{font-size:15px;color:#0f172a;margin:0 0 16px;}
-    .msg{padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
+    .msg{padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;}
+    .msg *{font-family:inherit;}
+    .msg p{margin:0 0 12px;}
+    .msg p:last-child{margin-bottom:0;}
+    .msg ul,.msg ol{margin:0 0 12px;padding-left:20px;}
+    .msg li{margin-bottom:6px;}
+    .msg li:last-child{margin-bottom:0;}
+    .msg blockquote{margin:0 0 12px;padding-left:12px;border-left:3px solid #d1d5db;color:#475569;}
+    .msg blockquote:last-child{margin-bottom:0;}
+    .msg code{display:inline-block;padding:2px 4px;border-radius:4px;background:#e2e8f0;font-size:13px;}
+    .msg pre{margin:0 0 12px;padding:12px;border-radius:8px;background:#0f172a;color:#f8fafc;overflow:auto;font-size:13px;}
+    .msg pre code{display:block;padding:0;background:transparent;color:inherit;}
     .btn{display:inline-block;margin-top:16px;padding:10px 16px;border-radius:8px;text-decoration:none;background:#ffffff;color:#111827;font-weight:600;border:1px solid #e5e7eb;}
     .footer{padding:16px 24px;color:#64748b;font-size:12px;border-top:1px solid #e5e7eb;background:#fafafa;}
     @media (prefers-color-scheme: dark){
@@ -90,6 +166,9 @@ function buildHtml(name: string, replyTo: string, msg: string) {
       .body{color:#e5e7eb;}
       .value{color:#e5e7eb;}
       .msg{background:#0f172a;border-color:#1f2937;color:#e5e7eb;}
+      .msg blockquote{border-left-color:#334155;color:#cbd5f5;}
+      .msg code{background:#1f2937;color:#e5e7eb;}
+      .msg pre{background:#111827;border-color:#1f2937;color:#f8fafc;}
       .footer{background:#0f172a;border-top-color:#1f2937;color:#9ca3af;}
       .btn{background:#000000;color:#ffffff;border-color:#1f2937;}
     }
@@ -110,7 +189,7 @@ function buildHtml(name: string, replyTo: string, msg: string) {
         <p class="value">${replyTo ? escapeHtml(replyTo) : "not provided"}</p>
 
         <span class="label">Message</span>
-        <div class="msg">${safeMsg}</div>
+        <div class="msg">${messageMarkup}</div>
 
         ${replyTo ? `<a class="btn" href="${replyHref}">Reply</a>` : ""}
       </div>
@@ -245,6 +324,7 @@ export async function sendContactEmail({
   name,
   email,
   message,
+  messageHtml,
 }: ContactMessage): Promise<void> {
   const fromEmail = process.env.APP_FROM_EMAIL;
   const fromPassword = process.env.APP_FROM_PASSWORD;
@@ -261,7 +341,7 @@ export async function sendContactEmail({
   const subject = `[Portfolio] New message from ${sanitizedName}`;
 
   const textBody = buildPlainText(sanitizedName, replyTo, message);
-  const htmlBody = buildHtml(sanitizedName, replyTo, message);
+  const htmlBody = buildHtml(sanitizedName, replyTo, message, messageHtml);
 
   const boundary = `b1_${Date.now().toString(36)}`;
   const mimeBody = [

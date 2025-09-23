@@ -6,6 +6,7 @@ interface ContactRequestBody {
   name?: unknown;
   email?: unknown;
   message?: unknown;
+  messageHtml?: unknown;
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -13,7 +14,10 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function validateRequest(body: ContactRequestBody) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const email = typeof body.email === 'string' ? body.email.trim() : '';
-  const message = typeof body.message === 'string' ? body.message.trim() : '';
+  const rawMessage = typeof body.message === 'string' ? body.message : '';
+  const normalizedMessage = rawMessage.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const message = normalizedMessage.trim();
+  const messageHtml = typeof body.messageHtml === 'string' ? body.messageHtml.trim() : '';
 
   if (!name) {
     return { error: 'Please provide your name.' } as const;
@@ -31,7 +35,11 @@ function validateRequest(body: ContactRequestBody) {
     return { error: 'Message is too long. Please keep it under 5000 characters.' } as const;
   }
 
-  return { name, email, message } as const;
+  if (messageHtml.length > 20000) {
+    return { error: 'Formatted message is too long. Please shorten it.' } as const;
+  }
+
+  return { name, email, message, messageHtml } as const;
 }
 
 export async function POST(request: Request) {
