@@ -49,7 +49,14 @@ export default function ContactForm() {
     ],
     editorProps: {
       attributes: {
-        class: 'outline-none',
+        class: [
+          'min-h-[180px] w-full cursor-text px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
+          'focus:outline-none focus-visible:outline-none',
+          '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5',
+          '[&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0',
+          '[&_ul]:list-disc [&_ul]:pl-6',
+          '[&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
+        ].join(' '),
       },
     },
     onCreate({ editor }) {
@@ -235,10 +242,7 @@ export default function ContactForm() {
                       Tell me about your project or question.
                     </span>
                   )}
-                  <EditorContent
-                    editor={editor}
-                    className="min-h-[180px] px-3 py-2 text-sm leading-6 text-foreground focus:outline-none [&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-6 [&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground"
-                  />
+                  <EditorContent editor={editor} />
                 </>
               ) : (
                 <div className="px-3 py-2 text-sm text-muted-foreground">Loading editor…</div>
