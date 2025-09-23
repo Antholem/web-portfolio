@@ -82,7 +82,7 @@ function buildHtml(name: string, replyTo: string, msg: string) {
     .label{display:block;font-size:12px;color:#64748b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.02em;}
     .value{font-size:15px;color:#0f172a;margin:0 0 16px;}
     .msg{padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    .btn{display:inline-block;margin-top:16px;padding:10px 16px;border-radius:8px;text-decoration:none;background:#000000;color:#ffffff;font-weight:600;}
+    .btn{display:inline-block;margin-top:16px;padding:10px 16px;border-radius:8px;text-decoration:none;background:#2563eb;color:#ffffff;font-weight:600;}
     .footer{padding:16px 24px;color:#64748b;font-size:12px;border-top:1px solid #e5e7eb;background:#fafafa;}
     @media (prefers-color-scheme: dark){
       body{background:#0b0c10;color:#e5e7eb;}
@@ -91,7 +91,7 @@ function buildHtml(name: string, replyTo: string, msg: string) {
       .body{color:#e5e7eb;}
       .value{color:#e5e7eb;}
       .msg{background:#0f172a;border-color:#1f2937;color:#e5e7eb;}
-      .btn{background:#ffffff;color:#000000;}
+      .btn{color:#ffffff;}
       .footer{background:#0f172a;border-top-color:#1f2937;color:#9ca3af;}
     }
   </style>
