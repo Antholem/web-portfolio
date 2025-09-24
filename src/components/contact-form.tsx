@@ -20,6 +20,8 @@ const NON_BREAKING_SPACE_REGEX = /\u00A0/g;
 const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
 
+const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
+
 const nodeHasMeaningfulText = (node: JSONContent | null | undefined): boolean => {
   if (!node) {
     return false;
@@ -29,8 +31,20 @@ const nodeHasMeaningfulText = (node: JSONContent | null | undefined): boolean =>
     return true;
   }
 
-  if (Array.isArray(node.content)) {
-    return node.content.some((child) => nodeHasMeaningfulText(child));
+  if (node.type === 'hardBreak') {
+    return true;
+  }
+
+  if (!Array.isArray(node.content)) {
+    return false;
+  }
+
+  if (node.content.some((child) => nodeHasMeaningfulText(child))) {
+    return true;
+  }
+
+  if (node.type && WRAPPER_NODE_TYPES.has(node.type)) {
+    return node.content.length > 0;
   }
 
   return false;
