@@ -3,7 +3,7 @@
 import { type ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
@@ -248,7 +248,7 @@ export default function ContactForm() {
   return (
     <Card className="mx-auto max-w-3xl">
       <form onSubmit={handleSubmit} className="flex flex-col">
-        <CardContent className="space-y-6 p-6 pt-6 pb-0">
+        <CardContent className="space-y-6 p-6 pt-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-2">
               <label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -316,25 +316,25 @@ export default function ContactForm() {
               </div>
             </div>
           </div>
-          <div className="-mx-6 flex flex-col items-stretch gap-2 border-t border-border/60 bg-muted/40 px-6 py-4 md:flex-row md:items-center md:justify-between">
-            <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
-              {isSubmitting ? 'Sending…' : 'Send message'}
-            </Button>
-            {status.message && (
-              <p
-                className={`text-sm ${
-                  status.state === 'error'
-                    ? 'text-destructive'
-                    : status.state === 'success'
-                      ? 'text-emerald-600'
-                      : 'text-muted-foreground'
-                }`}
-              >
-                {status.message}
-              </p>
-            )}
-          </div>
         </CardContent>
+        <CardFooter className="flex-col items-stretch gap-2 border-t border-border/60 px-6 py-4 md:flex-row md:items-center md:justify-between">
+          <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
+            {isSubmitting ? 'Sending…' : 'Send message'}
+          </Button>
+          {status.message && (
+            <p
+              className={`text-sm ${
+                status.state === 'error'
+                  ? 'text-destructive'
+                  : status.state === 'success'
+                    ? 'text-emerald-600'
+                    : 'text-muted-foreground'
+              }`}
+            >
+              {status.message}
+            </p>
+          )}
+        </CardFooter>
       </form>
     </Card>
   );
