@@ -3,6 +3,14 @@
 import { type ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
@@ -245,95 +253,105 @@ export default function ContactForm() {
     : [];
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mx-auto flex max-w-3xl flex-col gap-6 rounded-lg border border-border bg-background p-6 shadow-sm"
-    >
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="name" className="text-sm font-medium text-foreground">
-            Your name
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            value={values.name}
-            onChange={handleChange('name')}
-            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-            placeholder="Juan Dela Cruz"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="email" className="text-sm font-medium text-foreground">
-            Your email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            value={values.email}
-            onChange={handleChange('email')}
-            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-            placeholder="you@example.com"
-          />
-        </div>
-        <div className="flex flex-col gap-2 md:col-span-2">
-          <span className="text-sm font-medium text-foreground">How can I help?</span>
-          <div className="flex flex-col overflow-hidden rounded-md border border-input bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
-            <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/60 px-2 py-1">
-              {formattingOptions.map(({ label, icon: Icon, action, isActive, isDisabled }) => (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={action}
-                  disabled={isSubmitting || isDisabled}
-                  aria-label={label}
-                  className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                    isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  } ${isSubmitting || isDisabled ? 'opacity-50' : ''}`}
-                >
-                  <Icon className="h-4 w-4" />
-                </button>
-              ))}
+    <Card className="mx-auto w-full max-w-3xl">
+      <CardHeader>
+        <CardTitle>Let&apos;s work together</CardTitle>
+        <CardDescription>
+          Have a project in mind or just want to say hi? Share a few details and I&apos;ll get back to
+          you as soon as possible.
+        </CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit} className="flex flex-col">
+        <CardContent className="flex flex-col gap-6">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name" className="text-sm font-medium text-foreground">
+                Your name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                value={values.name}
+                onChange={handleChange('name')}
+                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                placeholder="Juan Dela Cruz"
+              />
             </div>
-            <div className="relative">
-              {editor ? (
-                <>
-                  {isEditorEmpty && (
-                    <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
-                      Tell me about your project or question.
-                    </span>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="text-sm font-medium text-foreground">
+                Your email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={values.email}
+                onChange={handleChange('email')}
+                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <span className="text-sm font-medium text-foreground">How can I help?</span>
+              <div className="flex flex-col overflow-hidden rounded-md border border-input bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/60 px-2 py-1">
+                  {formattingOptions.map(({ label, icon: Icon, action, isActive, isDisabled }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={action}
+                      disabled={isSubmitting || isDisabled}
+                      aria-label={label}
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                        isActive
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      } ${isSubmitting || isDisabled ? 'opacity-50' : ''}`}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </button>
+                  ))}
+                </div>
+                <div className="relative">
+                  {editor ? (
+                    <>
+                      {isEditorEmpty && (
+                        <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
+                          Tell me about your project or question.
+                        </span>
+                      )}
+                      <EditorContent editor={editor} />
+                    </>
+                  ) : (
+                    <div className="px-3 py-2 text-sm text-muted-foreground">Loading editor…</div>
                   )}
-                  <EditorContent editor={editor} />
-                </>
-              ) : (
-                <div className="px-3 py-2 text-sm text-muted-foreground">Loading editor…</div>
-              )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
-          {isSubmitting ? 'Sending…' : 'Send message'}
-        </Button>
-        {status.message && (
-          <p
-            className={`text-sm ${
-              status.state === 'error'
-                ? 'text-destructive'
-                : status.state === 'success'
-                  ? 'text-emerald-600'
-                  : 'text-muted-foreground'
-            }`}
-          >
-            {status.message}
-          </p>
-        )}
-      </div>
-    </form>
+        </CardContent>
+        <CardFooter className="flex-col items-stretch gap-2 md:flex-row md:items-center md:justify-between">
+          <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
+            {isSubmitting ? 'Sending…' : 'Send message'}
+          </Button>
+          {status.message && (
+            <p
+              className={`text-sm ${
+                status.state === 'error'
+                  ? 'text-destructive'
+                  : status.state === 'success'
+                    ? 'text-emerald-600'
+                    : 'text-muted-foreground'
+              }`}
+            >
+              {status.message}
+            </p>
+          )}
+        </CardFooter>
+      </form>
+    </Card>
   );
 }

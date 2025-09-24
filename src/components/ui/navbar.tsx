@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import {
     Sheet,
     SheetTrigger,
@@ -14,7 +15,6 @@ import { FaMoon, FaSun } from "react-icons/fa"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
-import { Separator } from "@/components/ui/separator"
 
 const links = [
     { href: "/", label: "About" },
@@ -40,70 +40,73 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const currentTheme = mounted ? theme : initialTheme || theme
 
     return (
-        <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
-            <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-                <div className="md:hidden">
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="size-8"
-                                aria-label="Open menu"
-                            >
-                                <Menu className="h-5 w-5" />
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="left">
-                            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                            <SheetDescription className="sr-only">
-                                Site navigation links
-                            </SheetDescription>
-                            <nav className="grid gap-4 py-4">
-                                {links.map((l) => (
-                                    <Button key={l.href} variant="ghost" asChild>
-                                        <Link href={l.href}>{l.label}</Link>
+        <header className="sticky top-0 z-40 w-full bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/40">
+            <div className="mx-auto max-w-6xl px-4 py-3">
+                <Card className="flex h-14 w-full items-center justify-between gap-4 rounded-full border-border/60 bg-background/80 px-4 shadow-sm supports-[backdrop-filter]:bg-background/60">
+                    <div className="flex items-center gap-2">
+                        <div className="md:hidden">
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-8"
+                                        aria-label="Open menu"
+                                    >
+                                        <Menu className="h-5 w-5" />
                                     </Button>
-                                ))}
-                            </nav>
-                        </SheetContent>
-                    </Sheet>
-                </div>
+                                </SheetTrigger>
+                                <SheetContent side="left">
+                                    <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                                    <SheetDescription className="sr-only">
+                                        Site navigation links
+                                    </SheetDescription>
+                                    <nav className="grid gap-4 py-4">
+                                        {links.map((l) => (
+                                            <Button key={l.href} variant="ghost" asChild>
+                                                <Link href={l.href}>{l.label}</Link>
+                                            </Button>
+                                        ))}
+                                    </nav>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
 
-                <Link href="/" className="flex items-center gap-2 font-semibold">
-                    <div className="relative h-6 w-6">
-                        <Image
-                            src="/logo-dark.svg"
-                            alt="Logo"
-                            fill
-                            sizes="24px"
-                            className="object-contain dark:hidden"
-                        />
-                        <Image
-                            src="/logo-light.svg"
-                            alt="Logo"
-                            fill
-                            sizes="24px"
-                            className="hidden object-contain dark:block"
-                        />
+                        <Link href="/" className="flex items-center gap-2 font-semibold">
+                            <div className="relative h-6 w-6">
+                                <Image
+                                    src="/logo-dark.svg"
+                                    alt="Logo"
+                                    fill
+                                    sizes="24px"
+                                    className="object-contain dark:hidden"
+                                />
+                                <Image
+                                    src="/logo-light.svg"
+                                    alt="Logo"
+                                    fill
+                                    sizes="24px"
+                                    className="hidden object-contain dark:block"
+                                />
+                            </div>
+                        </Link>
                     </div>
-                </Link>
 
-                <nav className="hidden md:flex items-center gap-4">
-                    {links.map((l) => (
-                        <Button key={l.href} variant="ghost" asChild>
-                            <Link href={l.href}>{l.label}</Link>
+                    <nav className="hidden items-center gap-4 md:flex">
+                        {links.map((l) => (
+                            <Button key={l.href} variant="ghost" asChild>
+                                <Link href={l.href}>{l.label}</Link>
+                            </Button>
+                        ))}
+                    </nav>
+
+                    <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
+                            {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                         </Button>
-                    ))}
-                </nav>
-
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
-                        {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
-                    </Button>
-                </div>
+                    </div>
+                </Card>
             </div>
-            <Separator />
         </header>
     )
 }
