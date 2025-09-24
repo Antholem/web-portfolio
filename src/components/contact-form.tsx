@@ -261,7 +261,7 @@ export default function ContactForm() {
             required
             value={values.name}
             onChange={handleChange('name')}
-            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             placeholder="Juan Dela Cruz"
           />
         </div>
@@ -276,7 +276,7 @@ export default function ContactForm() {
             required
             value={values.email}
             onChange={handleChange('email')}
-            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
             placeholder="you@example.com"
           />
         </div>
@@ -303,7 +303,7 @@ export default function ContactForm() {
               {editor ? (
                 <>
                   {isEditorEmpty && (
-                    <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground/70">
+                    <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
                       Tell me about your project or question.
                     </span>
                   )}
