@@ -303,7 +303,7 @@ export default function ContactForm() {
               {editor ? (
                 <>
                   {isEditorEmpty && (
-                    <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
+                    <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground/70">
                       Tell me about your project or question.
                     </span>
                   )}
