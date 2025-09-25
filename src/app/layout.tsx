@@ -53,9 +53,11 @@ export default async function RootLayout({
           `}
         </Script>
       </head>
-      <body className="font-sans" suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <Navbar initialTheme={cookieTheme} />
-        <main>{children}</main>
+        <main className="relative z-10 mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
+          {children}
+        </main>
       </body>
     </html>
   );

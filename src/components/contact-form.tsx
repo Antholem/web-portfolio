@@ -246,9 +246,9 @@ export default function ContactForm() {
     : [];
 
   return (
-    <Card className="mx-auto max-w-3xl">
+    <Card className="mx-auto max-w-3xl backdrop-blur-sm">
       <form onSubmit={handleSubmit} className="flex flex-col">
-        <CardContent className="space-y-6 p-6 pt-6">
+        <CardContent className="relative z-10 space-y-6 p-8">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-2">
               <label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -261,7 +261,7 @@ export default function ContactForm() {
                 required
                 value={values.name}
                 onChange={handleChange('name')}
-                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border/60 bg-white/80 px-3 py-2 text-sm text-foreground shadow-[0_18px_45px_-30px_rgba(15,23,42,0.45)] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-white/[0.04]"
                 placeholder="Juan Dela Cruz"
               />
             </div>
@@ -276,14 +276,14 @@ export default function ContactForm() {
                 required
                 value={values.email}
                 onChange={handleChange('email')}
-                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border/60 bg-white/80 px-3 py-2 text-sm text-foreground shadow-[0_18px_45px_-30px_rgba(15,23,42,0.45)] outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-white/[0.04]"
                 placeholder="you@example.com"
               />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
               <span className="text-sm font-medium text-foreground">How can I help?</span>
-              <div className="flex flex-col overflow-hidden rounded-md border border-input bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
-                <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/60 px-2 py-1">
+              <div className="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-white/80 shadow-[0_22px_50px_-35px_rgba(15,23,42,0.55)] backdrop-blur focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 dark:bg-white/[0.03]">
+                <div className="flex flex-wrap items-center gap-1 border-b border-border/70 bg-muted/60 px-2 py-1 dark:bg-white/[0.02]">
                   {formattingOptions.map(({ label, icon: Icon, action, isActive, isDisabled }) => (
                     <button
                       key={label}
@@ -291,8 +291,8 @@ export default function ContactForm() {
                       onClick={action}
                       disabled={isSubmitting || isDisabled}
                       aria-label={label}
-                      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                        isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      className={`inline-flex h-9 w-9 items-center justify-center rounded-full border border-transparent text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                        isActive ? 'bg-primary/15 text-primary shadow-[0_10px_30px_-20px_rgba(46,125,255,0.65)]' : 'text-muted-foreground hover:bg-muted/80 hover:text-foreground'
                       } ${isSubmitting || isDisabled ? 'opacity-50' : ''}`}
                     >
                       <Icon className="h-4 w-4" />
@@ -317,8 +317,12 @@ export default function ContactForm() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex-col items-stretch gap-2 border-t border-border/60 px-6 py-4 md:flex-row md:items-center md:justify-between">
-          <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
+        <CardFooter className="flex-col items-stretch gap-2 border-t border-border/60 bg-muted/60 px-8 py-6 backdrop-blur-md dark:bg-white/[0.02] md:flex-row md:items-center md:justify-between">
+          <Button
+            type="submit"
+            disabled={isSubmitting || !editor}
+            className="w-full justify-center rounded-full bg-gradient-to-r from-primary via-primary/90 to-primary/80 shadow-[0_20px_45px_-20px_rgba(46,125,255,0.65)] hover:from-primary/95 hover:via-primary/90 hover:to-primary/80 md:w-auto"
+          >
             {isSubmitting ? 'Sending…' : 'Send message'}
           </Button>
           {status.message && (
