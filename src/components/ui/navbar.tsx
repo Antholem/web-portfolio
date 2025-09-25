@@ -14,7 +14,6 @@ import { FaMoon, FaSun } from "react-icons/fa"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
-import { Separator } from "@/components/ui/separator"
 
 const links = [
     { href: "/", label: "About" },
@@ -40,8 +39,8 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const currentTheme = mounted ? theme : initialTheme || theme
 
     return (
-        <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
-            <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+        <header className="sticky top-3 z-40 flex w-full justify-center px-4">
+            <div className="flex h-14 w-full max-w-6xl items-center justify-between gap-3 rounded-full border border-border/60 bg-background/80 px-4 shadow-[0_12px_35px_-22px_rgba(15,23,42,0.45)] backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border/50 dark:shadow-[0_20px_45px_-28px_rgba(8,10,26,0.75)]">
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
@@ -61,7 +60,12 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                             </SheetDescription>
                             <nav className="grid gap-4 py-4">
                                 {links.map((l) => (
-                                    <Button key={l.href} variant="ghost" asChild>
+                                    <Button
+                                        key={l.href}
+                                        variant="ghost"
+                                        className="justify-start text-base font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                                        asChild
+                                    >
                                         <Link href={l.href}>{l.label}</Link>
                                     </Button>
                                 ))}
@@ -89,21 +93,30 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                     </div>
                 </Link>
 
-                <nav className="hidden md:flex items-center gap-4">
+                <nav className="hidden items-center gap-1.5 md:flex">
                     {links.map((l) => (
-                        <Button key={l.href} variant="ghost" asChild>
+                        <Button
+                            key={l.href}
+                            variant="ghost"
+                            className="text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                            asChild
+                        >
                             <Link href={l.href}>{l.label}</Link>
                         </Button>
                     ))}
                 </nav>
 
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-9 rounded-full bg-muted/40 text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+                        onClick={toggleTheme}
+                    >
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
                 </div>
             </div>
-            <Separator />
         </header>
     )
 }

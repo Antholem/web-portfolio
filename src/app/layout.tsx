@@ -53,7 +53,7 @@ export default async function RootLayout({
           `}
         </Script>
       </head>
-      <body className="font-sans" suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <Navbar initialTheme={cookieTheme} />
         <main>{children}</main>
       </body>
