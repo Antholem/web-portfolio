@@ -14,7 +14,6 @@ import { FaMoon, FaSun } from "react-icons/fa"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
-import { Separator } from "@/components/ui/separator"
 
 const links = [
     { href: "/", label: "About" },
@@ -40,7 +39,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const currentTheme = mounted ? theme : initialTheme || theme
 
     return (
-        <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
+        <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-card/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
                 <div className="md:hidden">
                     <Sheet>
@@ -103,7 +102,6 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                     </Button>
                 </div>
             </div>
-            <Separator />
         </header>
     )
 }
