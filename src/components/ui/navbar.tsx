@@ -40,7 +40,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const currentTheme = mounted ? theme : initialTheme || theme
 
     return (
-        <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur">
+        <header className="sticky top-0 z-40 w-full bg-card backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
                 <div className="md:hidden">
                     <Sheet>
