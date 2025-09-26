@@ -23,6 +23,15 @@ const sanitizeEditorText = (value: string) =>
 
 const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
 
+const editorClassName = [
+  'h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
+  'focus:outline-none focus-visible:outline-none',
+  '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5',
+  '[&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0',
+  '[&_ul]:list-disc [&_ul]:pl-6',
+  '[&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
+].join(' ');
+
 const nodeHasMeaningfulText = (node: JSONContent | null | undefined): boolean => {
   if (!node) {
     return false;
@@ -69,13 +78,51 @@ const initialValues: FormValues = {
 
 const initialStatus: FormStatus = { state: 'idle', message: null };
 
-interface FormattingOption {
+interface FormattingOptionDefinition {
   label: string;
   icon: LucideIcon;
-  action: () => boolean;
-  isActive: boolean;
-  isDisabled: boolean;
+  run: (editor: TiptapEditor) => boolean;
+  isActive: (editor: TiptapEditor) => boolean;
+  isDisabled: (editor: TiptapEditor) => boolean;
 }
+
+const formattingOptionDefinitions: FormattingOptionDefinition[] = [
+  {
+    label: 'Bold',
+    icon: Bold,
+    run: (instance) => instance.chain().focus().toggleBold().run(),
+    isActive: (instance) => instance.isActive('bold'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleBold().run(),
+  },
+  {
+    label: 'Italic',
+    icon: Italic,
+    run: (instance) => instance.chain().focus().toggleItalic().run(),
+    isActive: (instance) => instance.isActive('italic'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleItalic().run(),
+  },
+  {
+    label: 'Bullet list',
+    icon: List,
+    run: (instance) => instance.chain().focus().toggleBulletList().run(),
+    isActive: (instance) => instance.isActive('bulletList'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleBulletList().run(),
+  },
+  {
+    label: 'Numbered list',
+    icon: ListOrdered,
+    run: (instance) => instance.chain().focus().toggleOrderedList().run(),
+    isActive: (instance) => instance.isActive('orderedList'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleOrderedList().run(),
+  },
+  {
+    label: 'Quote',
+    icon: Quote,
+    run: (instance) => instance.chain().focus().toggleBlockquote().run(),
+    isActive: (instance) => instance.isActive('blockquote'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleBlockquote().run(),
+  },
+];
 
 export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
@@ -107,14 +154,7 @@ export default function ContactForm() {
     ],
     editorProps: {
       attributes: {
-        class: [
-          'h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
-          'focus:outline-none focus-visible:outline-none',
-          '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5',
-          '[&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0',
-          '[&_ul]:list-disc [&_ul]:pl-6',
-          '[&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
-        ].join(' '),
+        class: editorClassName,
       },
     },
     onCreate({ editor }) {
@@ -205,45 +245,31 @@ export default function ContactForm() {
 
   const isSubmitting = status.state === 'submitting';
 
-  const formattingOptions: FormattingOption[] = editor
-    ? [
-        {
-          label: 'Bold',
-          icon: Bold,
-          action: () => editor.chain().focus().toggleBold().run(),
-          isActive: editor.isActive('bold'),
-          isDisabled: !editor.can().chain().focus().toggleBold().run(),
-        },
-        {
-          label: 'Italic',
-          icon: Italic,
-          action: () => editor.chain().focus().toggleItalic().run(),
-          isActive: editor.isActive('italic'),
-          isDisabled: !editor.can().chain().focus().toggleItalic().run(),
-        },
-        {
-          label: 'Bullet list',
-          icon: List,
-          action: () => editor.chain().focus().toggleBulletList().run(),
-          isActive: editor.isActive('bulletList'),
-          isDisabled: !editor.can().chain().focus().toggleBulletList().run(),
-        },
-        {
-          label: 'Numbered list',
-          icon: ListOrdered,
-          action: () => editor.chain().focus().toggleOrderedList().run(),
-          isActive: editor.isActive('orderedList'),
-          isDisabled: !editor.can().chain().focus().toggleOrderedList().run(),
-        },
-        {
-          label: 'Quote',
-          icon: Quote,
-          action: () => editor.chain().focus().toggleBlockquote().run(),
-          isActive: editor.isActive('blockquote'),
-          isDisabled: !editor.can().chain().focus().toggleBlockquote().run(),
-        },
-      ]
-    : [];
+  const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
+    const isButtonActive = editor ? isActive(editor) : false;
+    const isButtonDisabled = isSubmitting || !editor || (editor ? isDisabled(editor) : true);
+
+    return (
+      <button
+        key={label}
+        type="button"
+        onClick={
+          editor
+            ? () => {
+                run(editor);
+              }
+            : undefined
+        }
+        disabled={isButtonDisabled}
+        aria-label={label}
+        className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+          isButtonActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        } ${isButtonDisabled ? 'opacity-50' : ''}`}
+      >
+        <Icon className="h-4 w-4" />
+      </button>
+    );
+  });
 
   return (
     <Card className="mx-auto max-w-3xl">
@@ -284,20 +310,7 @@ export default function ContactForm() {
               <span className="text-sm font-medium text-foreground">How can I help?</span>
               <div className="flex flex-col overflow-hidden rounded-md border border-input bg-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
                 <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/80 px-2 py-1">
-                  {formattingOptions.map(({ label, icon: Icon, action, isActive, isDisabled }) => (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={action}
-                      disabled={isSubmitting || isDisabled}
-                      aria-label={label}
-                      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                        isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                      } ${isSubmitting || isDisabled ? 'opacity-50' : ''}`}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </button>
-                  ))}
+                  {formattingButtons}
                 </div>
                 <div className="relative">
                   {editor ? (
@@ -310,11 +323,11 @@ export default function ContactForm() {
                       <EditorContent editor={editor} />
                     </>
                   ) : (
-                    <div
-                      aria-hidden
-                      className="h-56 w-full cursor-text overflow-y-auto px-3 py-2"
-                    >
-                      <div className="h-full w-full animate-pulse rounded-md bg-muted/60" />
+                    <div aria-hidden className="relative">
+                      <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
+                        Tell me about your project or question.
+                      </span>
+                      <div className={`${editorClassName} select-none`} />
                     </div>
                   )}
                 </div>
