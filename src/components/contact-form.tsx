@@ -282,8 +282,8 @@ export default function ContactForm() {
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
               <span className="text-sm font-medium text-foreground">How can I help?</span>
-              <div className="flex flex-col overflow-hidden rounded-md border border-input bg-background focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
-                <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/60 px-2 py-1">
+              <div className="flex flex-col overflow-hidden rounded-md border border-input bg-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/80 px-2 py-1">
                   {formattingOptions.map(({ label, icon: Icon, action, isActive, isDisabled }) => (
                     <button
                       key={label}
