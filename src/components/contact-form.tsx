@@ -310,7 +310,12 @@ export default function ContactForm() {
                       <EditorContent editor={editor} />
                     </>
                   ) : (
-                    <div className="px-3 py-2 text-sm text-muted-foreground">Loading editor…</div>
+                    <div
+                      aria-hidden
+                      className="h-56 w-full cursor-text overflow-y-auto px-3 py-2"
+                    >
+                      <div className="h-full w-full animate-pulse rounded-md bg-muted/60" />
+                    </div>
                   )}
                 </div>
               </div>
