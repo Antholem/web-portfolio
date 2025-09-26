@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title>Data insights illustration</title>
+  <desc>Stylized charts and graphs showing analytics data</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="#020817" />
+  <rect x="40" y="40" width="560" height="280" rx="32" fill="url(#bg)" opacity="0.7" />
+  <g transform="translate(100 90)">
+    <rect x="0" y="80" width="60" height="120" rx="12" fill="rgba(15,23,42,0.55)" />
+    <rect x="80" y="40" width="60" height="160" rx="12" fill="rgba(15,23,42,0.7)" />
+    <rect x="160" y="0" width="60" height="200" rx="12" fill="#f8fafc" opacity="0.85" />
+    <polyline points="0,180 60,120 120,140 180,80 240,100" fill="none" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="0" cy="180" r="8" fill="#fbbf24" />
+    <circle cx="60" cy="120" r="8" fill="#fbbf24" />
+    <circle cx="120" cy="140" r="8" fill="#fbbf24" />
+    <circle cx="180" cy="80" r="8" fill="#fbbf24" />
+    <circle cx="240" cy="100" r="8" fill="#fbbf24" />
+  </g>
+  <rect x="360" y="120" width="180" height="60" rx="16" fill="rgba(248,250,252,0.9)" />
+  <rect x="380" y="136" width="96" height="12" rx="6" fill="#1d4ed8" opacity="0.8" />
+  <rect x="380" y="156" width="72" height="12" rx="6" fill="#0f172a" opacity="0.8" />
+</svg>

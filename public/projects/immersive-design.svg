@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title>Immersive design system abstract illustration</title>
+  <desc>Colorful geometric shapes layered over a gradient background</desc>
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#gradient)" rx="32" />
+  <circle cx="160" cy="120" r="72" fill="rgba(255, 255, 255, 0.16)" />
+  <rect x="360" y="80" width="160" height="120" rx="24" fill="rgba(255,255,255,0.18)" />
+  <path d="M120 260h220l-60 60H60z" fill="rgba(15,23,42,0.2)" />
+  <path d="M420 220c-44 0-80 36-80 80h160c0-44-36-80-80-80z" fill="url(#accent)" opacity="0.75" />
+  <rect x="260" y="120" width="120" height="48" rx="12" fill="rgba(15,23,42,0.35)" />
+  <rect x="280" y="136" width="80" height="16" rx="8" fill="#f8fafc" opacity="0.9" />
+</svg>
