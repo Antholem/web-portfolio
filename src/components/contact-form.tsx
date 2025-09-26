@@ -307,7 +307,10 @@ export default function ContactForm() {
                           Tell me about your project or question.
                         </span>
                       )}
-                      <EditorContent editor={editor} />
+                      <EditorContent
+                        editor={editor}
+                        className="min-h-[9rem] max-h-64 overflow-y-auto px-3 py-2 text-sm leading-6 focus:outline-none focus-visible:outline-none"
+                      />
                     </>
                   ) : (
                     <div className="px-3 py-2 text-sm text-muted-foreground">Loading editor…</div>
