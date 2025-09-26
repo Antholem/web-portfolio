@@ -108,7 +108,7 @@ export default function ContactForm() {
     editorProps: {
       attributes: {
         class: [
-          'h-64 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
+          'h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
           'focus:outline-none focus-visible:outline-none',
           '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5',
           '[&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0',
