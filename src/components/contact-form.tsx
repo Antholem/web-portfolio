@@ -335,7 +335,7 @@ export default function ContactForm() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex-col items-stretch gap-2 border-t border-border/60 px-6 py-4 md:flex-row md:items-center md:justify-between">
+        <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
             {isSubmitting ? 'Sending…' : 'Send message'}
           </Button>

@@ -20,7 +20,7 @@ export default function ContactSection() {
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <Card className="mx-auto w-full max-w-xl">
+          <Card className="mx-auto w-full max-w-xl self-start">
             <CardHeader className="space-y-3">
               <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">Contact Details</p>
               <CardTitle className="text-xl text-foreground">Let&rsquo;s connect</CardTitle>
