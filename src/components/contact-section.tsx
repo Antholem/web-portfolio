@@ -20,10 +20,10 @@ export default function ContactSection() {
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <Card className="mx-auto w-full max-w-xl border-muted/60 bg-card/95 backdrop-blur">
+          <Card className="mx-auto w-full max-w-xl">
             <CardHeader className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary/70">Contact Details</p>
-              <CardTitle className="text-2xl font-semibold tracking-tight text-foreground">Let&rsquo;s connect</CardTitle>
+              <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">Contact Details</p>
+              <CardTitle className="text-xl text-foreground">Let&rsquo;s connect</CardTitle>
               <CardDescription className="text-sm leading-relaxed">
                 I&rsquo;m available to answer questions, explore opportunities, and discuss potential collaborations.
               </CardDescription>
@@ -35,7 +35,7 @@ export default function ContactSection() {
                     <Phone className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                       Phone
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">+63 977 333 6944</dd>
@@ -47,7 +47,7 @@ export default function ContactSection() {
                     <Mail className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                       Email
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">
@@ -63,7 +63,7 @@ export default function ContactSection() {
                     <MapPin className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                       Location
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">Mabalacat, Pampanga, Philippines</dd>
