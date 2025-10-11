@@ -1,4 +1,5 @@
 import ContactForm from "@/components/contact-form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 export default function ContactSection() {
@@ -19,23 +20,23 @@ export default function ContactSection() {
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="mx-auto w-full max-w-xl rounded-3xl border border-border/60 bg-background/90 p-8 shadow-lg shadow-primary/5 ring-1 ring-primary/10 backdrop-blur">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-semibold text-foreground">Get in touch</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  I&rsquo;m available to answer any questions or discuss potential collaborations.
-                </p>
-              </div>
-
-              <dl className="space-y-5">
+          <Card className="mx-auto w-full max-w-xl border-muted/60 bg-card/95 backdrop-blur">
+            <CardHeader className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary/70">Contact Details</p>
+              <CardTitle className="text-2xl font-semibold tracking-tight text-foreground">Let&rsquo;s connect</CardTitle>
+              <CardDescription className="text-sm leading-relaxed">
+                I&rsquo;m available to answer questions, explore opportunities, and discuss potential collaborations.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <dl className="space-y-5 text-left">
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                     <Phone className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
                     <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
-                      Contact
+                      Phone
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">+63 977 333 6944</dd>
                   </div>
@@ -50,7 +51,7 @@ export default function ContactSection() {
                       Email
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">
-                      <a className="transition hover:text-primary" href="mailto:artcherolemernaldo@gmail.com">
+                      <a className="transition-colors hover:text-primary" href="mailto:artcherolemernaldo@gmail.com">
                         artcherolemernaldo@gmail.com
                       </a>
                     </dd>
@@ -69,8 +70,8 @@ export default function ContactSection() {
                   </div>
                 </div>
               </dl>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           <div className="mx-auto w-full max-w-4xl lg:max-w-full">
             <ContactForm />
