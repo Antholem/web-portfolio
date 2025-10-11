@@ -81,14 +81,14 @@ export default function ProjectsSection() {
           {projects.map((project) => (
             <Card key={project.title} className="flex h-full flex-col overflow-hidden">
               <div className="relative h-52 w-full overflow-hidden">
-                {/* <Image
+                <Image
                   src={project.image.src}
                   alt={project.image.alt}
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                   className="object-cover transition duration-500 hover:scale-105"
                   priority={false}
-                /> */}
+                />
               </div>
 
               <CardHeader className="space-y-3">
