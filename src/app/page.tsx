@@ -1,4 +1,5 @@
 import ContactSection from "@/components/contact-section";
+import Footer from "@/components/footer";
 import ProjectsSection from "@/components/projects-section";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <main className="space-y-2">
       <ProjectsSection />
       <ContactSection />
+      <Footer />
     </main>
   );
 }
