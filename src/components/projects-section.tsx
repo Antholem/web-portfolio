@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 type Project = {
   title: string;
@@ -60,7 +60,7 @@ export default function ProjectsSection() {
     <section id="projects" className="bg-background py-16 lg:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary/80">
             Featured Work
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -75,7 +75,7 @@ export default function ProjectsSection() {
           {projects.map((project) => (
             <Card
               key={project.title}
-              className="flex h-full flex-col overflow-hidden border-muted/60"
+              className="flex h-full flex-col overflow-hidden"
             >
               <div className="relative h-52 w-full overflow-hidden">
                 <Image
@@ -88,12 +88,10 @@ export default function ProjectsSection() {
                 />
               </div>
 
-              <div className="flex flex-1 flex-col gap-5 p-6">
-                <div className="space-y-3">
+              <CardContent className="flex flex-1 flex-col gap-6 pt-6">
+                <div className="space-y-2">
                   <h3 className="text-xl font-semibold text-foreground">{project.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {project.description}
-                  </p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{project.description}</p>
                 </div>
 
                 <ul className="flex flex-wrap gap-2">
@@ -106,15 +104,14 @@ export default function ProjectsSection() {
                     </li>
                   ))}
                 </ul>
-
-                <div className="mt-auto pt-2">
-                  <Button asChild className="w-full">
-                    <Link href={project.href} target="_blank" rel="noreferrer noopener">
-                      {project.hrefLabel}
-                    </Link>
-                  </Button>
-                </div>
-              </div>
+              </CardContent>
+              <CardFooter className="mt-auto w-full">
+                <Button asChild className="w-full">
+                  <Link href={project.href} target="_blank" rel="noreferrer noopener">
+                    {project.hrefLabel}
+                  </Link>
+                </Button>
+              </CardFooter>
             </Card>
           ))}
         </div>
