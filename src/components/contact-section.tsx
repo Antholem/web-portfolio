@@ -11,11 +11,10 @@ export default function ContactSection() {
             Get in touch
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Let&rsquo;s collaborate on what&rsquo;s next for your product or team
+            Let&rsquo;s plan what&rsquo;s next for your team
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            Share a few details about your goals, timelines, and the challenges you&rsquo;re solving. I&rsquo;ll respond within
-            two business days to explore how we can create an impactful partnership.
+            Share your goals, timelines, and challenges. I&rsquo;ll reply within two business days to explore a meaningful partnership.
           </p>
         </div>
 

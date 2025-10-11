@@ -70,10 +70,10 @@ export default function ProjectsSection() {
             Featured Work
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Crafted digital experiences grounded in strategic, scalable engineering
+            Digital experiences built for scalable impact
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            Explore a selection of engagements where tailored design systems, performant architectures, and measurable outcomes came together to advance client goals.
+            Explore engagements that pair thoughtful design, performant systems, and measurable outcomes to advance client goals.
           </p>
         </div>
 
