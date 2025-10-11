@@ -2,6 +2,26 @@ import ContactForm from "@/components/contact-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, MapPin, Phone } from "lucide-react";
 
+const contactDetails = [
+  {
+    icon: Phone,
+    label: "Phone",
+    value: "+63 977 333 6944",
+    href: "tel:+639773336944",
+  },
+  {
+    icon: Mail,
+    label: "Email",
+    value: "artcherolemernaldo@gmail.com",
+    href: "mailto:artcherolemernaldo@gmail.com",
+  },
+  {
+    icon: MapPin,
+    label: "Location",
+    value: "Mabalacat, Pampanga, Philippines",
+  },
+];
+
 export default function ContactSection() {
   return (
     <section id="contact" className="bg-muted/20 py-16 lg:py-20">
@@ -20,55 +40,37 @@ export default function ContactSection() {
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <Card className="mx-auto w-full max-w-xl border-muted/60 bg-card/95 backdrop-blur">
-            <CardHeader className="space-y-3">
+          <Card className="mx-auto w-full max-w-xl">
+            <CardHeader className="space-y-4">
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary/70">Contact Details</p>
               <CardTitle className="text-2xl font-semibold tracking-tight text-foreground">Let&rsquo;s connect</CardTitle>
-              <CardDescription className="text-sm leading-relaxed">
+              <CardDescription className="leading-relaxed">
                 I&rsquo;m available to answer questions, explore opportunities, and discuss potential collaborations.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <dl className="space-y-5 text-left">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Phone className="h-5 w-5" aria-hidden />
+                {contactDetails.map(({ icon: Icon, label, value, href }) => (
+                  <div key={label} className="flex items-start gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </div>
+                    <div>
+                      <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
+                        {label}
+                      </dt>
+                      <dd className="mt-1 text-base font-medium text-foreground">
+                        {href ? (
+                          <a className="transition-colors hover:text-primary" href={href}>
+                            {value}
+                          </a>
+                        ) : (
+                          value
+                        )}
+                      </dd>
+                    </div>
                   </div>
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
-                      Phone
-                    </dt>
-                    <dd className="mt-1 text-base font-medium text-foreground">+63 977 333 6944</dd>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Mail className="h-5 w-5" aria-hidden />
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
-                      Email
-                    </dt>
-                    <dd className="mt-1 text-base font-medium text-foreground">
-                      <a className="transition-colors hover:text-primary" href="mailto:artcherolemernaldo@gmail.com">
-                        artcherolemernaldo@gmail.com
-                      </a>
-                    </dd>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <MapPin className="h-5 w-5" aria-hidden />
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
-                      Location
-                    </dt>
-                    <dd className="mt-1 text-base font-medium text-foreground">Mabalacat, Pampanga, Philippines</dd>
-                  </div>
-                </div>
+                ))}
               </dl>
             </CardContent>
           </Card>

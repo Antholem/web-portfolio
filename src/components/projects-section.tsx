@@ -2,7 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type Project = {
   title: string;
@@ -73,10 +80,7 @@ export default function ProjectsSection() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
-            <Card
-              key={project.title}
-              className="flex h-full flex-col overflow-hidden border-muted/60"
-            >
+            <Card key={project.title} className="flex h-full flex-col overflow-hidden">
               <div className="relative h-52 w-full overflow-hidden">
                 <Image
                   src={project.image.src}
@@ -88,14 +92,15 @@ export default function ProjectsSection() {
                 />
               </div>
 
-              <div className="flex flex-1 flex-col gap-5 p-6">
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-foreground">{project.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {project.description}
-                  </p>
-                </div>
-
+              <CardHeader className="space-y-4">
+                <CardTitle className="text-xl font-semibold text-foreground">
+                  {project.title}
+                </CardTitle>
+                <CardDescription className="text-sm leading-relaxed">
+                  {project.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col gap-5">
                 <ul className="flex flex-wrap gap-2">
                   {project.technologies.map((technology) => (
                     <li
@@ -106,15 +111,14 @@ export default function ProjectsSection() {
                     </li>
                   ))}
                 </ul>
-
-                <div className="mt-auto pt-2">
-                  <Button asChild className="w-full">
-                    <Link href={project.href} target="_blank" rel="noreferrer noopener">
-                      {project.hrefLabel}
-                    </Link>
-                  </Button>
-                </div>
-              </div>
+              </CardContent>
+              <CardFooter>
+                <Button asChild className="w-full">
+                  <Link href={project.href} target="_blank" rel="noreferrer noopener">
+                    {project.hrefLabel}
+                  </Link>
+                </Button>
+              </CardFooter>
             </Card>
           ))}
         </div>
