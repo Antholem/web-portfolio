@@ -1,4 +1,30 @@
 import ContactForm from "@/components/contact-form";
+import { Mail, MapPin, Phone, Send } from "lucide-react";
+
+const contactDetails = [
+  {
+    label: "Email",
+    value: "hello@alexdoe.dev",
+    icon: Mail,
+    href: "mailto:hello@alexdoe.dev",
+  },
+  {
+    label: "Phone",
+    value: "+1 (555) 123-4567",
+    icon: Phone,
+    href: "tel:+15551234567",
+  },
+  {
+    label: "Location",
+    value: "San Francisco, California (Pacific Time)",
+    icon: MapPin,
+  },
+  {
+    label: "Availability",
+    value: "Currently partnering with product teams on design systems and platform initiatives.",
+    icon: Send,
+  },
+];
 
 export default function ContactSection() {
   return (
@@ -16,8 +42,45 @@ export default function ContactSection() {
           </p>
         </div>
 
-        <div className="mx-auto w-full max-w-4xl">
-          <ContactForm />
+        <div className="mx-auto w-full max-w-5xl">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,380px)_1fr] lg:items-start">
+            <div className="rounded-3xl border border-border/70 bg-background/60 p-8 shadow-sm backdrop-blur">
+              <h3 className="text-xl font-semibold text-foreground">Contact Information</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Prefer to reach out directly? Use the details below to start the conversation or
+                share project context before submitting the form.
+              </p>
+
+              <dl className="mt-6 space-y-6">
+                {contactDetails.map((detail) => (
+                  <div key={detail.label} className="flex gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <detail.icon className="h-5 w-5" aria-hidden />
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-muted-foreground">{detail.label}</dt>
+                      {detail.href ? (
+                        <dd className="text-base font-semibold text-foreground">
+                          <a
+                            href={detail.href}
+                            className="hover:text-primary focus-visible:text-primary focus-visible:outline-none"
+                          >
+                            {detail.value}
+                          </a>
+                        </dd>
+                      ) : (
+                        <dd className="text-base font-semibold text-foreground">{detail.value}</dd>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            <div className="rounded-3xl border border-border/60 bg-background/70 p-6 shadow-sm backdrop-blur">
+              <ContactForm />
+            </div>
+          </div>
         </div>
       </div>
     </section>
