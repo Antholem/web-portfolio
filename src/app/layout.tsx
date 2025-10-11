@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import "./globals.css"
+import Footer from "@/components/footer"
 import Navbar from "@/components/ui/navbar"
 import { cookies } from "next/headers"
 import type { ReactNode } from "react"
@@ -54,8 +55,11 @@ export default async function RootLayout({
         </Script>
       </head>
       <body className="font-sans" suppressHydrationWarning>
-        <Navbar initialTheme={cookieTheme} />
-        <main>{children}</main>
+        <div className="flex min-h-screen flex-col bg-background text-foreground">
+          <Navbar initialTheme={cookieTheme} />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
