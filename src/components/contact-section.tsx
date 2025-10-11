@@ -14,6 +14,27 @@ export default function ContactSection() {
           <p className="mt-4 text-base text-muted-foreground">
             Share a few details about your goals, timelines, and the challenges you&rsquo;re solving. I&rsquo;ll respond within two business days to explore how we can create an impactful partnership.
           </p>
+          <address className="mt-6 space-y-2 text-sm not-italic text-muted-foreground">
+            <p>
+              <span className="font-semibold text-foreground">Email:</span>{" "}
+              <a
+                href="mailto:hello@example.com"
+                className="font-medium text-foreground transition-colors hover:text-primary"
+              >
+                hello@example.com
+              </a>
+            </p>
+            <p>
+              <span className="font-semibold text-foreground">Phone:</span>{" "}
+              <a
+                href="tel:+1234567890"
+                className="font-medium text-foreground transition-colors hover:text-primary"
+              >
+                +1 (234) 567-890
+              </a>
+            </p>
+          </address>
+
         </div>
 
         <div className="mx-auto w-full max-w-4xl">
