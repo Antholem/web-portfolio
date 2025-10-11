@@ -11,7 +11,7 @@ export default function ContactSection() {
             Get in touch
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Let&rsquo;s plan what&rsquo;s next for your team
+            Let&rsquo;s build something great together
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
             Share your goals, timelines, and challenges. I&rsquo;ll reply within two business days to explore a meaningful partnership.
@@ -21,7 +21,6 @@ export default function ContactSection() {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <Card className="mx-auto w-full max-w-xl self-start">
             <CardHeader className="space-y-3">
-              <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">Contact Details</p>
               <CardTitle className="text-xl text-foreground">Let&rsquo;s connect</CardTitle>
               <CardDescription className="text-sm leading-relaxed">
                 I&rsquo;m available to answer questions, explore opportunities, and discuss potential collaborations.
