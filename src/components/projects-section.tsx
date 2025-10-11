@@ -2,7 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type Project = {
   title: string;
@@ -73,11 +80,8 @@ export default function ProjectsSection() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
-            <Card
-              key={project.title}
-              className="flex h-full flex-col overflow-hidden border-muted/60"
-            >
-              <div className="relative h-52 w-full overflow-hidden">
+            <Card key={project.title} className="flex h-full flex-col overflow-hidden">
+              <div className="relative aspect-[4/3] w-full overflow-hidden">
                 <Image
                   src={project.image.src}
                   alt={project.image.alt}
@@ -88,15 +92,15 @@ export default function ProjectsSection() {
                 />
               </div>
 
-              <div className="flex flex-1 flex-col gap-5 p-6">
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-foreground">{project.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {project.description}
-                  </p>
-                </div>
+              <CardHeader className="flex flex-1 flex-col space-y-3">
+                <CardTitle>{project.title}</CardTitle>
+                <CardDescription className="leading-relaxed">
+                  {project.description}
+                </CardDescription>
+              </CardHeader>
 
-                <ul className="flex flex-wrap gap-2">
+              <CardContent className="pt-0">
+                <ul className="flex flex-wrap gap-2 text-sm">
                   {project.technologies.map((technology) => (
                     <li
                       key={technology}
@@ -106,15 +110,15 @@ export default function ProjectsSection() {
                     </li>
                   ))}
                 </ul>
+              </CardContent>
 
-                <div className="mt-auto pt-2">
-                  <Button asChild className="w-full">
-                    <Link href={project.href} target="_blank" rel="noreferrer noopener">
-                      {project.hrefLabel}
-                    </Link>
-                  </Button>
-                </div>
-              </div>
+              <CardFooter className="pt-0">
+                <Button asChild className="w-full">
+                  <Link href={project.href} target="_blank" rel="noreferrer noopener">
+                    {project.hrefLabel}
+                  </Link>
+                </Button>
+              </CardFooter>
             </Card>
           ))}
         </div>

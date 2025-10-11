@@ -20,16 +20,16 @@ export default function ContactSection() {
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <Card className="mx-auto w-full max-w-xl border-muted/60 bg-card/95 backdrop-blur">
-            <CardHeader className="space-y-3">
+          <Card className="mx-auto w-full max-w-xl">
+            <CardHeader className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary/70">Contact Details</p>
-              <CardTitle className="text-2xl font-semibold tracking-tight text-foreground">Let&rsquo;s connect</CardTitle>
-              <CardDescription className="text-sm leading-relaxed">
+              <CardTitle>Let&rsquo;s connect</CardTitle>
+              <CardDescription className="leading-relaxed">
                 I&rsquo;m available to answer questions, explore opportunities, and discuss potential collaborations.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-5">
-              <dl className="space-y-5 text-left">
+            <CardContent className="space-y-6">
+              <dl className="space-y-6 text-left">
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                     <Phone className="h-5 w-5" aria-hidden />
