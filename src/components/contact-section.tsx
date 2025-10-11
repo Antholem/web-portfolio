@@ -4,26 +4,24 @@ import { Mail, MapPin, Phone } from "lucide-react";
 
 export default function ContactSection() {
   return (
-    <section id="contact" className="bg-muted/20 py-16 lg:py-20">
+    <section id="contact" className="py-16 lg:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
             Get in touch
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Let&rsquo;s collaborate on what&rsquo;s next for your product or team
+            Let&rsquo;s build something great together
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            Share a few details about your goals, timelines, and the challenges you&rsquo;re solving. I&rsquo;ll respond within
-            two business days to explore how we can create an impactful partnership.
+            Share your goals, timelines, and challenges. I&rsquo;ll reply within two business days to explore a meaningful partnership.
           </p>
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <Card className="mx-auto w-full max-w-xl border-muted/60 bg-card/95 backdrop-blur">
+          <Card className="mx-auto w-full max-w-xl self-start">
             <CardHeader className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary/70">Contact Details</p>
-              <CardTitle className="text-2xl font-semibold tracking-tight text-foreground">Let&rsquo;s connect</CardTitle>
+              <CardTitle className="text-xl text-foreground">Let&rsquo;s connect</CardTitle>
               <CardDescription className="text-sm leading-relaxed">
                 I&rsquo;m available to answer questions, explore opportunities, and discuss potential collaborations.
               </CardDescription>
@@ -35,7 +33,7 @@ export default function ContactSection() {
                     <Phone className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                       Phone
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">+63 977 333 6944</dd>
@@ -47,12 +45,12 @@ export default function ContactSection() {
                     <Mail className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                       Email
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">
-                      <a className="transition-colors hover:text-primary" href="mailto:artcherolemernaldo@gmail.com">
-                        artcherolemernaldo@gmail.com
+                      <a className="hover:text-primary" href="mailto:antholemlemmanalo@gmail.com">
+                        antholemlemmanalo@gmail.com
                       </a>
                     </dd>
                   </div>
@@ -63,7 +61,7 @@ export default function ContactSection() {
                     <MapPin className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground/80">
+                    <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
                       Location
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">Mabalacat, Pampanga, Philippines</dd>
