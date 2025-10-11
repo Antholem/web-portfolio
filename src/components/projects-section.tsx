@@ -75,7 +75,7 @@ export default function ProjectsSection() {
           {projects.map((project) => (
             <Card
               key={project.title}
-              className="group flex h-full flex-col overflow-hidden border-muted/60 transition hover:shadow-lg"
+              className="flex h-full flex-col overflow-hidden border-muted/60 transition hover:shadow-lg"
             >
               <div className="relative h-52 w-full overflow-hidden">
                 <Image
@@ -83,7 +83,7 @@ export default function ProjectsSection() {
                   alt={project.image.alt}
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                  className="object-cover transition duration-500 group-hover:scale-105"
+                  className="object-cover transition duration-500 hover:scale-105"
                   priority={false}
                 />
               </div>
