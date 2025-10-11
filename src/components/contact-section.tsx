@@ -51,7 +51,7 @@ export default function ContactSection() {
                       Email
                     </dt>
                     <dd className="mt-1 text-base font-medium text-foreground">
-                      <a className="transition-colors hover:text-primary" href="mailto:artcherolemernaldo@gmail.com">
+                      <a className="hover:text-primary" href="mailto:artcherolemernaldo@gmail.com">
                         artcherolemernaldo@gmail.com
                       </a>
                     </dd>
