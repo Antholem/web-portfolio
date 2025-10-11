@@ -64,10 +64,10 @@ export default function ProjectsSection() {
             Featured Work
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Projects that blend thoughtful design with reliable engineering
+            Crafted digital experiences grounded in strategic, scalable engineering
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            From data-rich dashboards to immersive brand experiences, here are a few highlights from recent client collaborations.
+            Explore a selection of engagements where tailored design systems, performant architectures, and measurable outcomes came together to advance client goals.
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function ProjectsSection() {
           {projects.map((project) => (
             <Card
               key={project.title}
-              className="flex h-full flex-col overflow-hidden border-muted/60 transition hover:shadow-lg"
+              className="flex h-full flex-col overflow-hidden border-muted/60"
             >
               <div className="relative h-52 w-full overflow-hidden">
                 <Image
