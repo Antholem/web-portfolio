@@ -1,11 +1,11 @@
-import ContactForm from "@/components/contact-form";
+import ContactSection from "@/components/contact-section";
 import ProjectsSection from "@/components/projects-section";
 
 export default function Home() {
   return (
-    <main className="space-y-24">
+    <main className="space-y-2">
       <ProjectsSection />
-      <ContactForm />
+      <ContactSection />
     </main>
   );
 }
