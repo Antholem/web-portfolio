@@ -4,31 +4,31 @@ const skillCategories = [
   {
     title: "Frontend Engineering",
     description:
-      "Modern interfaces engineered with component libraries, performant styling systems, and design systems at scale.",
+      "Interfaces built with modern frameworks, component systems, and accessible styling.",
     skills: ["ReactJS", "NextJS", "Tailwind CSS", "Chakra UI", "Material UI", "Shadcn"],
   },
   {
     title: "Backend & APIs",
     description:
-      "Robust services crafted with scalable runtimes, RESTful patterns, and secure application architectures.",
+      "Services delivered with scalable runtimes, REST patterns, and secure architecture.",
     skills: ["Backend", "NodeJS", "ExpressJS", "PHP", "Python", "Java"],
   },
   {
     title: "Data & Platforms",
     description:
-      "Resilient data layers spanning SQL, NoSQL, and serverless ecosystems for data-driven product decisions.",
+      "Data stacks spanning SQL, NoSQL, and serverless tooling for product insights.",
     skills: ["MongoDB", "MySQL", "PostgreSQL", "Firebase", "Supabase"],
   },
   {
     title: "DevOps & Delivery",
     description:
-      "Streamlined deployment workflows with containerization, cloud platforms, and collaborative source control.",
+      "Pipelines powered by containers, cloud hosting, and collaborative version control.",
     skills: ["Docker", "Vercel", "GitHub", "GitLab"],
   },
   {
     title: "Product & AI Tooling",
     description:
-      "Human-centered design and emerging AI copilots that accelerate discovery, ideation, and experimentation.",
+      "Design and AI platforms that accelerate exploration, prototyping, and content.",
     skills: ["Figma", "Adobe XD", "Hugging Face", "Google Gemini"],
   },
 ];
@@ -38,13 +38,12 @@ export default function SkillsSection() {
     <section id="skills" className="bg-muted/40 py-16 lg:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">Core Capabilities</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">Key Skills</p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Expertise across the product lifecycle
+            Full-stack capabilities at a glance
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            A multidisciplinary toolkit that bridges user experience, engineering craft, and operational excellence to deliver
-            resilient digital products.
+            A focused toolkit across design, engineering, and delivery to ship reliable, user-centered products.
           </p>
         </div>
 
