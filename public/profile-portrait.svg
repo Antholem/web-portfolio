@@ -1,0 +1,30 @@
+<svg width="640" height="800" viewBox="0 0 640 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="10%" r="70%">
+      <stop offset="0%" stop-color="rgba(148, 163, 184, 0.6)" />
+      <stop offset="40%" stop-color="rgba(148, 163, 184, 0.15)" />
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.05)" />
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#1E293B" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  <rect width="640" height="800" rx="96" fill="#020817" />
+  <rect x="36" y="36" width="568" height="728" rx="80" fill="url(#glow)" />
+  <g filter="url(#shadow)">
+    <rect x="120" y="128" width="400" height="520" rx="72" fill="#0F172A" stroke="rgba(148, 163, 184, 0.25)" stroke-width="3" />
+    <path d="M320 236C350.928 236 376 211.376 376 180C376 148.624 350.928 124 320 124C289.072 124 264 148.624 264 180C264 211.376 289.072 236 320 236Z" fill="url(#gradient)" />
+    <path d="M320 268C248.924 268 192 324.924 192 396V408C192 418.247 200.253 426.5 210.5 426.5H429.5C439.747 426.5 448 418.247 448 408V396C448 324.924 391.076 268 320 268Z" fill="url(#gradient)" />
+    <rect x="208" y="440" width="224" height="160" rx="56" fill="#1E293B" />
+    <path d="M320 456C267.889 456 216 489.125 216 540C216 552.15 225.85 562 238 562H402C414.15 562 424 552.15 424 540C424 489.125 372.111 456 320 456Z" fill="#111827" />
+  </g>
+  <circle cx="520" cy="132" r="32" fill="rgba(56, 189, 248, 0.35)" />
+  <circle cx="112" cy="200" r="18" fill="rgba(79, 70, 229, 0.45)" />
+  <circle cx="524" cy="656" r="20" fill="rgba(96, 165, 250, 0.4)" />
+  <path d="M96 664C96 615.399 135.399 576 184 576H208V640C208 658.225 193.225 673 175 673H96V664Z" fill="rgba(30, 64, 175, 0.35)" />
+</svg>
