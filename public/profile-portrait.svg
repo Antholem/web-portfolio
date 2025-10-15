@@ -1,0 +1,37 @@
+<svg width="640" height="800" viewBox="0 0 640 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="800" rx="120" fill="url(#paint0_radial)" />
+  <g filter="url(#filter0_d)">
+    <path d="M320 184C268.002 184 224 228.002 224 280C224 331.998 268.002 376 320 376C371.998 376 416 331.998 416 280C416 228.002 371.998 184 320 184Z" fill="url(#paint1_linear)" />
+    <path d="M320 408C214.588 408 128 494.588 128 600V640C128 665.167 148.833 686 174 686H466C491.167 686 512 665.167 512 640V600C512 494.588 425.412 408 320 408Z" fill="url(#paint2_linear)" />
+  </g>
+  <rect x="48" y="48" width="544" height="704" rx="104" stroke="url(#paint3_linear)" stroke-opacity="0.6" stroke-width="8" />
+  <defs>
+    <filter id="filter0_d" x="96" y="152" width="448" height="566" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+      <feOffset dy="24" />
+      <feGaussianBlur stdDeviation="24" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.145098 0 0 0 0 0.282353 0 0 0 0 0.717647 0 0 0 0.16 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+    </filter>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(132 104) rotate(35) scale(732 610)">
+      <stop stop-color="#F5F8FF" />
+      <stop offset="0.42" stop-color="#E6ECFF" />
+      <stop offset="1" stop-color="#DCE4FF" />
+    </radialGradient>
+    <linearGradient id="paint1_linear" x1="320" y1="184" x2="320" y2="376" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2B52B2" />
+      <stop offset="1" stop-color="#1F3E89" />
+    </linearGradient>
+    <linearGradient id="paint2_linear" x1="320" y1="408" x2="320" y2="686" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#243B86" />
+      <stop offset="1" stop-color="#0F1F4C" />
+    </linearGradient>
+    <linearGradient id="paint3_linear" x1="48" y1="48" x2="592" y2="752" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.7" />
+      <stop offset="1" stop-color="#5F77D6" stop-opacity="0.5" />
+    </linearGradient>
+  </defs>
+</svg>
