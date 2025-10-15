@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Brain, Compass, LayoutDashboard, Server } from "lucide-react";
+import { Brain, LayoutDashboard, Server } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -9,17 +9,6 @@ const services: {
   highlights: string[];
   icon: LucideIcon;
 }[] = [
-  {
-    title: "Product Discovery & Strategy",
-    description:
-      "Collaborative strategy sprints that align product vision, define success metrics, and prioritize the initiatives that deliver real value.",
-    highlights: [
-      "Product audits & opportunity mapping",
-      "Goal-driven roadmap facilitation",
-      "Experience blueprints & customer journeys",
-    ],
-    icon: Compass,
-  },
   {
     title: "Design Systems & Experience Design",
     description:
@@ -71,7 +60,7 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-3">
           {services.map((service) => (
             <Card key={service.title} className="flex h-full flex-col">
               <CardHeader className="space-y-4">
