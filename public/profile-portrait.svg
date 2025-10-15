@@ -1,0 +1,55 @@
+<svg width="480" height="560" viewBox="0 0 480 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="560" rx="56" fill="url(#paint0_radial_hero)" />
+  <g filter="url(#filter0_d_hero)">
+    <path d="M240 140C280.421 140 315.296 165.234 333.732 202.655C340.056 215.449 343.36 229.758 343.36 244.256V247.968C343.36 284.313 335.319 319.959 319.865 351.273C304.218 382.99 281.55 408.178 253.236 421.433L245.706 424.915C242.512 426.393 238.848 426.39 235.656 424.905L227.713 421.114C199.676 407.748 177.294 382.087 161.842 350.133C146.624 318.659 138.72 283.404 138.72 246.715V244.256C138.72 197.699 173.443 160 217.759 147.837C224.894 145.842 232.4 144.832 240 144.832L240 140Z" fill="url(#paint1_linear_hero)" />
+  </g>
+  <g filter="url(#filter1_d_hero)">
+    <path d="M240.003 311.207C281.362 311.207 320.43 324.881 351.034 349.123C363.59 359.104 368.316 376.172 362.635 391.486C351.507 421.918 327.678 452.439 290.298 456.558C272.055 458.549 255.636 458.939 240.003 458.939C224.358 458.939 207.925 458.547 189.662 456.553C152.267 452.43 128.432 421.898 117.312 391.451C111.639 376.144 116.372 359.089 128.928 349.113C159.556 324.877 198.639 311.207 240.003 311.207Z" fill="url(#paint2_linear_hero)" />
+  </g>
+  <path d="M240 282.908C213.295 282.908 191.6 261.227 191.6 234.536V218.384C191.6 191.693 213.295 170.012 240 170.012C266.705 170.012 288.4 191.693 288.4 218.384V234.536C288.4 261.227 266.705 282.908 240 282.908Z" fill="url(#paint3_linear_hero)" />
+  <circle cx="196" cy="226" r="10" fill="#1B1B1F" fill-opacity="0.25" />
+  <circle cx="284" cy="226" r="10" fill="#1B1B1F" fill-opacity="0.25" />
+  <path d="M219.75 247.625C223.259 253.314 230.696 257.06 240 257.06C249.304 257.06 256.741 253.314 260.25 247.625" stroke="#0F172A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.18" />
+  <defs>
+    <filter id="filter0_d_hero" x="118.72" y="120" width="244.64" height="327.064" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+      <feOffset dy="12" />
+      <feGaussianBlur stdDeviation="10" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.0705882 0 0 0 0 0.0784314 0 0 0 0 0.160784 0 0 0 0.12 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_hero" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_hero" result="shape" />
+    </filter>
+    <filter id="filter1_d_hero" x="94.7656" y="291.207" width="290.114" height="189.731" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+      <feOffset dy="8" />
+      <feGaussianBlur stdDeviation="10" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.0705882 0 0 0 0 0.0784314 0 0 0 0 0.160784 0 0 0 0.12 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_hero" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_hero" result="shape" />
+    </filter>
+    <radialGradient id="paint0_radial_hero" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(90 62) rotate(36.6549) scale(496.962 410.408)">
+      <stop stop-color="#F5F5F7" />
+      <stop offset="0.55" stop-color="#EEF1F8" />
+      <stop offset="1" stop-color="#E1E6F2" />
+    </radialGradient>
+    <linearGradient id="paint1_linear_hero" x1="240" y1="140" x2="240" y2="424.915" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="0.5" stop-color="#CBD5F5" stop-opacity="0.85" />
+      <stop offset="1" stop-color="#94A3B8" stop-opacity="0.8" />
+    </linearGradient>
+    <linearGradient id="paint2_linear_hero" x1="240.003" y1="311.207" x2="240.003" y2="458.939" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.92" />
+      <stop offset="0.6" stop-color="#C7D2FE" stop-opacity="0.9" />
+      <stop offset="1" stop-color="#94A3B8" stop-opacity="0.85" />
+    </linearGradient>
+    <linearGradient id="paint3_linear_hero" x1="240" y1="170.012" x2="240" y2="282.908" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC" stop-opacity="0.95" />
+      <stop offset="0.65" stop-color="#DBEAFE" stop-opacity="0.9" />
+      <stop offset="1" stop-color="#BFDBFE" stop-opacity="0.85" />
+    </linearGradient>
+  </defs>
+</svg>
