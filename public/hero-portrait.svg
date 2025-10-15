@@ -1,0 +1,35 @@
+<svg width="640" height="800" viewBox="0 0 640 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="640" y2="800" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="15%" r="70%">
+      <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.6" />
+      <stop offset="70%" stop-color="#60a5fa" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbe8d3" />
+      <stop offset="100%" stop-color="#f2c8a2" />
+    </linearGradient>
+    <linearGradient id="jacket" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="800" rx="56" fill="url(#bg)" />
+  <rect width="640" height="800" rx="56" fill="url(#glow)" />
+  <g filter="url(#shadow)">
+    <circle cx="320" cy="248" r="132" fill="url(#skin)" />
+    <path d="M258 382c-46 0-86 38-86 84v56c0 62 60 116 148 116s148-54 148-116v-56c0-46-40-84-86-84H258z" fill="white" fill-opacity="0.85" />
+    <path d="M225 427c23 17 58 29 95 29 37 0 72-12 95-29v-15c0-38-31-69-69-69h-52c-38 0-69 31-69 69v15z" fill="url(#jacket)" />
+    <path d="M320 134c-74 0-116 48-116 128 0 22 3 39 8 52h216c5-13 8-30 8-52 0-80-42-128-116-128z" fill="#0f172a" />
+  </g>
+  <defs>
+    <filter id="shadow" x="100" y="80" width="440" height="580" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#0f172a" flood-opacity="0.35" />
+    </filter>
+  </defs>
+</svg>
