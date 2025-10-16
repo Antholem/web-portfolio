@@ -49,7 +49,7 @@ export default function HeroSection() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="px-6">
-              <Link href="#contact">Let&apos;s Collaborate</Link>
+              <Link href="#contact">Download Resume</Link>
             </Button>
           </div>
 
