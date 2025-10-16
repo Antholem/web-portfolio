@@ -31,30 +31,15 @@ export default function HeroSection() {
         <div className="flex-1 space-y-10">
           <div className="space-y-4">
             <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
-              Antholem Lem Manalo
+              Sam Antholem Manalo
             </p>
             <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Product Designer &amp; Full-Stack Engineer
+              Software Engineer
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               I design and build resilient digital platforms that balance delightful experiences with reliable engineering. My practice combines systems thinking, accessibility, and AI-assisted workflows to deliver measurable business impact.
             </p>
           </div>
-
-          <ul className="flex flex-wrap gap-3 text-sm font-medium text-muted-foreground">
-            {[
-              "Design Systems",
-              "Next.js &amp; TypeScript",
-              "AI Product Strategy",
-            ].map((item) => (
-              <li
-                key={item}
-                className="rounded-full bg-primary/10 px-4 py-2 text-xs uppercase tracking-[0.25em] text-primary"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
 
           <div className="flex flex-wrap gap-4">
             <Button asChild size="lg" className="px-6">
@@ -74,7 +59,7 @@ export default function HeroSection() {
                 Currently based in
               </p>
               <p className="mt-1 text-base font-medium text-foreground">
-                Mabalacat, Pampanga, Philippines
+                Clark, Pampanga, Philippines
               </p>
             </div>
             <div className="flex gap-3">
@@ -101,7 +86,7 @@ export default function HeroSection() {
           <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950/60 shadow-2xl backdrop-blur">
             <Image
               src="/profile-portrait.svg"
-              alt="Illustrated portrait of Antholem Lem Manalo"
+              alt="Illustrated portrait of Sam Antholem Manalo"
               width={480}
               height={560}
               priority
