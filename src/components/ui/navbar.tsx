@@ -17,7 +17,7 @@ import { useThemeStore } from "@/lib/theme-store"
 import { Separator } from "@/components/ui/separator"
 
 const links = [
-    { href: "/", label: "About" },
+    { href: "#about", label: "About" },
     { href: "#services", label: "Services" },
     { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Projects" },
