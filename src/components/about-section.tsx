@@ -1,4 +1,6 @@
-import { Bot, Briefcase, Compass, Layers, Sparkles } from "lucide-react";
+import Link from "next/link";
+
+import { Briefcase, Compass, Layers, Mail, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -88,18 +90,20 @@ export default function AboutSection() {
               ))}
             </div>
             <Card className="border-white/10 bg-primary/10 text-primary-foreground">
-              <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-                <div className="space-y-2 text-primary-foreground/90">
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-foreground/70">
-                    Ask the portfolio AI
+              <CardContent className="flex flex-col gap-3 p-6 text-sm leading-relaxed sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1 text-primary-foreground/90">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-foreground/80">
+                    Let&apos;s collaborate
                   </p>
-                  <p className="text-sm leading-relaxed sm:text-base">
-                    Curious about my experience, projects, or working style? Open the assistant to get answers tailored to your goals.
+                  <p className="text-primary-foreground">
+                    Share your goals and I&apos;ll respond within two business days to explore the fit.
                   </p>
                 </div>
-                <Button size="lg" variant="secondary" className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
-                  <Bot className="h-5 w-5" aria-hidden />
-                  Ask the AI guide
+                <Button asChild size="lg" className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
+                  <Link href="mailto:antholemlemmanalo@gmail.com">
+                    <Mail className="h-5 w-5" aria-hidden />
+                    Email Sam
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
