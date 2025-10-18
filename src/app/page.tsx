@@ -10,9 +10,9 @@ export default function Home() {
     <main className="space-y-2">
       <HeroSection />
       <AboutSection />
+      <SkillsSection />
       <ServicesSection />
       <ProjectsSection />
-      <SkillsSection />
       <ContactSection />
     </main>
   );

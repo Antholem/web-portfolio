@@ -18,8 +18,8 @@ import { Separator } from "@/components/ui/separator"
 
 const links = [
     { href: "#about", label: "About" },
-    { href: "#services", label: "Services" },
     { href: "#skills", label: "Skills" },
+    { href: "#services", label: "Services" },
     { href: "#projects", label: "Projects" },
     { href: "#contact", label: "Contacts" },
 ]
