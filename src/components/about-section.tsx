@@ -1,9 +1,7 @@
-import Link from "next/link";
-
-import { Briefcase, Compass, Layers, Mail, Sparkles } from "lucide-react";
+import { Bot, Briefcase, Compass, Layers, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const highlights = [
   {
@@ -69,24 +67,6 @@ export default function AboutSection() {
                 collaboration with designers, product strategists, and business
                 stakeholders.
               </p>
-              <dl className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-primary">
-                  <dt className="text-xs font-semibold uppercase tracking-[0.25em]">
-                    Experience
-                  </dt>
-                  <dd className="mt-1 text-base font-semibold text-primary">
-                    9+ years shipping products
-                  </dd>
-                </div>
-                <div className="rounded-2xl border border-muted/40 bg-muted/10 p-4 text-sm text-muted-foreground">
-                  <dt className="text-xs font-semibold uppercase tracking-[0.25em]">
-                    Availability
-                  </dt>
-                  <dd className="mt-1 text-base font-semibold text-foreground">
-                    Open to strategic collaborations
-                  </dd>
-                </div>
-              </dl>
             </div>
           </div>
           <div className="flex flex-col gap-6">
@@ -107,22 +87,22 @@ export default function AboutSection() {
                 </Card>
               ))}
             </div>
-            <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-primary/10 p-6 text-sm leading-relaxed text-primary-foreground sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-1 text-primary-foreground/90">
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-foreground/80">
-                  Let&apos;s collaborate
-                </p>
-                <p>
-                  Share your goals and I&apos;ll respond within two business days to explore the fit.
-                </p>
-              </div>
-              <Button asChild size="lg" className="w-full sm:w-auto">
-                <Link href="mailto:antholemlemmanalo@gmail.com">
-                  <Mail className="mr-2 h-5 w-5" aria-hidden />
-                  Email Sam
-                </Link>
-              </Button>
-            </div>
+            <Card className="border-white/10 bg-primary/10 text-primary-foreground">
+              <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-2 text-primary-foreground/90">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-foreground/70">
+                    Ask the portfolio AI
+                  </p>
+                  <p className="text-sm leading-relaxed sm:text-base">
+                    Curious about my experience, projects, or working style? Open the assistant to get answers tailored to your goals.
+                  </p>
+                </div>
+                <Button size="lg" variant="secondary" className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
+                  <Bot className="h-5 w-5" aria-hidden />
+                  Ask the AI guide
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
