@@ -1,29 +1,34 @@
 import Link from "next/link";
 
-import { Briefcase, Calendar, Mail, MapPin, MessageSquare } from "lucide-react";
+import { Briefcase, Compass, Layers, Mail, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const highlights = [
   {
-    label: "Role",
-    value: "Principal Software Engineer",
+    title: "Principal software engineer leadership",
+    description:
+      "Guiding cross-functional teams and stewarding architecture decisions that balance clarity, velocity, and resilience.",
     icon: Briefcase,
   },
   {
-    label: "Experience",
-    value: "9+ years shipping products",
-    icon: Calendar,
+    title: "Platform evolution",
+    description:
+      "Re-architecting design systems, APIs, and delivery workflows so teams can ship faster without sacrificing quality.",
+    icon: Layers,
   },
   {
-    label: "Location",
-    value: "Clark, Pampanga, Philippines",
-    icon: MapPin,
+    title: "Experience strategy",
+    description:
+      "Translating customer insights into intuitive, inclusive, and measurable journeys across every product touchpoint.",
+    icon: Compass,
   },
   {
-    label: "Availability",
-    value: "Open to strategic collaborations",
-    icon: MessageSquare,
+    title: "AI-assisted enablement",
+    description:
+      "Blending automation and human judgment to prototype, iterate, and operate products with confidence and clarity.",
+    icon: Sparkles,
   },
 ] as const;
 
@@ -48,44 +53,59 @@ export default function AboutSection() {
                 Crafting thoughtful systems that scale with your vision
               </h2>
               <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                I help product teams translate complex business requirements into
-                resilient, human-centered software. From discovery through
-                delivery, I combine systems thinking, accessible design
-                principles, and AI-accelerated workflows to orchestrate cohesive
-                digital experiences that deliver measurable results.
+                I&apos;m a principal software engineer based in Clark, Pampanga,
+                Philippines who helps product teams translate complex business
+                requirements into resilient, human-centered software. From
+                discovery through delivery, I combine systems thinking,
+                accessible design principles, and AI-accelerated workflows to
+                orchestrate cohesive digital experiences that deliver measurable
+                results.
               </p>
               <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Over the past decade, I&apos;ve led distributed engineering teams,
-                modernized legacy platforms, and launched data-informed
+                Over the past nine years I&apos;ve led distributed engineering
+                teams, modernized legacy platforms, and launched data-informed
                 experiences across finance, commerce, and SaaS. My approach
                 prioritizes maintainability, observability, and seamless
                 collaboration with designers, product strategists, and business
                 stakeholders.
               </p>
+              <dl className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm text-primary">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.25em]">
+                    Experience
+                  </dt>
+                  <dd className="mt-1 text-base font-semibold text-primary">
+                    9+ years shipping products
+                  </dd>
+                </div>
+                <div className="rounded-2xl border border-muted/40 bg-muted/10 p-4 text-sm text-muted-foreground">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.25em]">
+                    Availability
+                  </dt>
+                  <dd className="mt-1 text-base font-semibold text-foreground">
+                    Open to strategic collaborations
+                  </dd>
+                </div>
+              </dl>
             </div>
           </div>
           <div className="flex flex-col gap-6">
-            <div className="rounded-3xl border border-white/10 bg-muted/5 p-6 backdrop-blur">
-              <dl className="grid gap-4 sm:grid-cols-2">
-                {highlights.map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex items-start gap-3 rounded-2xl border border-transparent bg-background/80 p-4 shadow-sm transition hover:border-primary/40 hover:shadow-lg"
-                  >
-                    <span className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {highlights.map((item) => (
+                <Card key={item.title} className="h-full border-white/10 bg-muted/5 backdrop-blur">
+                  <CardHeader className="space-y-4">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <item.icon className="h-5 w-5" aria-hidden />
                     </span>
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                        {item.label}
-                      </dt>
-                      <dd className="text-sm font-medium text-foreground sm:text-base">
-                        {item.value}
-                      </dd>
+                    <div className="space-y-2">
+                      <CardTitle className="text-base text-foreground">{item.title}</CardTitle>
+                      <CardDescription className="text-sm leading-relaxed text-muted-foreground">
+                        {item.description}
+                      </CardDescription>
                     </div>
-                  </div>
-                ))}
-              </dl>
+                  </CardHeader>
+                </Card>
+              ))}
             </div>
             <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-primary/10 p-6 text-sm leading-relaxed text-primary-foreground sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-1 text-primary-foreground/90">
