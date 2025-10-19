@@ -48,23 +48,29 @@ export default function AboutSection() {
               >
                 Crafting thoughtful systems that scale with your vision
               </h2>
-              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                I&apos;m a principal software engineer based in Clark, Pampanga,
-                Philippines who helps product teams translate complex business
-                requirements into resilient, human-centered software. From
-                discovery through delivery, I combine systems thinking,
-                accessible design principles, and AI-accelerated workflows to
-                orchestrate cohesive digital experiences that deliver measurable
-                results.
+              <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+                An engineering leader focused on resilient delivery, I partner
+                with founders and product teams to align vision, execution, and
+                measurable outcomes across the product lifecycle.
               </p>
-              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Over the past nine years I&apos;ve led distributed engineering
-                teams, modernized legacy platforms, and launched data-informed
-                experiences across finance, commerce, and SaaS. My approach
-                prioritizes maintainability, observability, and seamless
-                collaboration with designers, product strategists, and business
-                stakeholders.
-              </p>
+              <div className="space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                <p>
+                  I&apos;m a principal software engineer based in Clark, Pampanga,
+                  Philippines who helps product teams translate complex
+                  requirements into human-centered software. From discovery
+                  through delivery, I combine systems thinking, accessible
+                  design principles, and AI-accelerated workflows to orchestrate
+                  cohesive digital experiences.
+                </p>
+                <p>
+                  Over the past nine years I&apos;ve led distributed engineering
+                  teams, modernized legacy platforms, and launched data-informed
+                  experiences across finance, commerce, and SaaS. My approach
+                  prioritizes maintainability, observability, and seamless
+                  collaboration with designers, product strategists, and
+                  business stakeholders.
+                </p>
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-6">
