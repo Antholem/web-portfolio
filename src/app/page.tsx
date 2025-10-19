@@ -4,6 +4,7 @@ import HeroSection from "@/components/hero-section";
 import ProjectsSection from "@/components/projects-section";
 import ServicesSection from "@/components/services-section";
 import SkillsSection from "@/components/skills-section";
+import FooterSection from "@/components/footer-section";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <ServicesSection />
       <ProjectsSection />
       <ContactSection />
+      <FooterSection />
     </main>
   );
 }
