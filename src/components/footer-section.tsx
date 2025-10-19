@@ -20,7 +20,7 @@ const socialLinks = [
 
 export default function FooterSection() {
   return (
-    <footer className="border-t border-border bg-background/80 backdrop-blur-sm">
+    <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-6xl space-y-10 px-4 py-12 sm:px-6 lg:px-8">
         {/* Top: Branding + Social */}
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

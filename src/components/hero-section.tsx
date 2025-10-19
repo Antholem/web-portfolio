@@ -25,8 +25,8 @@ const socialLinks = [
 
 export default function HeroSection() {
   return (
-    <section id="home" className="relative overflow-hidden bg-background">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.15),_transparent_55%),_radial-gradient(circle_at_bottom,_rgba(14,165,233,0.12),_transparent_60%)]" aria-hidden />
+    <header id="home" className="relative overflow-hidden">
+      <div className="absolute inset-0 -z-10" aria-hidden />
       <div className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-12 px-4 py-24 sm:px-6 lg:flex-row lg:items-start lg:py-28">
         <div className="flex-1 space-y-10">
           <div className="space-y-4">
@@ -82,8 +82,7 @@ export default function HeroSection() {
         </div>
 
         <div className="relative flex max-w-sm flex-1 items-center justify-center">
-          <div className="absolute inset-0 -z-10 rounded-[2.5rem] bg-gradient-to-br from-primary/30 via-primary/5 to-transparent blur-3xl" aria-hidden />
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-950/60 shadow-2xl backdrop-blur">
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10">
             <Image
               src="/profile-portrait.svg"
               alt="Illustrated portrait of Sam Antholem Manalo"
@@ -95,6 +94,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-    </section>
+    </header>
   );
 }

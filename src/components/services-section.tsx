@@ -46,7 +46,7 @@ const services: {
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="bg-muted/40 py-16 lg:py-20">
+    <section id="services" className="py-16 lg:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">

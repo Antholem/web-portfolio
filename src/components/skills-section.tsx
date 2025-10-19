@@ -41,7 +41,7 @@ const skillCategories = [
 
 export default function SkillsSection() {
   return (
-    <section id="skills" className="bg-muted/30 py-16 lg:py-20">
+    <section id="skills" className="py-16 lg:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">Core capabilities</p>

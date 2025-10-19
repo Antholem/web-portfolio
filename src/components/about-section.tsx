@@ -30,11 +30,7 @@ const highlights = [
 
 export default function AboutSection() {
   return (
-    <section
-      id="about"
-      className="bg-background/60 py-20 sm:py-24"
-      aria-labelledby="about-heading"
-    >
+    <section id="about" className="py-16 lg:py-20" aria-labelledby="about-heading">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
@@ -73,7 +69,7 @@ export default function AboutSection() {
           <div className="flex flex-col gap-6">
             <div className="grid gap-4 sm:grid-cols-2">
               {highlights.map((item) => (
-                <Card key={item.title} className="h-full border-white/10 bg-muted/5 backdrop-blur">
+                <Card key={item.title} className="h-full">
                   <CardHeader className="space-y-4">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <item.icon className="h-5 w-5" aria-hidden />
