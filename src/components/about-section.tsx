@@ -44,12 +44,11 @@ export default function AboutSection() {
             id="about-heading"
             className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
           >
-            Crafting thoughtful systems that scale with your vision
+            Designing resilient systems for ambitious teams
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            An engineering leader focused on resilient delivery, I partner with
-            founders and product teams to align vision, execution, and
-            measurable outcomes across the product lifecycle.
+            Principal engineer partnering with founders and product leaders to
+            turn vision into measurable delivery.
           </p>
         </div>
         <div className="mt-16 grid gap-16 lg:grid-cols-[1.05fr_minmax(0,0.95fr)] lg:items-start">
