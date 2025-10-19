@@ -36,42 +36,40 @@ export default function AboutSection() {
       aria-labelledby="about-heading"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-16 lg:grid-cols-[1.05fr_minmax(0,0.95fr)] lg:items-start">
-          <div className="space-y-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
-              About
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
+            About
+          </p>
+          <h2
+            id="about-heading"
+            className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+          >
+            Crafting thoughtful systems that scale with your vision
+          </h2>
+          <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+            An engineering leader focused on resilient delivery, I partner with
+            founders and product teams to align vision, execution, and
+            measurable outcomes across the product lifecycle.
+          </p>
+        </div>
+        <div className="mt-16 grid gap-16 lg:grid-cols-[1.05fr_minmax(0,0.95fr)] lg:items-start">
+          <div className="space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p>
+              I&apos;m a principal software engineer based in Clark, Pampanga,
+              Philippines who helps product teams translate complex requirements
+              into human-centered software. From discovery through delivery, I
+              combine systems thinking, accessible design principles, and
+              AI-accelerated workflows to orchestrate cohesive digital
+              experiences.
             </p>
-            <div className="space-y-4">
-              <h2
-                id="about-heading"
-                className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
-              >
-                Crafting thoughtful systems that scale with your vision
-              </h2>
-              <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-                An engineering leader focused on resilient delivery, I partner
-                with founders and product teams to align vision, execution, and
-                measurable outcomes across the product lifecycle.
-              </p>
-              <div className="space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                <p>
-                  I&apos;m a principal software engineer based in Clark, Pampanga,
-                  Philippines who helps product teams translate complex
-                  requirements into human-centered software. From discovery
-                  through delivery, I combine systems thinking, accessible
-                  design principles, and AI-accelerated workflows to orchestrate
-                  cohesive digital experiences.
-                </p>
-                <p>
-                  Over the past nine years I&apos;ve led distributed engineering
-                  teams, modernized legacy platforms, and launched data-informed
-                  experiences across finance, commerce, and SaaS. My approach
-                  prioritizes maintainability, observability, and seamless
-                  collaboration with designers, product strategists, and
-                  business stakeholders.
-                </p>
-              </div>
-            </div>
+            <p>
+              Over the past nine years I&apos;ve led distributed engineering teams,
+              modernized legacy platforms, and launched data-informed
+              experiences across finance, commerce, and SaaS. My approach
+              prioritizes maintainability, observability, and seamless
+              collaboration with designers, product strategists, and business
+              stakeholders.
+            </p>
           </div>
           <div className="flex flex-col gap-6">
             <div className="grid gap-4 sm:grid-cols-2">
