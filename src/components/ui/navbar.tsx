@@ -17,11 +17,11 @@ import { useThemeStore } from "@/lib/theme-store"
 import { Separator } from "@/components/ui/separator"
 
 const links = [
-    { href: "/", label: "About" },
-    { href: "#services", label: "Services" },
+    { href: "#about", label: "About" },
     { href: "#skills", label: "Skills" },
+    { href: "#services", label: "Services" },
     { href: "#projects", label: "Projects" },
-    { href: "#contacts", label: "Contacts" },
+    { href: "#contact", label: "Contacts" },
 ]
 
 export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dark" }) {
