@@ -11,7 +11,6 @@ export function Toaster({ ...props }: ToasterProps) {
       theme="system"
       position="bottom-left"
       richColors
-      closeButton
       className="toaster group"
       toastOptions={{
         className: 'group toast',

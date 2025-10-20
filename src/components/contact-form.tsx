@@ -270,6 +270,33 @@ export default function ContactForm() {
     );
   });
 
+  const testToastButtons = [
+    {
+      key: 'default',
+      label: 'Test toast',
+      onClick: () =>
+        toast('Here\'s how a toast appears.', {
+          description: 'Use this button to preview the default style.',
+        }),
+    },
+    {
+      key: 'success',
+      label: 'Test success',
+      onClick: () =>
+        toast.success('Success! Everything worked as expected.', {
+          description: 'This matches the message shown after a submission succeeds.',
+        }),
+    },
+    {
+      key: 'error',
+      label: 'Test error',
+      onClick: () =>
+        toast.error('Something went wrong.', {
+          description: 'This mirrors the error toast displayed when sending fails.',
+        }),
+    },
+  ];
+
   return (
     <Card className="mx-auto max-w-3xl">
       <form onSubmit={handleSubmit} className="flex flex-col">
@@ -334,10 +361,23 @@ export default function ContactForm() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
+        <CardFooter className="flex-col items-stretch gap-3 px-6 md:flex-row md:items-center md:justify-between">
           <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
             {isSubmitting ? 'Sending…' : 'Send message'}
           </Button>
+          <div className="flex w-full flex-wrap justify-start gap-2 md:w-auto md:justify-end">
+            {testToastButtons.map(({ key, label, onClick }) => (
+              <Button
+                key={key}
+                type="button"
+                variant="outline"
+                onClick={onClick}
+                className="w-full justify-center md:w-auto"
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
         </CardFooter>
       </form>
     </Card>
