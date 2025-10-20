@@ -8,6 +8,7 @@ import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/r
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
 import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
+import { toast } from '@/components/ui/sonner';
 
 type JSONContent = {
   type?: string;
@@ -65,18 +66,10 @@ interface FormValues {
   email: string;
 }
 
-type FormStatus =
-  | { state: 'idle'; message: string | null }
-  | { state: 'submitting'; message: string | null }
-  | { state: 'success'; message: string }
-  | { state: 'error'; message: string };
-
 const initialValues: FormValues = {
   name: '',
   email: '',
 };
-
-const initialStatus: FormStatus = { state: 'idle', message: null };
 
 interface FormattingOptionDefinition {
   label: string;
@@ -126,7 +119,7 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
 
 export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
-  const [status, setStatus] = useState<FormStatus>(initialStatus);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [, setEditorStateVersion] = useState(0);
 
@@ -175,8 +168,8 @@ export default function ContactForm() {
       return;
     }
 
-    editor.setEditable(status.state !== 'submitting');
-  }, [editor, status.state]);
+    editor.setEditable(!isSubmitting);
+  }, [editor, isSubmitting]);
 
   useEffect(() => {
     if (!editor) {
@@ -195,7 +188,7 @@ export default function ContactForm() {
     event.preventDefault();
 
     if (!editor) {
-      setStatus({ state: 'error', message: 'Editor failed to load. Please refresh the page.' });
+      toast.error('Editor failed to load. Please refresh the page.');
       return;
     }
 
@@ -203,19 +196,17 @@ export default function ContactForm() {
     const messageHtml = editor.getHTML();
 
     if (!plainMessage) {
-      setStatus({ state: 'error', message: 'Please include a message.' });
+      toast.error('Please include a message.');
       return;
     }
 
     if (plainMessage.length > 5000) {
-      setStatus({
-        state: 'error',
-        message: 'Message is too long. Please keep it under 5000 characters.',
-      });
+      toast.error('Message is too long. Please keep it under 5000 characters.');
       return;
     }
 
-    setStatus({ state: 'submitting', message: 'Sending your message…' });
+    setIsSubmitting(true);
+    const toastId = toast.loading('Sending your message…');
 
     try {
       const response = await fetch('/api/contact', {
@@ -233,17 +224,17 @@ export default function ContactForm() {
       setValues(initialValues);
       editor.commands.clearContent(true);
       updateEditorEmptyState(editor);
-      setStatus({ state: 'success', message: 'Thanks! Your message has been delivered.' });
+      toast.success('Thanks! Your message has been delivered.', { id: toastId });
     } catch (error) {
       const message =
         error instanceof Error && error.message
           ? error.message
           : 'Something went wrong while sending your message.';
-      setStatus({ state: 'error', message });
+      toast.error(message, { id: toastId });
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  const isSubmitting = status.state === 'submitting';
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
@@ -335,23 +326,10 @@ export default function ContactForm() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
+        <CardFooter className="px-6 pb-6">
           <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
             {isSubmitting ? 'Sending…' : 'Send message'}
           </Button>
-          {status.message && (
-            <p
-              className={`text-sm ${
-                status.state === 'error'
-                  ? 'text-destructive'
-                  : status.state === 'success'
-                    ? 'text-emerald-600'
-                    : 'text-muted-foreground'
-              }`}
-            >
-              {status.message}
-            </p>
-          )}
         </CardFooter>
       </form>
     </Card>
