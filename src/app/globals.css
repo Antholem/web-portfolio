@@ -20,6 +20,12 @@
     --accent-foreground: 0 0% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 137.9 72.2% 94.1%;
+    --info: 221.2 83.2% 53.3%;
+    --info-foreground: 214.3 31.8% 91.4%;
+    --warning: 35.5 91.7% 64.5%;
+    --warning-foreground: 24.6 95% 13.5%;
     --border: 240 5% 88%;
     --input: 240 5% 88%;
     --ring: 0 0% 18%;
@@ -47,6 +53,12 @@
     --accent-foreground: 0 0% 96%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 96%;
+    --success: 142.1 70.6% 45.3%;
+    --success-foreground: 140 20% 15%;
+    --info: 221.2 83.2% 63.7%;
+    --info-foreground: 210 20% 14%;
+    --warning: 35.5 91.7% 64.5%;
+    --warning-foreground: 24.6 95% 13.5%;
     --border: 240 5% 18%;
     --input: 240 5% 18%;
     --ring: 240 5% 80%;
@@ -93,8 +105,37 @@
     box-shadow: var(--toast-box-shadow);
   }
 
+  .toast[data-type='info'] {
+    background-color: hsl(var(--info));
+    color: hsl(var(--info-foreground));
+    border-color: color-mix(in srgb, hsl(var(--info)) 70%, transparent);
+  }
+
+  .toast[data-type='success'] {
+    background-color: hsl(var(--success));
+    color: hsl(var(--success-foreground));
+    border-color: color-mix(in srgb, hsl(var(--success)) 70%, transparent);
+  }
+
+  .toast[data-type='warning'] {
+    background-color: hsl(var(--warning));
+    color: hsl(var(--warning-foreground));
+    border-color: color-mix(in srgb, hsl(var(--warning)) 70%, transparent);
+  }
+
+  .toast[data-type='error'],
+  .toast[data-type='destructive'] {
+    background-color: hsl(var(--destructive));
+    color: hsl(var(--destructive-foreground));
+    border-color: color-mix(in srgb, hsl(var(--destructive)) 70%, transparent);
+  }
+
   .toast-description {
     color: hsl(var(--muted-foreground));
+  }
+
+  .toast[data-type] .toast-description {
+    color: inherit;
   }
 
   .toast-action,
