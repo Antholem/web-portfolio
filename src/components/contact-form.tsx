@@ -67,18 +67,10 @@ interface FormValues {
   email: string;
 }
 
-type FormStatus =
-  | { state: 'idle'; message: string | null }
-  | { state: 'submitting'; message: string | null }
-  | { state: 'success'; message: string }
-  | { state: 'error'; message: string };
-
 const initialValues: FormValues = {
   name: '',
   email: '',
 };
-
-const initialStatus: FormStatus = { state: 'idle', message: null };
 
 interface FormattingOptionDefinition {
   label: string;
@@ -128,17 +120,15 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
 
 export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
-  const [status, setStatus] = useState<FormStatus>(initialStatus);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [, setEditorStateVersion] = useState(0);
 
   const showError = (message: string) => {
-    setStatus({ state: 'error', message });
     toast.error(message);
   };
 
   const showSuccess = (message: string) => {
-    setStatus({ state: 'success', message });
     toast.success(message);
   };
 
@@ -187,8 +177,8 @@ export default function ContactForm() {
       return;
     }
 
-    editor.setEditable(status.state !== 'submitting');
-  }, [editor, status.state]);
+    editor.setEditable(!isSubmitting);
+  }, [editor, isSubmitting]);
 
   useEffect(() => {
     if (!editor) {
@@ -224,7 +214,7 @@ export default function ContactForm() {
       return;
     }
 
-    setStatus({ state: 'submitting', message: 'Sending your message…' });
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('/api/contact', {
@@ -249,10 +239,10 @@ export default function ContactForm() {
           ? error.message
           : 'Something went wrong while sending your message.';
       showError(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  const isSubmitting = status.state === 'submitting';
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
@@ -348,19 +338,6 @@ export default function ContactForm() {
           <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
             {isSubmitting ? 'Sending…' : 'Send message'}
           </Button>
-          {status.message && (
-            <p
-              className={`text-sm ${
-                status.state === 'error'
-                  ? 'text-destructive'
-                  : status.state === 'success'
-                    ? 'text-emerald-600'
-                    : 'text-muted-foreground'
-              }`}
-            >
-              {status.message}
-            </p>
-          )}
         </CardFooter>
       </form>
     </Card>
