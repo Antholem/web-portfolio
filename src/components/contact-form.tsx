@@ -2,12 +2,14 @@
 
 import { type ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
 import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 type JSONContent = {
   type?: string;
@@ -130,6 +132,16 @@ export default function ContactForm() {
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [, setEditorStateVersion] = useState(0);
 
+  const showError = (message: string) => {
+    setStatus({ state: 'error', message });
+    toast.error(message);
+  };
+
+  const showSuccess = (message: string) => {
+    setStatus({ state: 'success', message });
+    toast.success(message);
+  };
+
   const updateEditorEmptyState = useCallback(
     (instance: TiptapEditor) => {
       const plainText = sanitizeEditorText(instance.getText({ blockSeparator: '\n' }));
@@ -195,7 +207,7 @@ export default function ContactForm() {
     event.preventDefault();
 
     if (!editor) {
-      setStatus({ state: 'error', message: 'Editor failed to load. Please refresh the page.' });
+      showError('Editor failed to load. Please refresh the page.');
       return;
     }
 
@@ -203,15 +215,12 @@ export default function ContactForm() {
     const messageHtml = editor.getHTML();
 
     if (!plainMessage) {
-      setStatus({ state: 'error', message: 'Please include a message.' });
+      showError('Please include a message.');
       return;
     }
 
     if (plainMessage.length > 5000) {
-      setStatus({
-        state: 'error',
-        message: 'Message is too long. Please keep it under 5000 characters.',
-      });
+      showError('Message is too long. Please keep it under 5000 characters.');
       return;
     }
 
@@ -233,13 +242,13 @@ export default function ContactForm() {
       setValues(initialValues);
       editor.commands.clearContent(true);
       updateEditorEmptyState(editor);
-      setStatus({ state: 'success', message: 'Thanks! Your message has been delivered.' });
+      showSuccess('Thanks! Your message has been delivered.');
     } catch (error) {
       const message =
         error instanceof Error && error.message
           ? error.message
           : 'Something went wrong while sending your message.';
-      setStatus({ state: 'error', message });
+      showError(message);
     }
   };
 

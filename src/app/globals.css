@@ -66,3 +66,39 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  .toaster {
+    --ui-background: hsl(var(--background));
+    --ui-foreground: hsl(var(--foreground));
+    --ui-border: hsl(var(--border));
+    --toast-background: hsl(var(--card));
+    --toast-foreground: hsl(var(--card-foreground));
+    --toast-border: var(--ui-border);
+    --toast-border-radius: calc(var(--radius) - 2px);
+    --toast-box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  }
+
+  .dark .toaster {
+    --toast-background: hsl(var(--popover));
+    --toast-foreground: hsl(var(--popover-foreground));
+    --toast-border: hsl(var(--border));
+  }
+
+  .toast {
+    border-radius: var(--toast-border-radius);
+    border: 1px solid var(--toast-border);
+    background-color: var(--toast-background);
+    color: var(--toast-foreground);
+    box-shadow: var(--toast-box-shadow);
+  }
+
+  .toast-description {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .toast-action,
+  .toast-cancel {
+    border-radius: calc(var(--radius) - 4px);
+  }
+}
