@@ -16,7 +16,11 @@ export function Toaster({ ...props }: ToasterProps) {
     setMounted(true);
   }, []);
 
-  const resolvedTheme: 'light' | 'dark' | 'system' = mounted ? theme : 'system';
+  const resolvedTheme: 'light' | 'dark' | 'system' = mounted
+    ? theme === 'dark'
+      ? 'light'
+      : 'dark'
+    : 'system';
 
   return (
     <SonnerToaster
