@@ -1,14 +1,26 @@
 'use client';
 
 import type { ComponentProps } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster as SonnerToaster } from 'sonner';
+
+import { useThemeStore } from '@/lib/theme-store';
 
 type ToasterProps = ComponentProps<typeof SonnerToaster>;
 
 export function Toaster({ ...props }: ToasterProps) {
+  const theme = useThemeStore((state) => state.theme);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const resolvedTheme: 'light' | 'dark' | 'system' = mounted ? theme : 'system';
+
   return (
     <SonnerToaster
-      theme="system"
+      theme={resolvedTheme}
       position="bottom-left"
       richColors
       className="toaster group"
