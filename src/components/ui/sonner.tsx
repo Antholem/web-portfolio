@@ -22,13 +22,10 @@ export function Toaster({ ...props }: ToasterProps) {
     <SonnerToaster
       theme={resolvedTheme}
       position="bottom-left"
-      richColors
       className="toaster group"
       toastOptions={{
         className: 'group toast',
         descriptionClassName: 'toast-description',
-        actionButtonClassName: 'toast-action',
-        cancelButtonClassName: 'toast-cancel',
       }}
       {...props}
     />
