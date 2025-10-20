@@ -1,43 +1,57 @@
+import type { LucideIcon } from "lucide-react";
+import { Cog, Database, Monitor, Palette, ServerCog, Sparkles } from "lucide-react";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-const skillCategories = [
+const skillCategories: {
+  title: string;
+  description: string;
+  skills: readonly string[];
+  icon: LucideIcon;
+}[] = [
   {
     title: "Front-end Engineering",
     description:
       "Crafting polished interfaces with performance-minded frameworks, component systems, and modern styling tooling.",
     skills: ["ReactJS", "NextJS", "Tailwind CSS", "Chakra UI", "Material UI", "Shadcn"],
+    icon: Monitor,
   },
   {
     title: "Backend & APIs",
     description:
       "Designing resilient services, APIs, and integrations that scale reliably across diverse runtime environments.",
     skills: ["Backend", "NodeJS", "ExpressJS", "PHP", "Python", "Java"],
+    icon: ServerCog,
   },
   {
     title: "Data & Cloud Platforms",
     description:
       "Implementing data models and real-time experiences backed by managed services and developer-friendly platforms.",
     skills: ["MongoDB", "MySQL", "PostgreSQL", "Firebase", "Supabase"],
+    icon: Database,
   },
   {
     title: "DevOps & Delivery",
     description:
       "Automating delivery workflows and observability to ship confidently from local development to production.",
     skills: ["Docker", "Vercel", "GitHub", "GitLab"],
+    icon: Cog,
   },
   {
     title: "Design & Collaboration",
     description:
       "Translating ideas into intuitive journeys through iterative prototyping, feedback loops, and design systems.",
     skills: ["Figma", "Adobe XD"],
+    icon: Palette,
   },
   {
     title: "AI & Emerging Tech",
     description:
       "Exploring intelligent tooling to accelerate product discovery, experimentation, and personalized experiences.",
     skills: ["Hugging Face", "Google Gemini"],
+    icon: Sparkles,
   },
-] as const;
+];
 
 export default function SkillsSection() {
   return (
@@ -57,7 +71,10 @@ export default function SkillsSection() {
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {skillCategories.map((category) => (
             <Card key={category.title} className="flex h-full flex-col">
-              <CardHeader className="space-y-3">
+              <CardHeader className="space-y-4">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <category.icon className="h-5 w-5" aria-hidden />
+                </span>
                 <CardTitle className="text-lg text-foreground">{category.title}</CardTitle>
                 <CardDescription className="text-sm leading-relaxed">{category.description}</CardDescription>
               </CardHeader>
