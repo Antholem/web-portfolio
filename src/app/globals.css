@@ -79,7 +79,13 @@
     --toast-box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
   }
 
-  .dark .toaster {
+  .toaster--light {
+    --toast-background: hsl(var(--card));
+    --toast-foreground: hsl(var(--card-foreground));
+    --toast-border: var(--ui-border);
+  }
+
+  .toaster--dark {
     --toast-background: hsl(var(--popover));
     --toast-foreground: hsl(var(--popover-foreground));
     --toast-border: hsl(var(--border));
