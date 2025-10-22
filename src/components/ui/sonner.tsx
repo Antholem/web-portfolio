@@ -7,5 +7,11 @@ export function Toaster() {
   const { colorMode } = useColorMode();
   const theme = colorMode === 'dark' ? 'light' : 'dark';
 
-  return <SonnerToaster position="bottom-left" theme={theme} />;
+  return (
+    <SonnerToaster
+      key={theme}
+      position="bottom-left"
+      theme={theme}
+    />
+  );
 }
