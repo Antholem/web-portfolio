@@ -20,14 +20,6 @@
     --accent-foreground: 0 0% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --toast-success: 142 72% 96%;
-    --toast-success-foreground: 141 70% 18%;
-    --toast-info: 221 88% 96%;
-    --toast-info-foreground: 223 84% 20%;
-    --toast-warning: 38 96% 94%;
-    --toast-warning-foreground: 28 88% 22%;
-    --toast-error: 0 86% 96%;
-    --toast-error-foreground: 354 70% 20%;
     --border: 240 5% 88%;
     --input: 240 5% 88%;
     --ring: 0 0% 18%;
@@ -36,7 +28,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
   .dark {
     --background: 240 6% 4%;
@@ -55,14 +47,6 @@
     --accent-foreground: 0 0% 96%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 96%;
-    --toast-success: 142 64% 28%;
-    --toast-success-foreground: 140 22% 88%;
-    --toast-info: 221 83% 42%;
-    --toast-info-foreground: 214 31% 92%;
-    --toast-warning: 35 91% 38%;
-    --toast-warning-foreground: 43 100% 93%;
-    --toast-error: 0 72% 33%;
-    --toast-error-foreground: 0 0% 96%;
     --border: 240 5% 18%;
     --input: 240 5% 18%;
     --ring: 240 5% 80%;
@@ -70,7 +54,7 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 }
 
@@ -109,36 +93,7 @@
     box-shadow: var(--toast-box-shadow);
   }
 
-  .toast[data-type='info'] {
-    background-color: hsl(var(--toast-info));
-    color: hsl(var(--toast-info-foreground));
-    border-color: color-mix(in srgb, hsl(var(--toast-info)) 70%, transparent);
-  }
-
-  .toast[data-type='success'] {
-    background-color: hsl(var(--toast-success));
-    color: hsl(var(--toast-success-foreground));
-    border-color: color-mix(in srgb, hsl(var(--toast-success)) 70%, transparent);
-  }
-
-  .toast[data-type='warning'] {
-    background-color: hsl(var(--toast-warning));
-    color: hsl(var(--toast-warning-foreground));
-    border-color: color-mix(in srgb, hsl(var(--toast-warning)) 70%, transparent);
-  }
-
-  .toast[data-type='error'],
-  .toast[data-type='destructive'] {
-    background-color: hsl(var(--toast-error));
-    color: hsl(var(--toast-error-foreground));
-    border-color: color-mix(in srgb, hsl(var(--toast-error)) 70%, transparent);
-  }
-
   .toast-description {
-    color: hsl(var(--muted-foreground));
-  }
-
-  .toast[data-type] .toast-description {
     color: inherit;
   }
 
