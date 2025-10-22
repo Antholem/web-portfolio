@@ -11,30 +11,30 @@ type ToasterProps = ComponentProps<typeof SonnerToaster> & {
   initialTheme?: 'light' | 'dark';
 };
 
+const invertTheme = (value: 'light' | 'dark') => (value === 'dark' ? 'light' : 'dark');
+
 export function Toaster({ initialTheme, className, ...props }: ToasterProps) {
   const theme = useThemeStore((state) => state.theme);
-  const [mounted, setMounted] = useState(false);
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() =>
+    initialTheme ? invertTheme(initialTheme) : 'dark',
+  );
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (!initialTheme) {
+      const isDark = document.documentElement.classList.contains('dark');
+      setResolvedTheme(isDark ? 'light' : 'dark');
+    }
+  }, [initialTheme]);
 
-  const currentTheme = mounted ? theme : initialTheme;
-  const resolvedTheme: 'light' | 'dark' | 'system' = currentTheme
-    ? currentTheme === 'dark'
-      ? 'light'
-      : 'dark'
-    : 'system';
+  useEffect(() => {
+    setResolvedTheme(invertTheme(theme));
+  }, [theme]);
 
   return (
     <SonnerToaster
       theme={resolvedTheme}
       position="bottom-left"
-      className={cn(
-        'toaster group',
-        resolvedTheme !== 'system' && `toaster--${resolvedTheme}`,
-        className,
-      )}
+      className={cn('toaster group', `toaster--${resolvedTheme}`, className)}
       toastOptions={{
         className: 'group toast',
         descriptionClassName: 'toast-description',
