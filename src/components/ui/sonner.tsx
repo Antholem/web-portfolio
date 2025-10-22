@@ -1,9 +1,21 @@
 'use client'
 
-import { Toaster as SonnerToaster } from "sonner"
+import { useEffect, useState } from 'react'
+import { Toaster as SonnerToaster } from 'sonner'
+
+import { useThemeStore } from '@/lib/theme-store'
 
 export function Toaster() {
-  return <SonnerToaster position="bottom-left" theme="dark" />
+  const theme = useThemeStore((state) => state.theme)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  return (
+    <SonnerToaster position="bottom-left" theme={mounted ? theme : undefined} />
+  )
 }
 
-export { toast } from "sonner"
+export { toast } from 'sonner'
