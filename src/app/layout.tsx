@@ -2,10 +2,10 @@ import type { Metadata } from "next"
 import "./globals.css"
 import Navbar from "@/components/ui/navbar"
 import { Toaster } from "@/components/ui/sonner"
+import { Providers } from "./providers"
 import { cookies } from "next/headers"
 import type { ReactNode } from "react"
 import Script from "next/script"
-
 
 export const metadata: Metadata = {
   title: "Antholem",
@@ -55,9 +55,11 @@ export default async function RootLayout({
         </Script>
       </head>
       <body className="font-sans" suppressHydrationWarning>
-        <Navbar initialTheme={cookieTheme} />
-        <main>{children}</main>
-        <Toaster />
+        <Providers>
+          <Navbar initialTheme={cookieTheme} />
+          <main>{children}</main>
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );
