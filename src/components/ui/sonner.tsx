@@ -1,14 +1,16 @@
 'use client';
 
 import type { ComponentProps } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Toaster as SonnerToaster } from 'sonner';
 
 import { useThemeStore } from '@/lib/theme-store';
 
-type ToasterProps = ComponentProps<typeof SonnerToaster>;
+type ToasterProps = ComponentProps<typeof SonnerToaster> & {
+  initialTheme?: 'light' | 'dark';
+};
 
-export function Toaster({ ...props }: ToasterProps) {
+export function Toaster({ initialTheme, ...props }: ToasterProps) {
   const theme = useThemeStore((state) => state.theme);
   const [mounted, setMounted] = useState(false);
 
@@ -16,11 +18,15 @@ export function Toaster({ ...props }: ToasterProps) {
     setMounted(true);
   }, []);
 
-  const resolvedTheme: 'light' | 'dark' | 'system' = mounted
-    ? theme === 'dark'
-      ? 'light'
-      : 'dark'
-    : 'system';
+  const currentTheme = mounted ? theme : initialTheme;
+
+  const resolvedTheme = useMemo((): 'light' | 'dark' | 'system' => {
+    if (!currentTheme) {
+      return 'system';
+    }
+
+    return currentTheme === 'dark' ? 'light' : 'dark';
+  }, [currentTheme]);
 
   return (
     <SonnerToaster

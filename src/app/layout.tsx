@@ -57,7 +57,7 @@ export default async function RootLayout({
       <body className="font-sans" suppressHydrationWarning>
         <Navbar initialTheme={cookieTheme} />
         <main>{children}</main>
-        <Toaster />
+        <Toaster initialTheme={cookieTheme} />
       </body>
     </html>
   );
