@@ -4,6 +4,7 @@ import { type ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'r
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
@@ -195,7 +196,9 @@ export default function ContactForm() {
     event.preventDefault();
 
     if (!editor) {
-      setStatus({ state: 'error', message: 'Editor failed to load. Please refresh the page.' });
+      const message = 'Editor failed to load. Please refresh the page.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
       return;
     }
 
@@ -203,15 +206,19 @@ export default function ContactForm() {
     const messageHtml = editor.getHTML();
 
     if (!plainMessage) {
-      setStatus({ state: 'error', message: 'Please include a message.' });
+      const message = 'Please include a message.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
       return;
     }
 
     if (plainMessage.length > 5000) {
+      const message = 'Message is too long. Please keep it under 5000 characters.';
       setStatus({
         state: 'error',
-        message: 'Message is too long. Please keep it under 5000 characters.',
+        message,
       });
+      toast.error(message);
       return;
     }
 
@@ -233,13 +240,16 @@ export default function ContactForm() {
       setValues(initialValues);
       editor.commands.clearContent(true);
       updateEditorEmptyState(editor);
-      setStatus({ state: 'success', message: 'Thanks! Your message has been delivered.' });
+      const message = 'Thanks! Your message has been delivered.';
+      setStatus({ state: 'success', message });
+      toast.success(message);
     } catch (error) {
       const message =
         error instanceof Error && error.message
           ? error.message
           : 'Something went wrong while sending your message.';
       setStatus({ state: 'error', message });
+      toast.error(message);
     }
   };
 
@@ -336,9 +346,19 @@ export default function ContactForm() {
           </div>
         </CardContent>
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
-          <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
-            {isSubmitting ? 'Sending…' : 'Send message'}
-          </Button>
+          <div className="flex w-full flex-col gap-2 md:flex-row">
+            <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
+              {isSubmitting ? 'Sending…' : 'Send message'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => toast('This is a test toast from the contact form!')}
+              className="w-full justify-center md:w-auto"
+            >
+              Test toast
+            </Button>
+          </div>
           {status.message && (
             <p
               className={`text-sm ${
