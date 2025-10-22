@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentProps } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Toaster as SonnerToaster } from 'sonner';
 
 import { useThemeStore } from '@/lib/theme-store';
@@ -15,20 +15,25 @@ const invertTheme = (value: 'light' | 'dark') => (value === 'dark' ? 'light' : '
 
 export function Toaster({ initialTheme, className, ...props }: ToasterProps) {
   const theme = useThemeStore((state) => state.theme);
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() =>
-    initialTheme ? invertTheme(initialTheme) : 'dark',
-  );
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!initialTheme) {
-      const isDark = document.documentElement.classList.contains('dark');
-      setResolvedTheme(isDark ? 'light' : 'dark');
+    setMounted(true);
+  }, []);
+
+  const activeTheme = useMemo<'light' | 'dark'>(() => {
+    if (mounted) {
+      return theme;
     }
-  }, [initialTheme]);
 
-  useEffect(() => {
-    setResolvedTheme(invertTheme(theme));
-  }, [theme]);
+    if (initialTheme) {
+      return initialTheme;
+    }
+
+    return 'light';
+  }, [initialTheme, mounted, theme]);
+
+  const resolvedTheme = useMemo<'light' | 'dark'>(() => invertTheme(activeTheme), [activeTheme]);
 
   return (
     <SonnerToaster
