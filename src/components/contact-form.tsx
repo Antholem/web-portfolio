@@ -8,6 +8,7 @@ import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/r
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
 import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
+import { toast } from 'sonner';
 
 type JSONContent = {
   type?: string;
@@ -195,7 +196,9 @@ export default function ContactForm() {
     event.preventDefault();
 
     if (!editor) {
-      setStatus({ state: 'error', message: 'Editor failed to load. Please refresh the page.' });
+      const errorMessage = 'Editor failed to load. Please refresh the page.';
+      setStatus({ state: 'error', message: errorMessage });
+      toast.error(errorMessage);
       return;
     }
 
@@ -203,15 +206,19 @@ export default function ContactForm() {
     const messageHtml = editor.getHTML();
 
     if (!plainMessage) {
-      setStatus({ state: 'error', message: 'Please include a message.' });
+      const errorMessage = 'Please include a message.';
+      setStatus({ state: 'error', message: errorMessage });
+      toast.error(errorMessage);
       return;
     }
 
     if (plainMessage.length > 5000) {
+      const errorMessage = 'Message is too long. Please keep it under 5000 characters.';
       setStatus({
         state: 'error',
-        message: 'Message is too long. Please keep it under 5000 characters.',
+        message: errorMessage,
       });
+      toast.error(errorMessage);
       return;
     }
 
@@ -233,13 +240,16 @@ export default function ContactForm() {
       setValues(initialValues);
       editor.commands.clearContent(true);
       updateEditorEmptyState(editor);
-      setStatus({ state: 'success', message: 'Thanks! Your message has been delivered.' });
+      const successMessage = 'Thanks! Your message has been delivered.';
+      setStatus({ state: 'success', message: successMessage });
+      toast.success(successMessage);
     } catch (error) {
       const message =
         error instanceof Error && error.message
           ? error.message
           : 'Something went wrong while sending your message.';
       setStatus({ state: 'error', message });
+      toast.error(message);
     }
   };
 
