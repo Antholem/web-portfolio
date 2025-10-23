@@ -350,28 +350,7 @@ export default function ContactForm() {
             <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
               {isSubmitting ? 'Sending…' : 'Send message'}
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => toast('This is a test toast from the contact form!')}
-              className="w-full justify-center md:w-auto"
-            >
-              Test toast
-            </Button>
           </div>
-          {status.message && (
-            <p
-              className={`text-sm ${
-                status.state === 'error'
-                  ? 'text-destructive'
-                  : status.state === 'success'
-                    ? 'text-emerald-600'
-                    : 'text-muted-foreground'
-              }`}
-            >
-              {status.message}
-            </p>
-          )}
         </CardFooter>
       </form>
     </Card>
