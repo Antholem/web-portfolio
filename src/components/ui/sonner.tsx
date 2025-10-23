@@ -7,6 +7,7 @@ import { useThemeStore } from '@/lib/theme-store'
 
 export function Toaster() {
   const theme = useThemeStore((state) => state.theme)
+  const invertedTheme = theme === 'dark' ? 'light' : 'dark'
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -14,7 +15,10 @@ export function Toaster() {
   }, [])
 
   return (
-    <SonnerToaster position="bottom-left" theme={mounted ? theme : undefined} />
+    <SonnerToaster
+      position="bottom-left"
+      theme={mounted ? invertedTheme : undefined}
+    />
   )
 }
 
