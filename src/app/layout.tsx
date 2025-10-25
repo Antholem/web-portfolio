@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import Navbar from "@/components/ui/navbar"
+import { Toaster } from "@/components/ui/sonner"
 import { cookies } from "next/headers"
 import type { ReactNode } from "react"
 import Script from "next/script"
@@ -56,6 +57,7 @@ export default async function RootLayout({
       <body className="font-sans" suppressHydrationWarning>
         <Navbar initialTheme={cookieTheme} />
         <main>{children}</main>
+        <Toaster />
       </body>
     </html>
   );
