@@ -304,7 +304,7 @@ export default function ContactForm() {
                 value={values.name}
                 onChange={handleChange('name')}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="Your full name (e.g., Jordan Carter)"
+                placeholder="Enter your full name"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -319,7 +319,7 @@ export default function ContactForm() {
                 value={values.email}
                 onChange={handleChange('email')}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="you@company.com"
+                placeholder="Enter your email"
               />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
