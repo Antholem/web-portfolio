@@ -18,6 +18,7 @@ type JSONContent = {
 
 const ZERO_WIDTH_SPACE_REGEX = /\u200B/g;
 const NON_BREAKING_SPACE_REGEX = /\u00A0/g;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
@@ -254,6 +255,11 @@ export default function ContactForm() {
   };
 
   const isSubmitting = status.state === 'submitting';
+  const trimmedName = values.name.trim();
+  const trimmedEmail = values.email.trim();
+  const isNameValid = trimmedName.length > 0;
+  const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
+  const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
@@ -347,7 +353,11 @@ export default function ContactForm() {
         </CardContent>
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
-            <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
+            <Button
+              type="submit"
+              disabled={isSubmitting || !editor || !isFormValid}
+              className="w-full justify-center md:w-auto"
+            >
               {isSubmitting ? 'Sending…' : 'Send message'}
             </Button>
           </div>
