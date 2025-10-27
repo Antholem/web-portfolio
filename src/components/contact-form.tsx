@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -18,6 +18,7 @@ type JSONContent = {
 
 const ZERO_WIDTH_SPACE_REGEX = /\u200B/g;
 const NON_BREAKING_SPACE_REGEX = /\u00A0/g;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
@@ -254,6 +255,11 @@ export default function ContactForm() {
   };
 
   const isSubmitting = status.state === 'submitting';
+  const trimmedName = values.name.trim();
+  const trimmedEmail = values.email.trim();
+  const isNameValid = trimmedName.length > 0;
+  const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
+  const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
@@ -298,7 +304,7 @@ export default function ContactForm() {
                 value={values.name}
                 onChange={handleChange('name')}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="Juan Dela Cruz"
+                placeholder="Enter your full name"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -313,7 +319,7 @@ export default function ContactForm() {
                 value={values.email}
                 onChange={handleChange('email')}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="you@example.com"
+                placeholder="Enter your email"
               />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
@@ -327,7 +333,7 @@ export default function ContactForm() {
                     <>
                       {isEditorEmpty && (
                         <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
-                          Tell me about your project or question.
+                          Share your project goals, requirements, or questions.
                         </span>
                       )}
                       <EditorContent editor={editor} />
@@ -335,7 +341,7 @@ export default function ContactForm() {
                   ) : (
                     <div aria-hidden className="relative">
                       <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
-                        Tell me about your project or question.
+                        Share your project goals, requirements, or questions.
                       </span>
                       <div className={`${editorClassName} select-none`} />
                     </div>
@@ -347,8 +353,20 @@ export default function ContactForm() {
         </CardContent>
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
-            <Button type="submit" disabled={isSubmitting || !editor} className="w-full justify-center md:w-auto">
-              {isSubmitting ? 'Sending…' : 'Send message'}
+            <Button
+              type="submit"
+              disabled={isSubmitting || !editor || !isFormValid}
+              className="w-full justify-center md:w-auto"
+              aria-live="polite"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Sending…
+                </>
+              ) : (
+                'Send message'
+              )}
             </Button>
           </div>
         </CardFooter>
