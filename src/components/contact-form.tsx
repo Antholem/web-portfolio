@@ -8,12 +8,13 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Loader2, Quote, Sparkles } from 'lucide-react';
 
 type JSONContent = {
   type?: string;
   text?: string;
   content?: JSONContent[];
+  attrs?: Record<string, unknown>;
 };
 
 const ZERO_WIDTH_SPACE_REGEX = /\u200B/g;
@@ -24,6 +25,49 @@ const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
 
 const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
+
+const convertPlainTextToDoc = (text: string): JSONContent => {
+  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const paragraphs = normalized
+    .split(/\n{2,}/)
+    .map((paragraphText) => {
+      const trimmedParagraph = paragraphText.trimEnd();
+      const lines = trimmedParagraph.split('\n');
+      const paragraphContent: JSONContent[] = [];
+
+      lines.forEach((line, index) => {
+        const sanitizedLine = sanitizeEditorText(line);
+
+        if (sanitizedLine.length > 0) {
+          paragraphContent.push({ type: 'text', text: sanitizedLine });
+        }
+
+        if (index < lines.length - 1) {
+          paragraphContent.push({ type: 'hardBreak' });
+        }
+      });
+
+      if (paragraphContent.length === 0) {
+        paragraphContent.push({ type: 'text', text: '' });
+      }
+
+      return { type: 'paragraph', content: paragraphContent } as JSONContent;
+    });
+
+  if (paragraphs.length === 0) {
+    return {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: sanitizeEditorText(normalized) }],
+        },
+      ],
+    } as JSONContent;
+  }
+
+  return { type: 'doc', content: paragraphs } as JSONContent;
+};
 
 const editorClassName = [
   'h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
@@ -130,6 +174,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [, setEditorStateVersion] = useState(0);
 
   const updateEditorEmptyState = useCallback(
@@ -177,8 +222,8 @@ export default function ContactForm() {
       return;
     }
 
-    editor.setEditable(status.state !== 'submitting');
-  }, [editor, status.state]);
+    editor.setEditable(status.state !== 'submitting' && !isEnhancing);
+  }, [editor, status.state, isEnhancing]);
 
   useEffect(() => {
     if (!editor) {
@@ -254,6 +299,59 @@ export default function ContactForm() {
     }
   };
 
+  const handleEnhance = async () => {
+    if (!editor) {
+      const message = 'Editor failed to load. Please refresh the page.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
+      return;
+    }
+
+    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+
+    if (!plainMessage) {
+      const message = 'Please write a message to enhance first.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
+      return;
+    }
+
+    setIsEnhancing(true);
+
+    try {
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: plainMessage }),
+      });
+
+      const payload = (await response.json()) as { enhanced?: string; error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? 'Failed to enhance your message.');
+      }
+
+      if (!payload.enhanced) {
+        throw new Error('Gemini did not return an enhanced message.');
+      }
+
+      editor.commands.setContent(convertPlainTextToDoc(payload.enhanced));
+      updateEditorEmptyState(editor);
+      setEditorStateVersion((count) => count + 1);
+      setStatus({ state: 'idle', message: null });
+      toast.success('Message enhanced with Gemini.');
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Something went wrong while enhancing your message.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
   const isSubmitting = status.state === 'submitting';
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
@@ -263,7 +361,8 @@ export default function ContactForm() {
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
-    const isButtonDisabled = isSubmitting || !editor || (editor ? isDisabled(editor) : true);
+    const isButtonDisabled =
+      isSubmitting || isEnhancing || !editor || (editor ? isDisabled(editor) : true);
 
     return (
       <button
@@ -354,8 +453,27 @@ export default function ContactForm() {
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
             <Button
+              type="button"
+              variant="outline"
+              onClick={handleEnhance}
+              disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
+              className="w-full justify-center md:w-auto"
+            >
+              {isEnhancing ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Enhancing…
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  Enhance with AI
+                </>
+              )}
+            </Button>
+            <Button
               type="submit"
-              disabled={isSubmitting || !editor || !isFormValid}
+              disabled={isSubmitting || isEnhancing || !editor || !isFormValid}
               className="w-full justify-center md:w-auto"
               aria-live="polite"
             >
