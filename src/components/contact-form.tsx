@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, Italic, List, ListOrdered, Quote } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -357,8 +357,16 @@ export default function ContactForm() {
               type="submit"
               disabled={isSubmitting || !editor || !isFormValid}
               className="w-full justify-center md:w-auto"
+              aria-live="polite"
             >
-              {isSubmitting ? 'Sending…' : 'Send message'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Sending…
+                </>
+              ) : (
+                'Send message'
+              )}
             </Button>
           </div>
         </CardFooter>
