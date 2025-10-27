@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { sendContactEmail } from '@/lib/email';
+import { enhanceContactMessage } from '@/lib/gemini';
 
 interface ContactRequestBody {
   name?: unknown;
@@ -57,8 +58,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
+  let enhancedMessage: string | null = null;
+
   try {
-    await sendContactEmail(validation);
+    enhancedMessage = await enhanceContactMessage(validation.message);
+  } catch (error) {
+    console.error('Failed to enhance message with Gemini:', error);
+  }
+
+  try {
+    await sendContactEmail({ ...validation, enhancedMessage });
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof Error && error.name === 'EmailConfigurationError') {

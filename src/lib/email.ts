@@ -5,6 +5,7 @@ interface ContactMessage {
   email: string;
   message: string;
   messageHtml?: string;
+  enhancedMessage?: string | null;
 }
 
 class EmailConfigurationError extends Error {
@@ -105,27 +106,41 @@ function extractVisibleText(html: string): string {
     .trim();
 }
 
-function buildPlainText(name: string, replyTo: string, msg: string) {
-  return [
+function buildPlainText(name: string, replyTo: string, msg: string, enhanced?: string | null) {
+  const lines = [
     "You received a new message through your portfolio.",
     "",
     `Name: ${name}`,
     `Email: ${replyTo || "not provided"}`,
     "",
-    "Message:",
+    "Message (original):",
     msg.trim(),
-    "",
-    "—",
-    "This email came from your portfolio.",
-  ].join("\n");
+  ];
+
+  if (enhanced) {
+    lines.push("", "Gemini-enhanced message:", enhanced.trim());
+  }
+
+  lines.push("", "—", "This email came from your portfolio.");
+
+  return lines.join("\n");
 }
 
-function buildHtml(name: string, replyTo: string, msg: string, msgHtml?: string) {
+function buildHtml(
+  name: string,
+  replyTo: string,
+  msg: string,
+  msgHtml?: string,
+  enhanced?: string | null,
+) {
   const preheader = "New message from your portfolio. Open to view.";
   const sanitizedHtml = msgHtml ? sanitizeRichText(msgHtml) : '';
   const hasRichText = sanitizedHtml && extractVisibleText(sanitizedHtml).length > 0;
   const fallbackHtml = escapeHtml(msg.trim()).replace(/\r?\n/g, "<br>");
   const messageMarkup = hasRichText ? sanitizedHtml : `<p>${fallbackHtml}</p>`;
+  const enhancedMarkup = enhanced
+    ? `<p>${escapeHtml(enhanced.trim()).replace(/\r?\n/g, "<br>")}</p>`
+    : '';
   const replyHref = replyTo ? `mailto:${replyTo}` : "#";
 
   return normalizeMessageBody(`<!doctype html>
@@ -188,8 +203,14 @@ function buildHtml(name: string, replyTo: string, msg: string, msgHtml?: string)
         <span class="label">Email</span>
         <p class="value">${replyTo ? escapeHtml(replyTo) : "not provided"}</p>
 
-        <span class="label">Message</span>
+        <span class="label">Message (original)</span>
         <div class="msg">${messageMarkup}</div>
+
+        ${
+          enhancedMarkup
+            ? `<span class="label">Gemini-enhanced message</span><div class="msg">${enhancedMarkup}</div>`
+            : ''
+        }
 
         ${replyTo ? `<a class="btn" href="${replyHref}">Reply</a>` : ""}
       </div>
@@ -325,6 +346,7 @@ export async function sendContactEmail({
   email,
   message,
   messageHtml,
+  enhancedMessage,
 }: ContactMessage): Promise<void> {
   const fromEmail = process.env.APP_FROM_EMAIL;
   const fromPassword = process.env.APP_FROM_PASSWORD;
@@ -340,8 +362,10 @@ export async function sendContactEmail({
   const replyTo = sanitizeEmail(email);
   const subject = `[Portfolio] New message from ${sanitizedName}`;
 
-  const textBody = buildPlainText(sanitizedName, replyTo, message);
-  const htmlBody = buildHtml(sanitizedName, replyTo, message, messageHtml);
+  const normalizedEnhanced = enhancedMessage ? enhancedMessage.trim() : null;
+
+  const textBody = buildPlainText(sanitizedName, replyTo, message, normalizedEnhanced);
+  const htmlBody = buildHtml(sanitizedName, replyTo, message, messageHtml, normalizedEnhanced);
 
   const boundary = `b1_${Date.now().toString(36)}`;
   const mimeBody = [
