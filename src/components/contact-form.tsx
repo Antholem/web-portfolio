@@ -304,7 +304,7 @@ export default function ContactForm() {
                 value={values.name}
                 onChange={handleChange('name')}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="Juan Dela Cruz"
+                placeholder="Your full name (e.g., Jordan Carter)"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -319,7 +319,7 @@ export default function ContactForm() {
                 value={values.email}
                 onChange={handleChange('email')}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="you@example.com"
+                placeholder="you@company.com"
               />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
@@ -333,7 +333,7 @@ export default function ContactForm() {
                     <>
                       {isEditorEmpty && (
                         <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
-                          Tell me about your project or question.
+                          Share your project goals, requirements, or questions.
                         </span>
                       )}
                       <EditorContent editor={editor} />
@@ -341,7 +341,7 @@ export default function ContactForm() {
                   ) : (
                     <div aria-hidden className="relative">
                       <span className="pointer-events-none absolute left-3 top-2 text-sm text-muted-foreground">
-                        Tell me about your project or question.
+                        Share your project goals, requirements, or questions.
                       </span>
                       <div className={`${editorClassName} select-none`} />
                     </div>
