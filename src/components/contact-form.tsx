@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Loader2, Quote, Wand2 } from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -22,6 +22,23 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const plainTextToHtml = (value: string) => {
+  const paragraphs = value
+    .split(/\n+/)
+    .map((paragraph) => `<p>${escapeHtml(paragraph.trim()) || '&nbsp;'}</p>`)
+    .join('');
+
+  return paragraphs || '<p>&nbsp;</p>';
+};
 
 const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
 
@@ -130,6 +147,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [, setEditorStateVersion] = useState(0);
 
   const updateEditorEmptyState = useCallback(
@@ -254,6 +272,58 @@ export default function ContactForm() {
     }
   };
 
+  const handleEnhance = async () => {
+    if (!editor) {
+      const message = 'Editor failed to load. Please refresh the page.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
+      return;
+    }
+
+    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+
+    if (!plainMessage) {
+      const message = 'Please include a message to enhance.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
+      return;
+    }
+
+    setIsEnhancing(true);
+    setStatus((previous) => (previous.state === 'submitting' ? previous : { state: 'idle', message: null }));
+
+    try {
+      const response = await fetch('/api/enhance-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: plainMessage }),
+      });
+
+      const payload = (await response.json()) as { error?: string } | { enhancedMessage?: string };
+
+      if (!response.ok) {
+        throw new Error('error' in payload && payload.error ? payload.error : 'Failed to enhance your message.');
+      }
+
+      if (!('enhancedMessage' in payload) || typeof payload.enhancedMessage !== 'string') {
+        throw new Error('Gemini did not return an enhanced message.');
+      }
+
+      editor.commands.setContent(plainTextToHtml(payload.enhancedMessage));
+      updateEditorEmptyState(editor);
+      toast.success('Message enhanced with Gemini.');
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Something went wrong while enhancing your message.';
+      setStatus({ state: 'error', message });
+      toast.error(message);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
   const isSubmitting = status.state === 'submitting';
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
@@ -353,6 +423,25 @@ export default function ContactForm() {
         </CardContent>
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
+              onClick={handleEnhance}
+              className="w-full justify-center md:w-auto"
+            >
+              {isEnhancing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  Enhancing…
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4" aria-hidden="true" />
+                  Enhance message
+                </>
+              )}
+            </Button>
             <Button
               type="submit"
               disabled={isSubmitting || !editor || !isFormValid}
