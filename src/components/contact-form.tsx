@@ -23,6 +23,21 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
 
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const transformPlainTextToHtml = (value: string) =>
+  value
+    .trim()
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br />')}</p>`)
+    .join('');
+
 const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
 
 const editorClassName = [
@@ -130,6 +145,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [, setEditorStateVersion] = useState(0);
 
   const updateEditorEmptyState = useCallback(
@@ -254,6 +270,49 @@ export default function ContactForm() {
     }
   };
 
+  const handleEnhanceMessage = async () => {
+    if (!editor) {
+      toast.error('Editor failed to load. Please refresh the page.');
+      return;
+    }
+
+    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+
+    if (!plainMessage) {
+      toast.error('Please write a message before enhancing it.');
+      return;
+    }
+
+    setIsEnhancing(true);
+
+    try {
+      const response = await fetch('/api/paraphrase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: plainMessage }),
+      });
+
+      const payload = (await response.json()) as { error?: string; message?: string };
+
+      if (!response.ok || !payload.message) {
+        throw new Error(payload.error ?? 'Failed to enhance your message.');
+      }
+
+      const html = transformPlainTextToHtml(payload.message);
+      editor.commands.setContent(html, true);
+      updateEditorEmptyState(editor);
+      toast.success('Your message has been enhanced.');
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Something went wrong while enhancing your message.';
+      toast.error(message);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
   const isSubmitting = status.state === 'submitting';
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
@@ -355,7 +414,7 @@ export default function ContactForm() {
           <div className="flex w-full flex-col gap-2 md:flex-row">
             <Button
               type="submit"
-              disabled={isSubmitting || !editor || !isFormValid}
+              disabled={isSubmitting || isEnhancing || !editor || !isFormValid}
               className="w-full justify-center md:w-auto"
               aria-live="polite"
             >
@@ -366,6 +425,22 @@ export default function ContactForm() {
                 </>
               ) : (
                 'Send message'
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleEnhanceMessage}
+              disabled={isSubmitting || isEnhancing || !editor || isEditorEmpty}
+              className="w-full justify-center md:w-auto"
+            >
+              {isEnhancing ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Enhancing…
+                </>
+              ) : (
+                'Enhance with Gemini'
               )}
             </Button>
           </div>
