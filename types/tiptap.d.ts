@@ -20,6 +20,7 @@ declare module '@tiptap/react' {
     isActive(name: string): boolean;
     commands: {
       clearContent(emitUpdate?: boolean): void;
+      setContent(content: unknown, emitUpdate?: boolean): void;
     };
     chain(): CommandChain;
     can(): {
