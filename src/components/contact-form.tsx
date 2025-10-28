@@ -130,6 +130,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [, setEditorStateVersion] = useState(0);
 
   const updateEditorEmptyState = useCallback(
@@ -146,6 +147,27 @@ export default function ContactForm() {
     },
     [setIsEditorEmpty],
   );
+
+  const createDocumentFromPlainText = useCallback((text: string): JSONContent => {
+    const lines = text.split(/\r?\n/);
+
+    return {
+      type: 'doc',
+      content: lines.map((line) =>
+        line
+          ? {
+              type: 'paragraph',
+              content: [
+                {
+                  type: 'text',
+                  text: line,
+                },
+              ],
+            }
+          : { type: 'paragraph' },
+      ),
+    };
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -177,8 +199,8 @@ export default function ContactForm() {
       return;
     }
 
-    editor.setEditable(status.state !== 'submitting');
-  }, [editor, status.state]);
+    editor.setEditable(status.state !== 'submitting' && !isEnhancing);
+  }, [editor, isEnhancing, status.state]);
 
   useEffect(() => {
     if (!editor) {
@@ -255,6 +277,7 @@ export default function ContactForm() {
   };
 
   const isSubmitting = status.state === 'submitting';
+  const isBusy = isSubmitting || isEnhancing;
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
   const isNameValid = trimmedName.length > 0;
@@ -263,7 +286,7 @@ export default function ContactForm() {
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
-    const isButtonDisabled = isSubmitting || !editor || (editor ? isDisabled(editor) : true);
+    const isButtonDisabled = isBusy || !editor || (editor ? isDisabled(editor) : true);
 
     return (
       <button
@@ -286,6 +309,64 @@ export default function ContactForm() {
       </button>
     );
   });
+
+  const enhanceMessage = useCallback(async () => {
+    if (!editor) {
+      toast.error('Editor failed to load. Please refresh the page.');
+      return;
+    }
+
+    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+
+    if (!plainMessage) {
+      toast.error('Please write a message to enhance first.');
+      return;
+    }
+
+    if (plainMessage.length > 5000) {
+      toast.error('Message is too long to enhance. Please shorten it.');
+      return;
+    }
+
+    setIsEnhancing(true);
+
+    try {
+      const response = await fetch('/api/enhance-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: plainMessage }),
+      });
+
+      const payload = (await response.json()) as { error?: string } | { enhancedMessage?: string };
+
+      if (!response.ok) {
+        throw new Error('error' in payload && payload.error ? payload.error : 'Failed to enhance the message.');
+      }
+
+      const enhancedMessage =
+        'enhancedMessage' in payload && typeof payload.enhancedMessage === 'string'
+          ? payload.enhancedMessage.trim()
+          : '';
+
+      if (!enhancedMessage) {
+        throw new Error('Gemini did not return an enhanced message.');
+      }
+
+      editor.commands.setContent(createDocumentFromPlainText(enhancedMessage), true, {
+        preserveWhitespace: 'full',
+      });
+      updateEditorEmptyState(editor);
+      toast.success('Message enhanced.');
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Something went wrong while enhancing your message.';
+      toast.error(message);
+    } finally {
+      setIsEnhancing(false);
+    }
+  }, [createDocumentFromPlainText, editor, updateEditorEmptyState]);
 
   return (
     <Card className="mx-auto max-w-3xl">
@@ -354,8 +435,24 @@ export default function ContactForm() {
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
             <Button
+              type="button"
+              variant="outline"
+              disabled={isBusy || !editor || isEditorEmpty}
+              className="w-full justify-center md:w-auto"
+              onClick={enhanceMessage}
+            >
+              {isEnhancing ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Enhancing…
+                </>
+              ) : (
+                'Enhance message'
+              )}
+            </Button>
+            <Button
               type="submit"
-              disabled={isSubmitting || !editor || !isFormValid}
+              disabled={isBusy || !editor || !isFormValid}
               className="w-full justify-center md:w-auto"
               aria-live="polite"
             >
