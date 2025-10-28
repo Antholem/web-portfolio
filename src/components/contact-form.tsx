@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Loader2, Quote, Sparkles } from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -80,6 +80,42 @@ const initialValues: FormValues = {
 
 const initialStatus: FormStatus = { state: 'idle', message: null };
 
+const createEditorContentFromPlainText = (text: string): JSONContent => {
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trimEnd())
+    .filter((paragraph, index, original) => paragraph.length > 0 || index === original.length - 1);
+
+  const docContent = paragraphs.map<JSONContent>((paragraph) => {
+    const lines = paragraph.split('\n');
+    const paragraphContent = lines.flatMap<JSONContent>((line, index) => {
+      const trimmedLine = line.trimEnd();
+      const nodes: JSONContent[] = [];
+
+      if (index > 0) {
+        nodes.push({ type: 'hardBreak' });
+      }
+
+      if (trimmedLine.length > 0) {
+        nodes.push({ type: 'text', text: trimmedLine });
+      }
+
+      return nodes;
+    });
+
+    if (paragraphContent.length === 0) {
+      return { type: 'paragraph' };
+    }
+
+    return { type: 'paragraph', content: paragraphContent };
+  });
+
+  return {
+    type: 'doc',
+    content: docContent.length > 0 ? docContent : [{ type: 'paragraph' }],
+  };
+};
+
 interface FormattingOptionDefinition {
   label: string;
   icon: LucideIcon;
@@ -130,6 +166,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [, setEditorStateVersion] = useState(0);
 
   const updateEditorEmptyState = useCallback(
@@ -254,12 +291,59 @@ export default function ContactForm() {
     }
   };
 
+  const handleEnhanceMessage = async () => {
+    if (!editor) {
+      toast.error('Editor failed to load. Please refresh the page.');
+      return;
+    }
+
+    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+
+    if (!plainMessage) {
+      toast.error('Please write a message to enhance.');
+      return;
+    }
+
+    setIsEnhancing(true);
+
+    try {
+      const response = await fetch('/api/contact/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: plainMessage }),
+      });
+
+      const payload = (await response.json()) as { error?: string } | { enhancedMessage?: string };
+
+      if (!response.ok) {
+        throw new Error('error' in payload && payload.error ? payload.error : 'Failed to enhance message.');
+      }
+
+      if (!('enhancedMessage' in payload) || !payload.enhancedMessage) {
+        throw new Error('Failed to enhance message.');
+      }
+
+      editor.commands.setContent(createEditorContentFromPlainText(payload.enhancedMessage));
+      updateEditorEmptyState(editor);
+      toast.success('Message enhanced successfully.');
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Something went wrong while enhancing your message.';
+      toast.error(message);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
   const isSubmitting = status.state === 'submitting';
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
   const isNameValid = trimmedName.length > 0;
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
   const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
+  const canEnhanceMessage = !isEnhancing && !isSubmitting && !isEditorEmpty && !!editor;
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
@@ -354,9 +438,28 @@ export default function ContactForm() {
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
             <Button
+              type="button"
+              variant="outline"
+              onClick={handleEnhanceMessage}
+              disabled={!canEnhanceMessage}
+              className="w-full justify-center gap-2 md:w-auto"
+            >
+              {isEnhancing ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Enhancing…
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  Enhance message
+                </>
+              )}
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting || !editor || !isFormValid}
-              className="w-full justify-center md:w-auto"
+              className="w-full justify-center gap-2 md:w-auto"
               aria-live="polite"
             >
               {isSubmitting ? (
