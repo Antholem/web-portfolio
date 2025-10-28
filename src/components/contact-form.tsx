@@ -19,11 +19,43 @@ type JSONContent = {
 const ZERO_WIDTH_SPACE_REGEX = /\u200B/g;
 const NON_BREAKING_SPACE_REGEX = /\u00A0/g;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_MESSAGE_LENGTH = 5000;
 
 const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
 
 const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
+
+const convertPlainTextToDocument = (text: string): JSONContent => {
+  const trimmed = text.trim();
+
+  if (!trimmed) {
+    return { type: 'doc', content: [{ type: 'paragraph' }] };
+  }
+
+  const paragraphs = trimmed.split(/\n{2,}/).map((paragraph) => {
+    const lines = paragraph.split('\n');
+    const content: JSONContent[] = [];
+
+    lines.forEach((line, index) => {
+      if (line.length > 0) {
+        content.push({ type: 'text', text: line });
+      }
+
+      if (index < lines.length - 1) {
+        content.push({ type: 'hardBreak' });
+      }
+    });
+
+    if (content.length === 0) {
+      content.push({ type: 'text', text: '' });
+    }
+
+    return { type: 'paragraph', content };
+  });
+
+  return { type: 'doc', content: paragraphs };
+};
 
 const editorClassName = [
   'h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
@@ -130,6 +162,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [, setEditorStateVersion] = useState(0);
 
   const updateEditorEmptyState = useCallback(
@@ -177,8 +210,8 @@ export default function ContactForm() {
       return;
     }
 
-    editor.setEditable(status.state !== 'submitting');
-  }, [editor, status.state]);
+    editor.setEditable(status.state !== 'submitting' && !isEnhancing);
+  }, [editor, isEnhancing, status.state]);
 
   useEffect(() => {
     if (!editor) {
@@ -213,7 +246,7 @@ export default function ContactForm() {
       return;
     }
 
-    if (plainMessage.length > 5000) {
+    if (plainMessage.length > MAX_MESSAGE_LENGTH) {
       const message = 'Message is too long. Please keep it under 5000 characters.';
       setStatus({
         state: 'error',
@@ -254,16 +287,68 @@ export default function ContactForm() {
     }
   };
 
+  const handleEnhance = useCallback(async () => {
+    if (!editor) {
+      toast.error('Editor failed to load. Please refresh the page.');
+      return;
+    }
+
+    const currentPlainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+
+    if (!currentPlainMessage) {
+      toast.error('Please include a message to enhance.');
+      return;
+    }
+
+    if (currentPlainMessage.length > MAX_MESSAGE_LENGTH) {
+      toast.error('Message is too long. Please shorten it before enhancing.');
+      return;
+    }
+
+    setIsEnhancing(true);
+
+    try {
+      const response = await fetch('/api/contact/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: currentPlainMessage }),
+      });
+
+      const payload = (await response.json()) as { error?: string; enhancedMessage?: string };
+
+      if (!response.ok || !payload.enhancedMessage) {
+        throw new Error(payload.error ?? 'Something went wrong while enhancing your message. Please try again.');
+      }
+
+      const updatedContent = convertPlainTextToDocument(payload.enhancedMessage);
+      editor.commands.setContent(updatedContent);
+      editor.commands.focus('end');
+      updateEditorEmptyState(editor);
+      toast.success('Message enhanced successfully.');
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Unable to enhance your message at this time.';
+      toast.error(message);
+    } finally {
+      setIsEnhancing(false);
+    }
+  }, [editor, updateEditorEmptyState]);
+
   const isSubmitting = status.state === 'submitting';
+  const isBusy = isSubmitting || isEnhancing;
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
+  const plainEditorText = editor ? sanitizeEditorText(editor.getText({ blockSeparator: '\n' })) : '';
+  const isMessageTooLong = plainEditorText.length > MAX_MESSAGE_LENGTH;
   const isNameValid = trimmedName.length > 0;
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
   const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
-    const isButtonDisabled = isSubmitting || !editor || (editor ? isDisabled(editor) : true);
+    const isButtonDisabled = isBusy || !editor || (editor ? isDisabled(editor) : true);
 
     return (
       <button
@@ -355,7 +440,7 @@ export default function ContactForm() {
           <div className="flex w-full flex-col gap-2 md:flex-row">
             <Button
               type="submit"
-              disabled={isSubmitting || !editor || !isFormValid}
+              disabled={isBusy || !editor || !isFormValid}
               className="w-full justify-center md:w-auto"
               aria-live="polite"
             >
@@ -366,6 +451,22 @@ export default function ContactForm() {
                 </>
               ) : (
                 'Send message'
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isBusy || !editor || !plainEditorText || isMessageTooLong}
+              onClick={handleEnhance}
+              className="w-full justify-center md:w-auto"
+            >
+              {isEnhancing ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Enhancing…
+                </>
+              ) : (
+                'Enhance message'
               )}
             </Button>
           </div>
