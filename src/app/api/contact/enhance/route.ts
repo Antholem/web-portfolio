@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const MODEL_NAME = 'gemini-1.5-flash-latest';
+const MODEL_NAME = process.env.GEMINI_MODEL ?? 'gemini-2.0-flash-lite';
 const GENERATE_CONTENT_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
 
 interface EnhanceRequestBody {
