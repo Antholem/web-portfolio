@@ -19,9 +19,44 @@ type JSONContent = {
 const ZERO_WIDTH_SPACE_REGEX = /\u200B/g;
 const NON_BREAKING_SPACE_REGEX = /\u00A0/g;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_MESSAGE_LENGTH = 5000;
 
 const sanitizeEditorText = (value: string) =>
   value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
+
+const convertTextToDoc = (value: string): JSONContent => {
+  const paragraphs = value
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter((paragraph) => paragraph.length > 0)
+    .map<JSONContent>((paragraph) => {
+      const lines = paragraph.split(/\n/);
+      const content: JSONContent[] = lines.flatMap((line, index) => {
+        const nodes: JSONContent[] = [];
+
+        if (line.length > 0) {
+          nodes.push({ type: 'text', text: line });
+        }
+
+        if (index < lines.length - 1) {
+          nodes.push({ type: 'hardBreak' });
+        }
+
+        return nodes;
+      });
+
+      return {
+        type: 'paragraph',
+        content: content.length > 0 ? content : [{ type: 'text', text: '' }],
+      };
+    });
+
+  if (paragraphs.length === 0) {
+    return { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: '' }] }] };
+  }
+
+  return { type: 'doc', content: paragraphs };
+};
 
 const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
 
@@ -130,6 +165,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [, setEditorStateVersion] = useState(0);
 
   const updateEditorEmptyState = useCallback(
@@ -213,8 +249,8 @@ export default function ContactForm() {
       return;
     }
 
-    if (plainMessage.length > 5000) {
-      const message = 'Message is too long. Please keep it under 5000 characters.';
+    if (plainMessage.length > MAX_MESSAGE_LENGTH) {
+      const message = `Message is too long. Please keep it under ${MAX_MESSAGE_LENGTH} characters.`;
       setStatus({
         state: 'error',
         message,
@@ -260,6 +296,57 @@ export default function ContactForm() {
   const isNameValid = trimmedName.length > 0;
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
   const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
+
+  const handleEnhance = async () => {
+    if (!editor) {
+      toast.error('Editor failed to load. Please refresh the page.');
+      return;
+    }
+
+    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+
+    if (!plainMessage) {
+      toast.error('Please write a message before enhancing it.');
+      return;
+    }
+
+    if (plainMessage.length > MAX_MESSAGE_LENGTH) {
+      toast.error(`Message is too long. Please keep it under ${MAX_MESSAGE_LENGTH} characters.`);
+      return;
+    }
+
+    setIsEnhancing(true);
+
+    try {
+      const response = await fetch('/api/contact/enhance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: plainMessage }),
+      });
+
+      const payload = (await response.json()) as { suggestion?: string; error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? 'Failed to enhance your message.');
+      }
+
+      if (!payload.suggestion) {
+        throw new Error('The AI response was empty. Please try again.');
+      }
+
+      editor.commands.setContent(convertTextToDoc(payload.suggestion), false);
+      updateEditorEmptyState(editor);
+      toast.success('Message enhanced successfully.');
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Something went wrong while enhancing your message.';
+      toast.error(message);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
     const isButtonActive = editor ? isActive(editor) : false;
@@ -353,6 +440,22 @@ export default function ContactForm() {
         </CardContent>
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
+              onClick={handleEnhance}
+              className="w-full justify-center md:w-auto"
+            >
+              {isEnhancing ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Enhancing…
+                </>
+              ) : (
+                'Enhance message'
+              )}
+            </Button>
             <Button
               type="submit"
               disabled={isSubmitting || !editor || !isFormValid}
