@@ -48,8 +48,21 @@ export default function HeroSection() {
                 <ArrowDownRight className="h-5 w-5" aria-hidden />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="px-6">
-              <Link href="#contact">Download Resume</Link>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="px-6"
+            >
+              <a
+                href="/assets/resume.pdf"
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Download Sam Antholem Manalo's resume"
+              >
+                Download Resume
+              </a>
             </Button>
           </div>
 
@@ -82,16 +95,14 @@ export default function HeroSection() {
         </div>
 
         <div className="relative flex max-w-sm flex-1 items-center justify-center">
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10">
-            <Image
-              src="/profile-portrait.svg"
-              alt="Illustrated portrait of Sam Antholem Manalo"
-              width={480}
-              height={560}
-              priority
-              className="h-auto w-full object-cover"
-            />
-          </div>
+          <Image
+            src="/assets/profile.jpg"
+            alt="Portrait of Sam Antholem Manalo"
+            width={480}
+            height={560}
+            priority
+            className="h-auto w-full rounded-[2.5rem] object-cover shadow-xl"
+          />
         </div>
       </div>
     </header>
