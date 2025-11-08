@@ -15,6 +15,7 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
 import { Separator } from "@/components/ui/separator"
+import { ChatAI } from "@/components/ui/chat-ai"
 
 const links = [
     { href: "#about", label: "About" },
@@ -98,6 +99,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
+                    <ChatAI />
                     <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
