@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowDownRight, Github, Linkedin, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ResumeButton } from "@/components/resume-button";
 
 const socialLinks = [
   {
@@ -48,22 +49,7 @@ export default function HeroSection() {
                 <ArrowDownRight className="h-5 w-5" aria-hidden />
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="px-6"
-            >
-              <a
-                href="/assets/resume.pdf"
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Download Sam Antholem Manalo's resume"
-              >
-                Download Resume
-              </a>
-            </Button>
+            <ResumeButton />
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
