@@ -1,7 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
-import { ArrowDownRight, Github, Linkedin, Mail } from "lucide-react";
+import {
+  ArrowDownRight,
+  ChevronDown,
+  Eye,
+  Github,
+  Linkedin,
+  Mail,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +30,93 @@ const socialLinks = [
     icon: Mail,
   },
 ] as const;
+
+const resumeUrl = "/assets/resume.pdf";
+
+function ResumeButton() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent | FocusEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("focusin", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("focusin", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className="flex rounded-md shadow-sm">
+        <Button
+          asChild
+          size="lg"
+          variant="outline"
+          className="rounded-r-none border-r-0 px-6"
+        >
+          <a
+            href={resumeUrl}
+            download
+            rel="noopener noreferrer"
+            aria-label="Download Sam Antholem Manalo's resume"
+          >
+            Download Resume
+          </a>
+        </Button>
+        <Button
+          type="button"
+          size="lg"
+          variant="outline"
+          className="-ml-px rounded-l-none border-l px-3"
+          aria-haspopup="menu"
+          aria-expanded={isMenuOpen}
+          aria-label="Toggle resume options"
+          onClick={() => setIsMenuOpen((previous) => !previous)}
+        >
+          <ChevronDown className="h-4 w-4" aria-hidden />
+        </Button>
+      </div>
+      {isMenuOpen ? (
+        <div
+          role="menu"
+          aria-label="Resume options"
+          className="absolute right-0 z-20 mt-2 w-48 rounded-lg border bg-background p-1 shadow-lg"
+        >
+          <Link
+            href={resumeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            role="menuitem"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition hover:bg-muted"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <Eye className="h-4 w-4" aria-hidden />
+            View Resume
+          </Link>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 export default function HeroSection() {
   return (
@@ -48,22 +143,7 @@ export default function HeroSection() {
                 <ArrowDownRight className="h-5 w-5" aria-hidden />
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="px-6"
-            >
-              <a
-                href="/assets/resume.pdf"
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Download Sam Antholem Manalo's resume"
-              >
-                Download Resume
-              </a>
-            </Button>
+            <ResumeButton />
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
