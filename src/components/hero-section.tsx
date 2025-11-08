@@ -1,7 +1,19 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
-import { ArrowDownRight, Github, Linkedin, Mail } from "lucide-react";
+import {
+  ArrowDownRight,
+  ChevronDown,
+  Download,
+  Eye,
+  Github,
+  Linkedin,
+  Mail,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -24,6 +36,47 @@ const socialLinks = [
 ] as const;
 
 export default function HeroSection() {
+  const [isResumeMenuOpen, setIsResumeMenuOpen] = useState(false);
+  const resumeMenuRef = useRef<HTMLDivElement | null>(null);
+  const resumeUrl = "/assets/resume.pdf";
+
+  useEffect(() => {
+    if (!isResumeMenuOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        resumeMenuRef.current &&
+        !resumeMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsResumeMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsResumeMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isResumeMenuOpen]);
+
+  const toggleResumeMenu = () => {
+    setIsResumeMenuOpen((previous) => !previous);
+  };
+
+  const closeResumeMenu = () => {
+    setIsResumeMenuOpen(false);
+  };
+
   return (
     <header id="home" className="relative overflow-hidden">
       <div className="absolute inset-0 -z-10" aria-hidden />
@@ -48,22 +101,69 @@ export default function HeroSection() {
                 <ArrowDownRight className="h-5 w-5" aria-hidden />
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="px-6"
+            <div
+              ref={resumeMenuRef}
+              className="relative inline-flex rounded-md shadow-sm"
             >
-              <a
-                href="/assets/resume.pdf"
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Download Sam Antholem Manalo's resume"
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="rounded-r-none border-r-0 px-6"
               >
-                Download Resume
-              </a>
-            </Button>
+                <a
+                  href={resumeUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Download Sam Antholem Manalo's resume"
+                  onClick={closeResumeMenu}
+                >
+                  <Download className="h-5 w-5" aria-hidden />
+                  Download Resume
+                </a>
+              </Button>
+              <Button
+                type="button"
+                size="lg"
+                variant="outline"
+                className="rounded-l-none px-3"
+                aria-label="Show resume options"
+                aria-haspopup="menu"
+                aria-expanded={isResumeMenuOpen}
+                aria-controls="resume-menu"
+                onClick={toggleResumeMenu}
+              >
+                <ChevronDown className="h-4 w-4" aria-hidden />
+                <span className="sr-only">More resume options</span>
+              </Button>
+              {isResumeMenuOpen ? (
+                <div
+                  id="resume-menu"
+                  role="menu"
+                  aria-label="Resume options"
+                  className="absolute right-0 top-full z-20 mt-2 w-44 overflow-hidden rounded-md border bg-background p-1 shadow-lg"
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                      event.preventDefault();
+                      closeResumeMenu();
+                    }
+                  }}
+                >
+                  <a
+                    role="menuitem"
+                    href={resumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition hover:bg-accent hover:text-accent-foreground"
+                    onClick={closeResumeMenu}
+                  >
+                    <Eye className="h-4 w-4" aria-hidden />
+                    View Resume
+                  </a>
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
