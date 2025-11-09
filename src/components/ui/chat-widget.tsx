@@ -117,15 +117,51 @@ const initialBotMessage: Message = {
 
 const STORAGE_KEY = "chat-assistant-messages"
 
+function readStoredMessages(storage: Storage | undefined | null): Message[] | null {
+    if (!storage) {
+        return null
+    }
+
+    try {
+        const stored = storage.getItem(STORAGE_KEY)
+        if (!stored) {
+            return null
+        }
+
+        const parsed = JSON.parse(stored)
+        if (isMessageArray(parsed) && parsed.length > 0) {
+            return parsed
+        }
+    } catch (error) {
+        console.error("Failed to restore chat history", error)
+    }
+
+    return null
+}
+
 function persistMessages(messages: Message[]) {
     if (typeof window === "undefined") {
         return
     }
 
+    const serialized = JSON.stringify(messages)
+    let hasPersisted = false
+
     try {
-        window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+        window.localStorage.setItem(STORAGE_KEY, serialized)
+        hasPersisted = true
     } catch (error) {
-        console.error("Failed to persist chat history", error)
+        console.error("Failed to persist chat history to localStorage", error)
+    }
+
+    if (hasPersisted) {
+        return
+    }
+
+    try {
+        window.sessionStorage.setItem(STORAGE_KEY, serialized)
+    } catch (error) {
+        console.error("Failed to persist chat history to sessionStorage", error)
     }
 }
 
@@ -134,16 +170,13 @@ function getStoredMessages(): Message[] {
         return [initialBotMessage]
     }
 
-    try {
-        const stored = window.sessionStorage.getItem(STORAGE_KEY)
-        if (stored) {
-            const parsed = JSON.parse(stored)
-            if (isMessageArray(parsed) && parsed.length > 0) {
-                return parsed
-            }
+    const sources = [window.localStorage, window.sessionStorage]
+
+    for (const storage of sources) {
+        const restored = readStoredMessages(storage)
+        if (restored) {
+            return restored
         }
-    } catch (error) {
-        console.error("Failed to restore chat history", error)
     }
 
     return [initialBotMessage]
@@ -262,7 +295,10 @@ export function ChatWidget() {
 
     return (
         <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
+            <div
+                className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"
+                style={{ paddingTop: "env(safe-area-inset-top)" }}
+            >
                 <div className="relative flex items-center justify-center px-4 py-3 text-sm font-semibold">
                     <span>Chat Assistant</span>
                     <SheetClose asChild>
