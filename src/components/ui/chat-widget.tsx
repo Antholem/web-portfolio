@@ -20,21 +20,6 @@ type Message = {
     text: string
 }
 
-function isMessageArray(value: unknown): value is Message[] {
-    return (
-        Array.isArray(value) &&
-        value.every(
-            (message) =>
-                message !== null &&
-                typeof message === "object" &&
-                typeof (message as Message).id === "number" &&
-                ((message as Message).sender === "bot" ||
-                    (message as Message).sender === "user") &&
-                typeof (message as Message).text === "string",
-        )
-    )
-}
-
 const markdownComponents: Components = {
     p: ({ className, ...props }) => (
         <p
@@ -115,75 +100,8 @@ const initialBotMessage: Message = {
     text: "Hi there! I'm your friendly assistant. How can I help you today?",
 }
 
-const STORAGE_KEY = "chat-assistant-messages"
-
-function readStoredMessages(storage: Storage | undefined | null): Message[] | null {
-    if (!storage) {
-        return null
-    }
-
-    try {
-        const stored = storage.getItem(STORAGE_KEY)
-        if (!stored) {
-            return null
-        }
-
-        const parsed = JSON.parse(stored)
-        if (isMessageArray(parsed) && parsed.length > 0) {
-            return parsed
-        }
-    } catch (error) {
-        console.error("Failed to restore chat history", error)
-    }
-
-    return null
-}
-
-function persistMessages(messages: Message[]) {
-    if (typeof window === "undefined") {
-        return
-    }
-
-    const serialized = JSON.stringify(messages)
-    let hasPersisted = false
-
-    try {
-        window.localStorage.setItem(STORAGE_KEY, serialized)
-        hasPersisted = true
-    } catch (error) {
-        console.error("Failed to persist chat history to localStorage", error)
-    }
-
-    if (hasPersisted) {
-        return
-    }
-
-    try {
-        window.sessionStorage.setItem(STORAGE_KEY, serialized)
-    } catch (error) {
-        console.error("Failed to persist chat history to sessionStorage", error)
-    }
-}
-
-function getStoredMessages(): Message[] {
-    if (typeof window === "undefined") {
-        return [initialBotMessage]
-    }
-
-    const sources = [window.localStorage, window.sessionStorage]
-
-    for (const storage of sources) {
-        const restored = readStoredMessages(storage)
-        if (restored) {
-            return restored
-        }
-    }
-
-    return [initialBotMessage]
-}
-
 export function ChatWidget() {
-    const [messages, setMessages] = useState<Message[]>(() => getStoredMessages())
+    const [messages, setMessages] = useState<Message[]>([initialBotMessage])
     const [inputValue, setInputValue] = useState("")
     const [isResponding, setIsResponding] = useState(false)
     const endRef = useRef<HTMLDivElement | null>(null)
@@ -193,7 +111,6 @@ export function ChatWidget() {
     useEffect(() => {
         messagesRef.current = messages
         endRef.current?.scrollIntoView({ behavior: "smooth" })
-        persistMessages(messages)
     }, [messages])
 
     useEffect(() => {
@@ -221,7 +138,6 @@ export function ChatWidget() {
 
         messagesRef.current = nextMessages
         setMessages(nextMessages)
-        persistMessages(nextMessages)
         setInputValue("")
         setIsResponding(true)
 
@@ -263,7 +179,6 @@ export function ChatWidget() {
             const completedMessages = [...messagesRef.current, assistantMessage]
 
             messagesRef.current = completedMessages
-            persistMessages(completedMessages)
 
             if (isMounted.current) {
                 setMessages(completedMessages)
@@ -281,7 +196,6 @@ export function ChatWidget() {
             const completedMessages = [...messagesRef.current, assistantMessage]
 
             messagesRef.current = completedMessages
-            persistMessages(completedMessages)
 
             if (isMounted.current) {
                 setMessages(completedMessages)
