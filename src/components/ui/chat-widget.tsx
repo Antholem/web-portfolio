@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { SheetClose } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { SendHorizontal, X } from "lucide-react"
 
@@ -21,7 +22,7 @@ function createBotResponse(userMessage: string): string {
     return `You said: "${userMessage}". I'm just a demo bot, but I'm here to keep you company!`
 }
 
-export function ChatWidget({ onClose }: { onClose: () => void }) {
+export function ChatWidget() {
     const [messages, setMessages] = useState<Message[]>([initialBotMessage])
     const [inputValue, setInputValue] = useState("")
     const [isResponding, setIsResponding] = useState(false)
@@ -58,21 +59,22 @@ export function ChatWidget({ onClose }: { onClose: () => void }) {
     }
 
     return (
-        <div className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-xl border bg-background shadow-xl">
+        <div className="flex h-full flex-col">
             <div className="flex items-center justify-between border-b bg-muted/60 px-4 py-3">
                 <p className="text-sm font-semibold">Chat Assistant</p>
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8"
-                    aria-label="Close chat"
-                    onClick={onClose}
-                >
-                    <X className="h-4 w-4" />
-                </Button>
+                <SheetClose asChild>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        aria-label="Close chat"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                </SheetClose>
             </div>
-            <div className="flex max-h-96 flex-col">
+            <div className="flex h-full flex-col">
                 <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm">
                     {messages.map((message) => (
                         <div

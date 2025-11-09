@@ -30,7 +30,6 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const setTheme = useThemeStore((state) => state.setTheme)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     const [mounted, setMounted] = useState(false)
-    const [isChatOpen, setIsChatOpen] = useState(false)
 
     useEffect(() => {
         if (initialTheme) {
@@ -100,22 +99,30 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
-                        aria-label="Open chat assistant"
-                        onClick={() => setIsChatOpen((prev) => !prev)}
-                    >
-                        <MessageCircle className="h-5 w-5" />
-                    </Button>
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8"
+                                aria-label="Open chat assistant"
+                            >
+                                <MessageCircle className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent
+                            side="right"
+                            className="flex h-full w-full max-w-md flex-col gap-0 p-0"
+                        >
+                            <ChatWidget />
+                        </SheetContent>
+                    </Sheet>
                     <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
                 </div>
             </div>
             <Separator />
-            {isChatOpen ? <ChatWidget onClose={() => setIsChatOpen(false)} /> : null}
         </header>
     )
 }
