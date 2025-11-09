@@ -10,9 +10,10 @@ import {
     SheetDescription,
 } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
-import { FaMoon, FaSun } from "react-icons/fa"
+import { FaComments, FaMoon, FaSun } from "react-icons/fa"
+import { IoMdClose } from "react-icons/io"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
 import { Separator } from "@/components/ui/separator"
 
@@ -29,6 +30,17 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const setTheme = useThemeStore((state) => state.setTheme)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     const [mounted, setMounted] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false)
+    const [messageInput, setMessageInput] = useState("")
+    const [messages, setMessages] = useState<
+        { id: number; sender: "user" | "bot"; text: string }
+    >([
+        {
+            id: Date.now(),
+            sender: "bot",
+            text: "Hi there! How can I help you today?",
+        },
+    ])
 
     useEffect(() => {
         if (initialTheme) {
@@ -38,6 +50,31 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     }, [initialTheme, setTheme])
 
     const currentTheme = mounted ? theme : initialTheme || theme
+
+    const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const trimmed = messageInput.trim()
+        if (!trimmed) return
+
+        const userMessage = {
+            id: Date.now(),
+            sender: "user" as const,
+            text: trimmed,
+        }
+
+        setMessages((prev) => [...prev, userMessage])
+        setMessageInput("")
+
+        const botMessage = {
+            id: Date.now() + 1,
+            sender: "bot" as const,
+            text: "Thanks for reaching out! I'll get back to you shortly.",
+        }
+
+        setTimeout(() => {
+            setMessages((prev) => [...prev, botMessage])
+        }, 400)
+    }
 
     return (
         <header className="sticky top-0 z-40 w-full bg-card backdrop-blur">
@@ -98,10 +135,64 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        onClick={() => setIsChatOpen((prev) => !prev)}
+                        aria-label={isChatOpen ? "Close chat" : "Open chat"}
+                    >
+                        {isChatOpen ? <IoMdClose /> : <FaComments />}
+                    </Button>
                     <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
                 </div>
+                {isChatOpen && (
+                    <div className="fixed bottom-4 right-4 z-50 w-80 rounded-lg border bg-card shadow-lg">
+                        <div className="flex items-center justify-between border-b px-4 py-3">
+                            <h2 className="font-semibold">Chat</h2>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-6"
+                                onClick={() => setIsChatOpen(false)}
+                                aria-label="Close chat"
+                            >
+                                <IoMdClose className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        <div className="flex max-h-64 flex-col gap-2 overflow-y-auto px-4 py-3 text-sm">
+                            {messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={
+                                        message.sender === "user"
+                                            ? "self-end rounded-lg bg-primary px-3 py-2 text-primary-foreground"
+                                            : "self-start rounded-lg bg-muted px-3 py-2"
+                                    }
+                                >
+                                    {message.text}
+                                </div>
+                            ))}
+                        </div>
+                        <form onSubmit={handleSendMessage} className="border-t px-3 py-2">
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="text"
+                                    className="flex-1 rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                                    placeholder="Type your message..."
+                                    value={messageInput}
+                                    onChange={(event) => setMessageInput(event.target.value)}
+                                    aria-label="Message"
+                                />
+                                <Button type="submit" size="sm">
+                                    Send
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                )}
             </div>
             <Separator />
         </header>
