@@ -10,7 +10,7 @@ import {
     SheetDescription,
 } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
-import { FaMoon, FaSun } from "react-icons/fa"
+import { FaComments, FaMoon, FaSun, FaTimes } from "react-icons/fa"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
@@ -29,6 +29,16 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const setTheme = useThemeStore((state) => state.setTheme)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     const [mounted, setMounted] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false)
+    const [chatInput, setChatInput] = useState("")
+    const [messages, setMessages] = useState<
+        { sender: "user" | "bot"; text: string }[]
+    >([
+        {
+            sender: "bot",
+            text: "Hi there! How can I help you today?",
+        },
+    ])
 
     useEffect(() => {
         if (initialTheme) {
@@ -98,12 +108,92 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        aria-label="Open chat"
+                        onClick={() => setIsChatOpen((prev) => !prev)}
+                    >
+                        <FaComments />
+                    </Button>
                     <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
                 </div>
             </div>
             <Separator />
+            {isChatOpen && (
+                <div className="fixed bottom-4 right-4 z-50 w-72 overflow-hidden rounded-xl border bg-background shadow-xl">
+                    <div className="flex items-center justify-between border-b px-3 py-2">
+                        <p className="text-sm font-semibold">Chat with me</p>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-7"
+                            aria-label="Close chat"
+                            onClick={() => setIsChatOpen(false)}
+                        >
+                            <FaTimes className="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <div className="max-h-60 space-y-2 overflow-y-auto px-3 py-3 text-sm">
+                        {messages.map((message, index) => (
+                            <div
+                                key={`${message.sender}-${index}`}
+                                className={`flex ${
+                                    message.sender === "user" ? "justify-end" : "justify-start"
+                                }`}
+                            >
+                                <span
+                                    className={`inline-block rounded-2xl px-3 py-2 ${
+                                        message.sender === "user"
+                                            ? "bg-primary text-primary-foreground"
+                                            : "bg-muted text-muted-foreground"
+                                    }`}
+                                >
+                                    {message.text}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                    <form
+                        className="flex items-center gap-2 border-t px-3 py-2"
+                        onSubmit={(event) => {
+                            event.preventDefault()
+                            const trimmed = chatInput.trim()
+                            if (!trimmed) {
+                                return
+                            }
+                            setMessages((prev) => [
+                                ...prev,
+                                { sender: "user", text: trimmed },
+                            ])
+                            setChatInput("")
+                            setTimeout(() => {
+                                setMessages((prev) => [
+                                    ...prev,
+                                    {
+                                        sender: "bot",
+                                        text: "Thanks for your message! I'll get back to you shortly.",
+                                    },
+                                ])
+                            }, 400)
+                        }}
+                    >
+                        <input
+                            type="text"
+                            className="flex-1 rounded-md border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="Type your message..."
+                            value={chatInput}
+                            onChange={(event) => setChatInput(event.target.value)}
+                        />
+                        <Button type="submit" size="sm">
+                            Send
+                        </Button>
+                    </form>
+                </div>
+            )}
         </header>
     )
 }
