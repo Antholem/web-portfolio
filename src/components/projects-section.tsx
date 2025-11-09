@@ -24,39 +24,45 @@ type Project = {
 
 const projects: Project[] = [
   {
-    title: "Atlas Insights",
+    title: "Conversational AI Workspace",
     description:
-      "Analytics dashboard for tracking KPIs with real-time charts, role-based access, and configurable reporting widgets.",
+      "Idea-capturing platform where visitors chat with AI using text, voice dictation, or image uploads, while Supabase threads persist history and Gemini suggestions.",
     image: {
-      src: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
-      alt: "Laptop displaying a data analytics dashboard interface.",
+      src: "/assets/project-1.png",
+      alt: "Mockup of a conversational AI workspace interface with chat history and controls.",
     },
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
-    href: "https://example.com/atlas-insights",
+    technologies: [
+      "Next.js 15",
+      "TypeScript",
+      "Supabase",
+      "Google Gemini API",
+      "Chakra UI",
+    ],
+    href: "https://example.com/conversational-ai-workspace",
     hrefLabel: "View project",
   },
   {
-    title: "Aurora Commerce",
+    title: "Responsive SPA From Scratch",
     description:
-      "Headless e-commerce platform with personalized recommendations, smooth checkout flow, and automated inventory sync.",
+      "Single-page experience crafted with semantic HTML5, CSS3, and vanilla JavaScript, progressively enhanced into a fully responsive and interactive UI.",
     image: {
-      src: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80",
-      alt: "Person browsing an online store on a tablet and phone.",
+      src: "/assets/project-2.png",
+      alt: "Responsive single-page application layout displayed across multiple device sizes.",
     },
-    technologies: ["Next.js", "Shopify", "GraphQL"],
-    href: "https://example.com/aurora-commerce",
+    technologies: ["HTML5", "CSS3", "JavaScript", "Responsive Design"],
+    href: "https://example.com/responsive-spa",
     hrefLabel: "View project",
   },
   {
-    title: "Horizon Studio",
+    title: "Real-Time Crypto Markets",
     description:
-      "Portfolio platform for creative studios, featuring modular layouts, smooth motion transitions, and accessible navigation.",
+      "React and Material UI dashboard streaming live CoinGecko pricing, watchlists, and dynamic routing for deep dives into individual assets.",
     image: {
-      src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
-      alt: "Designers collaborating while viewing a web project on a laptop.",
+      src: "/assets/project-3.png",
+      alt: "Real-time cryptocurrency dashboard with charts and market listings.",
     },
-    technologies: ["Next.js", "Contentful", "Framer Motion"],
-    href: "https://example.com/horizon-studio",
+    technologies: ["React", "Material UI", "CoinGecko API", "Real-time Data"],
+    href: "https://example.com/real-time-crypto",
     hrefLabel: "View project",
   },
 ];
