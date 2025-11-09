@@ -107,7 +107,7 @@ export function ChatWidget() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="absolute right-2.5 top-2.5"
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2"
                             aria-label="Close chat assistant"
                         >
                             <X className="h-4 w-4" />
