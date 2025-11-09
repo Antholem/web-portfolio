@@ -24,40 +24,40 @@ type Project = {
 
 const projects: Project[] = [
   {
-    title: "Atlas Insights Dashboard",
+    title: "Atlas Insights",
     description:
-      "An interactive analytics dashboard that tracks campaign KPIs, featuring real-time charts, role-based views, and configurable reporting widgets tailored for marketing teams.",
+      "Analytics dashboard for tracking KPIs with real-time charts, role-based access, and configurable reporting widgets.",
     image: {
       src: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
       alt: "Laptop displaying a data analytics dashboard interface.",
     },
     technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
     href: "https://example.com/atlas-insights",
-    hrefLabel: "View case study",
+    hrefLabel: "View project",
   },
   {
-    title: "Aurora Commerce Platform",
+    title: "Aurora Commerce",
     description:
-      "A headless e-commerce experience with personalized product curation, seamless checkout flows, and automated inventory sync across storefronts.",
+      "Headless e-commerce platform with personalized recommendations, smooth checkout flow, and automated inventory sync.",
     image: {
       src: "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80",
       alt: "Person browsing an online store on a tablet and phone.",
     },
     technologies: ["Next.js", "Shopify", "GraphQL"],
     href: "https://example.com/aurora-commerce",
-    hrefLabel: "Visit project",
+    hrefLabel: "View project",
   },
   {
-    title: "Horizon Studio Portfolio",
+    title: "Horizon Studio",
     description:
-      "A modular creative studio portfolio designed to showcase motion work with cinematic storytelling, parallax transitions, and accessible navigation controls.",
+      "Portfolio platform for creative studios, featuring modular layouts, smooth motion transitions, and accessible navigation.",
     image: {
       src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
       alt: "Designers collaborating while viewing a web project on a laptop.",
     },
     technologies: ["Next.js", "Contentful", "Framer Motion"],
     href: "https://example.com/horizon-studio",
-    hrefLabel: "See live site",
+    hrefLabel: "View project",
   },
 ];
 
@@ -67,13 +67,14 @@ export default function ProjectsSection() {
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
-            Featured Work
+            Projects
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Digital experiences built for scalable impact
+            Scalable products built with precision
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            Explore engagements that pair thoughtful design, performant systems, and measurable outcomes to advance client goals.
+            A selection of web applications engineered for performance,
+            usability, and maintainability.
           </p>
         </div>
 
@@ -92,7 +93,9 @@ export default function ProjectsSection() {
               </div>
 
               <CardHeader className="space-y-3">
-                <CardTitle className="text-xl text-foreground">{project.title}</CardTitle>
+                <CardTitle className="text-xl text-foreground">
+                  {project.title}
+                </CardTitle>
                 <CardDescription className="text-sm leading-relaxed">
                   {project.description}
                 </CardDescription>
@@ -112,7 +115,11 @@ export default function ProjectsSection() {
 
                 <div className="mt-auto">
                   <Button asChild className="w-full">
-                    <Link href={project.href} target="_blank" rel="noreferrer noopener">
+                    <Link
+                      href={project.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
                       {project.hrefLabel}
                     </Link>
                   </Button>

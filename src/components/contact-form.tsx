@@ -359,15 +359,14 @@ export default function ContactForm() {
         onClick={
           editor
             ? () => {
-                run(editor);
-              }
+              run(editor);
+            }
             : undefined
         }
         disabled={isButtonDisabled}
         aria-label={label}
-        className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-          isButtonActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-        } ${isButtonDisabled ? 'opacity-50' : ''}`}
+        className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${isButtonActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          } ${isButtonDisabled ? 'opacity-50' : ''}`}
       >
         <Icon className="h-4 w-4" />
       </button>
@@ -441,6 +440,21 @@ export default function ContactForm() {
         <CardFooter className="flex-col items-stretch gap-2 px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex w-full flex-col gap-2 md:flex-row">
             <Button
+              type="submit"
+              disabled={isSubmitting || !editor || !isFormValid}
+              className="w-full justify-center md:w-auto"
+              aria-live="polite"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin" aria-hidden="true" />
+                  Sending…
+                </>
+              ) : (
+                'Send message'
+              )}
+            </Button>
+            <Button
               type="button"
               variant="outline"
               disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
@@ -454,21 +468,6 @@ export default function ContactForm() {
                 </>
               ) : (
                 'Enhance message'
-              )}
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !editor || !isFormValid}
-              className="w-full justify-center md:w-auto"
-              aria-live="polite"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="animate-spin" aria-hidden="true" />
-                  Sending…
-                </>
-              ) : (
-                'Send message'
               )}
             </Button>
           </div>

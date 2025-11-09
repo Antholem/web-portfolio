@@ -8,7 +8,13 @@ import {
   Users2,
 } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const skillCategories: {
   title: string;
@@ -17,44 +23,44 @@ const skillCategories: {
   icon: LucideIcon;
 }[] = [
   {
-    title: "Front-end Engineering",
+    title: "Frontend",
     description:
-      "Crafting polished interfaces with performance-minded frameworks, component systems, and modern styling tooling.",
+      "Building responsive and maintainable interfaces with modern frameworks and design systems.",
     skills: ["ReactJS", "NextJS", "Tailwind CSS", "Chakra UI", "Material UI", "Shadcn"],
     icon: PanelsTopLeft,
   },
   {
-    title: "Backend & APIs",
+    title: "Backend",
     description:
-      "Designing resilient services, APIs, and integrations that scale reliably across diverse runtime environments.",
-    skills: ["Backend", "NodeJS", "ExpressJS", "PHP", "Python", "Java"],
+      "Developing secure and scalable APIs with clean architecture and consistent performance.",
+    skills: ["NodeJS", "ExpressJS", "PHP", "Python", "Java"],
     icon: ServerCog,
   },
   {
-    title: "Data & Cloud Platforms",
+    title: "Data & Cloud",
     description:
-      "Implementing data models and real-time experiences backed by managed services and developer-friendly platforms.",
+      "Managing databases and cloud services to support reliable, real-time applications.",
     skills: ["MongoDB", "MySQL", "PostgreSQL", "Firebase", "Supabase"],
     icon: Database,
   },
   {
-    title: "DevOps & Delivery",
+    title: "DevOps",
     description:
-      "Automating delivery workflows and observability to ship confidently from local development to production.",
+      "Automating deployment, monitoring, and delivery pipelines for smooth production workflows.",
     skills: ["Docker", "Vercel", "GitHub", "GitLab"],
     icon: Cog,
   },
   {
-    title: "Design & Collaboration",
+    title: "Design",
     description:
-      "Translating ideas into intuitive journeys through iterative prototyping, feedback loops, and design systems.",
+      "Creating user flows and prototypes that connect usability with functional design systems.",
     skills: ["Figma", "Adobe XD"],
     icon: Users2,
   },
   {
-    title: "AI & Emerging Tech",
+    title: "AI Integration",
     description:
-      "Exploring intelligent tooling to accelerate product discovery, experimentation, and personalized experiences.",
+      "Embedding AI tools and APIs into products to improve automation, insights, and development speed.",
     skills: ["Hugging Face", "Google Gemini"],
     icon: BrainCircuit,
   },
@@ -65,13 +71,14 @@ export default function SkillsSection() {
     <section id="skills" className="py-16 lg:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">Core capabilities</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
+            Skills
+          </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            A full-stack toolkit for shipping production-ready products
+            End-to-end engineering for modern web apps
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            From interface architecture to deployment pipelines, I bring a balanced skill set to deliver resilient, maintainable,
-            and human-centered software solutions.
+            From frontend to cloud, I focus on building reliable systems with clean architecture and efficient delivery.
           </p>
         </div>
 
@@ -83,7 +90,9 @@ export default function SkillsSection() {
                   <category.icon className="h-5 w-5" aria-hidden />
                 </span>
                 <CardTitle className="text-lg text-foreground">{category.title}</CardTitle>
-                <CardDescription className="text-sm leading-relaxed">{category.description}</CardDescription>
+                <CardDescription className="text-sm leading-relaxed">
+                  {category.description}
+                </CardDescription>
               </CardHeader>
               <CardContent className="mt-auto">
                 <ul className="flex flex-wrap gap-2">

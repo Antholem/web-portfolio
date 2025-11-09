@@ -73,7 +73,7 @@ export default function HeroSection() {
               Software Engineer
             </h1>
             <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              I design and build resilient digital platforms that balance delightful experiences with reliable engineering. My practice combines systems thinking, accessibility, and AI-assisted workflows to deliver measurable business impact.
+              I engineer scalable digital platforms that merge robust architecture with refined user experience. My approach applies systems thinking, accessibility standards, and AI-enhanced workflows to deliver reliable and measurable performance.
             </p>
           </div>
 

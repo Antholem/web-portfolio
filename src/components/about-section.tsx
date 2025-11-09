@@ -3,34 +3,34 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 
 const highlights = [
   {
-    title: "Principal software engineer leadership",
+    title: "System Architecture",
     description:
-      "Guiding cross-functional teams and stewarding architecture decisions that balance clarity, velocity, and resilience.",
+      "Designing scalable and maintainable software structures focused on performance, reliability, and clean design patterns.",
     icon: Briefcase,
   },
   {
-    title: "Platform evolution",
+    title: "Platform Scaling",
     description:
-      "Re-architecting design systems, APIs, and delivery workflows so teams can ship faster without sacrificing quality.",
+      "Improving system performance and reliability through refactoring, API optimization, and efficient deployment pipelines.",
     icon: Layers,
   },
   {
-    title: "Experience strategy",
+    title: "Experience Design",
     description:
-      "Translating customer insights into intuitive, inclusive, and measurable journeys across every product touchpoint.",
+      "Building accessible and data-informed interfaces that align usability with measurable product goals.",
     icon: Compass,
   },
   {
-    title: "AI-assisted enablement",
+    title: "AI Integration",
     description:
-      "Blending automation and human judgment to prototype, iterate, and operate products with confidence and clarity.",
+      "Embedding AI-driven features and automation into workflows to enhance development efficiency and decision accuracy.",
     icon: Sparkles,
   },
 ] as const;
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-16 lg:py-20" aria-labelledby="about-heading">
+    <section id="about" className="py-16 lg:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-primary/80">
@@ -40,32 +40,30 @@ export default function AboutSection() {
             id="about-heading"
             className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
           >
-            Designing resilient systems for ambitious teams
+            Building scalable and reliable systems
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Principal engineer partnering with founders and product leaders to
-            turn vision into measurable delivery.
+            Focused on architecture, performance, and AI-driven development.
           </p>
         </div>
-        <div className="mt-16 grid gap-16 lg:grid-cols-[1.05fr_minmax(0,0.95fr)] lg:items-start">
+        <div className="mt-16 grid gap-16 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div className="space-y-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
             <p>
-              I&apos;m a principal software engineer based in Clark, Pampanga,
-              Philippines who helps product teams translate complex requirements
-              into human-centered software. From discovery through delivery, I
-              combine systems thinking, accessible design principles, and
-              AI-accelerated workflows to orchestrate cohesive digital
-              experiences.
+              I&apos;m a software engineer based in Clark, Pampanga, Philippines,
+              focused on building scalable, maintainable, and human-centered
+              systems. I translate complex business requirements into reliable
+              software through systems thinking, accessibility-driven design,
+              and AI-assisted development workflows.
             </p>
             <p>
-              Over the past nine years I&apos;ve led distributed engineering teams,
-              modernized legacy platforms, and launched data-informed
-              experiences across finance, commerce, and SaaS. My approach
-              prioritizes maintainability, observability, and seamless
-              collaboration with designers, product strategists, and business
+              I&apos;ve led distributed teams, refactored legacy architectures,
+              and delivered data-informed platforms across finance, commerce, and
+              SaaS. My work emphasizes maintainability, observability, and
+              effective collaboration with product, design, and engineering
               stakeholders.
             </p>
           </div>
+
           <div className="flex flex-col gap-6">
             <div className="grid gap-4 sm:grid-cols-2">
               {highlights.map((item) => (
@@ -75,7 +73,9 @@ export default function AboutSection() {
                       <item.icon className="h-5 w-5" aria-hidden />
                     </span>
                     <div className="space-y-2">
-                      <CardTitle className="text-base text-foreground">{item.title}</CardTitle>
+                      <CardTitle className="text-base text-foreground">
+                        {item.title}
+                      </CardTitle>
                       <CardDescription className="text-sm leading-relaxed text-muted-foreground">
                         {item.description}
                       </CardDescription>
@@ -86,6 +86,7 @@ export default function AboutSection() {
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );

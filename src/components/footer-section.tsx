@@ -29,9 +29,8 @@ export default function FooterSection() {
               Sam Antholem Manalo
             </h3>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Software Engineer focused on crafting reliable, accessible, and performance-driven
-              digital experiences. Building scalable systems that connect design, engineering,
-              and impact.
+              Software engineer building scalable, accessible, and high-performance web
+              applications. Focused on aligning design and engineering to deliver measurable results.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -49,11 +48,12 @@ export default function FooterSection() {
             ))}
           </div>
         </div>
+
         <div className="flex flex-col gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Sam Antholem Manalo. All rights reserved.</p>
           <p className="text-muted-foreground/80">
-            Built with <span className="font-medium text-foreground">Next.js</span>, {" "}
-            <span className="font-medium text-foreground">Tailwind CSS</span>, and {" "}
+            Built with <span className="font-medium text-foreground">Next.js</span>,{" "}
+            <span className="font-medium text-foreground">Tailwind CSS</span>, and{" "}
             <span className="font-medium text-foreground">ShadCN UI</span>.
           </p>
         </div>

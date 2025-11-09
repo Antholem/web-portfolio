@@ -1,7 +1,12 @@
 import type { LucideIcon } from "lucide-react";
 import { Brain, LayoutDashboard, Server } from "lucide-react";
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const services: {
   title: string;
@@ -9,40 +14,40 @@ const services: {
   highlights: string[];
   icon: LucideIcon;
 }[] = [
-  {
-    title: "Design Systems & Experience Design",
-    description:
-      "Modular, accessible interface systems that scale across platforms while preserving craft, clarity, and consistency.",
-    highlights: [
-      "Component libraries & documentation",
-      "Responsive UX patterns & prototyping",
-      "Accessibility-first interface audits",
-    ],
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Full-stack Web Engineering",
-    description:
-      "Robust front-end and backend solutions that balance developer velocity with resilient architecture and observability.",
-    highlights: [
-      "Next.js and React application development",
-      "API design, integrations, and automation",
-      "Performance tuning & reliability engineering",
-    ],
-    icon: Server,
-  },
-  {
-    title: "AI-assisted Product Enablement",
-    description:
-      "Integrating intelligent tooling, workflows, and copilots that accelerate decision-making and augment human creativity.",
-    highlights: [
-      "Workflow automation & AI copilots",
-      "Knowledge base and content generation",
-      "Ethical AI implementation guidance",
-    ],
-    icon: Brain,
-  },
-];
+    {
+      title: "Design Systems",
+      description:
+        "Building scalable UI frameworks with accessible components and consistent design language.",
+      highlights: [
+        "Component libraries and documentation",
+        "Responsive and accessible UX patterns",
+        "Interface audits and usability testing",
+      ],
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Full-Stack Development",
+      description:
+        "Delivering performant web apps with optimized APIs, maintainable architecture, and strong reliability.",
+      highlights: [
+        "Next.js and React application development",
+        "API design and third-party integrations",
+        "Performance and observability improvements",
+      ],
+      icon: Server,
+    },
+    {
+      title: "AI Integration",
+      description:
+        "Embedding AI tools into products to enhance automation, insight generation, and developer workflows.",
+      highlights: [
+        "AI copilots and workflow automation",
+        "Content generation and data processing",
+        "Responsible and efficient AI adoption",
+      ],
+      icon: Brain,
+    },
+  ];
 
 export default function ServicesSection() {
   return (
@@ -53,10 +58,11 @@ export default function ServicesSection() {
             Services
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Partnerships tailored to every stage of product growth
+            Technical solutions for modern product teams
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            From validating ideas to scaling platforms, I bring a multidisciplinary toolkit to plan, build, and evolve digital experiences that resonate.
+            I design, build, and optimize systems that combine strong
+            engineering with practical design execution.
           </p>
         </div>
 
@@ -77,8 +83,14 @@ export default function ServicesSection() {
               <CardContent className="mt-auto">
                 <ul className="space-y-3 text-left">
                   {service.highlights.map((highlight) => (
-                    <li key={highlight} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="mt-1 inline-block size-1.5 flex-shrink-0 rounded-full bg-primary" aria-hidden />
+                    <li
+                      key={highlight}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
+                      <span
+                        className="mt-1 inline-block size-1.5 flex-shrink-0 rounded-full bg-primary"
+                        aria-hidden
+                      />
                       <span>{highlight}</span>
                     </li>
                   ))}
