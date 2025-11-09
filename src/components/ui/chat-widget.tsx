@@ -1,6 +1,13 @@
 "use client"
 
-import { FormEvent, useEffect, useRef, useState } from "react"
+import {
+    FormEvent,
+    Fragment,
+    ReactNode,
+    useEffect,
+    useRef,
+    useState,
+} from "react"
 import { Button } from "@/components/ui/button"
 import { SheetClose } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
@@ -10,6 +17,110 @@ type Message = {
     id: number
     sender: "user" | "bot"
     text: string
+}
+
+const inlinePattern =
+    /(\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|`[^`]+`)/g
+
+function renderInlineSegments(text: string): ReactNode[] {
+    return text
+        .split(inlinePattern)
+        .filter(Boolean)
+        .map((segment, index) => {
+            if (segment.startsWith("**") && segment.endsWith("**")) {
+                return (
+                    <strong key={`strong-${index}`}>
+                        {segment.slice(2, -2)}
+                    </strong>
+                )
+            }
+
+            if (segment.startsWith("__") && segment.endsWith("__")) {
+                return (
+                    <strong key={`strong-${index}`}>
+                        {segment.slice(2, -2)}
+                    </strong>
+                )
+            }
+
+            if (
+                (segment.startsWith("*") && segment.endsWith("*")) ||
+                (segment.startsWith("_") && segment.endsWith("_"))
+            ) {
+                return (
+                    <em key={`em-${index}`}>
+                        {segment.slice(1, -1)}
+                    </em>
+                )
+            }
+
+            if (segment.startsWith("`") && segment.endsWith("`")) {
+                return (
+                    <code
+                        key={`code-${index}`}
+                        className="rounded bg-muted px-1 py-0.5 text-[0.8em]"
+                    >
+                        {segment.slice(1, -1)}
+                    </code>
+                )
+            }
+
+            return <Fragment key={`text-${index}`}>{segment}</Fragment>
+        })
+}
+
+function renderBlock(text: string, index: number): ReactNode | null {
+    const trimmed = text.trim()
+
+    if (!trimmed) {
+        return null
+    }
+
+    const lines = trimmed.split(/\n+/)
+    const isUnorderedList = lines.every((line) => /^\s*[-*+]\s+/.test(line))
+    const isOrderedList = lines.every((line) => /^\s*\d+\.\s+/.test(line))
+
+    if (isUnorderedList) {
+        return (
+            <ul key={`ul-${index}`} className="list-disc space-y-1 pl-4">
+                {lines.map((line, itemIndex) => (
+                    <li key={`ul-${index}-${itemIndex}`} className="leading-relaxed">
+                        {renderInlineSegments(line.replace(/^\s*[-*+]\s+/, ""))}
+                    </li>
+                ))}
+            </ul>
+        )
+    }
+
+    if (isOrderedList) {
+        return (
+            <ol key={`ol-${index}`} className="list-decimal space-y-1 pl-5">
+                {lines.map((line, itemIndex) => (
+                    <li key={`ol-${index}-${itemIndex}`} className="leading-relaxed">
+                        {renderInlineSegments(line.replace(/^\s*\d+\.\s+/, ""))}
+                    </li>
+                ))}
+            </ol>
+        )
+    }
+
+    return (
+        <p key={`p-${index}`} className="leading-relaxed">
+            {lines.map((line, lineIndex) => (
+                <Fragment key={`p-${index}-${lineIndex}`}>
+                    {renderInlineSegments(line)}
+                    {lineIndex < lines.length - 1 ? <br /> : null}
+                </Fragment>
+            ))}
+        </p>
+    )
+}
+
+function formatMessageText(text: string): ReactNode[] {
+    return text
+        .split(/\n{2,}/)
+        .map((block, index) => renderBlock(block, index))
+        .filter(Boolean) as ReactNode[]
 }
 
 const initialBotMessage: Message = {
@@ -129,13 +240,15 @@ export function ChatWidget() {
                         >
                             <div
                                 className={cn(
-                                    "max-w-[80%] rounded-lg px-3 py-2",
+                                    "max-w-[80%] rounded-lg px-3 py-2 text-sm",
                                     message.sender === "user"
                                         ? "bg-primary text-primary-foreground"
                                         : "bg-muted text-muted-foreground"
                                 )}
                             >
-                                {message.text}
+                                <div className="space-y-2">
+                                    {formatMessageText(message.text)}
+                                </div>
                             </div>
                         </div>
                     ))}
