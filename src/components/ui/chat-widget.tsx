@@ -1,17 +1,12 @@
 "use client"
 
-import {
-    FormEvent,
-    Fragment,
-    ReactNode,
-    useEffect,
-    useRef,
-    useState,
-} from "react"
+import { FormEvent, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { SheetClose } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { SendHorizontal, X } from "lucide-react"
+import ReactMarkdown, { type Components } from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 type Message = {
     id: number
@@ -19,108 +14,74 @@ type Message = {
     text: string
 }
 
-const inlinePattern =
-    /(\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|`[^`]+`)/g
-
-function renderInlineSegments(text: string): ReactNode[] {
-    return text
-        .split(inlinePattern)
-        .filter(Boolean)
-        .map((segment, index) => {
-            if (segment.startsWith("**") && segment.endsWith("**")) {
-                return (
-                    <strong key={`strong-${index}`}>
-                        {segment.slice(2, -2)}
-                    </strong>
-                )
-            }
-
-            if (segment.startsWith("__") && segment.endsWith("__")) {
-                return (
-                    <strong key={`strong-${index}`}>
-                        {segment.slice(2, -2)}
-                    </strong>
-                )
-            }
-
-            if (
-                (segment.startsWith("*") && segment.endsWith("*")) ||
-                (segment.startsWith("_") && segment.endsWith("_"))
-            ) {
-                return (
-                    <em key={`em-${index}`}>
-                        {segment.slice(1, -1)}
-                    </em>
-                )
-            }
-
-            if (segment.startsWith("`") && segment.endsWith("`")) {
-                return (
-                    <code
-                        key={`code-${index}`}
-                        className="rounded bg-muted px-1 py-0.5 text-[0.8em]"
-                    >
-                        {segment.slice(1, -1)}
-                    </code>
-                )
-            }
-
-            return <Fragment key={`text-${index}`}>{segment}</Fragment>
-        })
-}
-
-function renderBlock(text: string, index: number): ReactNode | null {
-    const trimmed = text.trim()
-
-    if (!trimmed) {
-        return null
-    }
-
-    const lines = trimmed.split(/\n+/)
-    const isUnorderedList = lines.every((line) => /^\s*[-*+]\s+/.test(line))
-    const isOrderedList = lines.every((line) => /^\s*\d+\.\s+/.test(line))
-
-    if (isUnorderedList) {
-        return (
-            <ul key={`ul-${index}`} className="list-disc space-y-1 pl-4">
-                {lines.map((line, itemIndex) => (
-                    <li key={`ul-${index}-${itemIndex}`} className="leading-relaxed">
-                        {renderInlineSegments(line.replace(/^\s*[-*+]\s+/, ""))}
-                    </li>
-                ))}
-            </ul>
-        )
-    }
-
-    if (isOrderedList) {
-        return (
-            <ol key={`ol-${index}`} className="list-decimal space-y-1 pl-5">
-                {lines.map((line, itemIndex) => (
-                    <li key={`ol-${index}-${itemIndex}`} className="leading-relaxed">
-                        {renderInlineSegments(line.replace(/^\s*\d+\.\s+/, ""))}
-                    </li>
-                ))}
-            </ol>
-        )
-    }
-
-    return (
-        <p key={`p-${index}`} className="leading-relaxed">
-            {lines.map((line, lineIndex) => (
-                <Fragment key={`p-${index}-${lineIndex}`}>
-                    {renderInlineSegments(line)}
-                    {lineIndex < lines.length - 1 ? <br /> : null}
-                </Fragment>
-            ))}
-        </p>
-    )
-}
-
-function formatMessageText(text: string): ReactNode[] {
-    return text
-        .split(/\n{2,}/)
-        .map((block, index) => renderBlock(block, index))
-        .filter(Boolean) as ReactNode[]
+const markdownComponents: Components = {
+    p: ({ className, ...props }) => (
+        <p
+            {...props}
+            className={cn("leading-relaxed [&:not(:first-child)]:mt-2", className)}
+        />
+    ),
+    strong: ({ className, ...props }) => (
+        <strong {...props} className={cn("font-semibold", className)} />
+    ),
+    em: ({ className, ...props }) => (
+        <em {...props} className={cn("italic", className)} />
+    ),
+    code: ({ inline, className, ...props }) => (
+        <code
+            {...props}
+            className={cn(
+                "rounded bg-muted px-1 py-0.5 text-[0.85em]",
+                inline ? "" : "block whitespace-pre-wrap",
+                className,
+            )}
+        />
+    ),
+    pre: ({ className, ...props }) => (
+        <pre
+            {...props}
+            className={cn(
+                "overflow-x-auto rounded-lg bg-muted px-3 py-2 text-sm [&:not(:first-child)]:mt-2",
+                className,
+            )}
+        />
+    ),
+    ul: ({ className, ...props }) => (
+        <ul
+            {...props}
+            className={cn(
+                "list-disc space-y-1 pl-4 [&:not(:first-child)]:mt-2",
+                className,
+            )}
+        />
+    ),
+    ol: ({ className, ...props }) => (
+        <ol
+            {...props}
+            className={cn(
+                "list-decimal space-y-1 pl-5 [&:not(:first-child)]:mt-2",
+                className,
+            )}
+        />
+    ),
+    li: ({ className, ...props }) => (
+        <li {...props} className={cn("leading-relaxed", className)} />
+    ),
+    a: ({ className, ...props }) => (
+        <a
+            {...props}
+            className={cn("text-primary underline underline-offset-4", className)}
+        />
+    ),
+    blockquote: ({ className, ...props }) => (
+        <blockquote
+            {...props}
+            className={cn(
+                "border-l-2 border-muted-foreground/50 pl-3 italic [&:not(:first-child)]:mt-2",
+                className,
+            )}
+        />
+    ),
 }
 
 const initialBotMessage: Message = {
@@ -246,9 +207,13 @@ export function ChatWidget() {
                                         : "bg-muted text-muted-foreground"
                                 )}
                             >
-                                <div className="space-y-2">
-                                    {formatMessageText(message.text)}
-                                </div>
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    components={markdownComponents}
+                                    className="space-y-2"
+                                >
+                                    {message.text}
+                                </ReactMarkdown>
                             </div>
                         </div>
                     ))}

@@ -112,7 +112,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                         </SheetTrigger>
                         <SheetContent
                             side="right"
-                            className="flex h-full w-full max-w-md flex-col gap-0 overflow-hidden p-0 [&>button[data-radix-dialog-close]]:hidden"
+                            className="flex h-[100dvh] w-screen max-w-full flex-col gap-0 overflow-hidden p-0 sm:h-full sm:w-full sm:max-w-md [&>button[data-radix-dialog-close]]:hidden"
                             style={{
                                 height: "100dvh",
                                 maxHeight: "100dvh",
