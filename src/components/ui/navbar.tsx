@@ -114,6 +114,12 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                             side="right"
                             className="flex h-full w-full max-w-md flex-col gap-0 p-0"
                         >
+                            <SheetTitle className="sr-only">
+                                Chat Assistant
+                            </SheetTitle>
+                            <SheetDescription className="sr-only">
+                                Start a conversation with the portfolio assistant
+                            </SheetDescription>
                             <ChatWidget />
                         </SheetContent>
                     </Sheet>
