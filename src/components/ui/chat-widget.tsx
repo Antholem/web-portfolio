@@ -2,9 +2,8 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { SheetClose } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { SendHorizontal, X } from "lucide-react"
+import { SendHorizontal } from "lucide-react"
 
 type Message = {
     id: number
@@ -18,10 +17,6 @@ const initialBotMessage: Message = {
     text: "Hi there! I'm your friendly assistant. How can I help you today?",
 }
 
-function createBotResponse(userMessage: string): string {
-    return `You said: "${userMessage}". I'm just a demo bot, but I'm here to keep you company!`
-}
-
 export function ChatWidget() {
     const [messages, setMessages] = useState<Message[]>([initialBotMessage])
     const [inputValue, setInputValue] = useState("")
@@ -32,47 +27,79 @@ export function ChatWidget() {
         endRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [messages])
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        if (isResponding) return
         const trimmed = inputValue.trim()
         if (!trimmed) return
 
         const timestamp = Date.now()
-        setMessages((prev) => [
-            ...prev,
-            { id: timestamp, sender: "user", text: trimmed },
-        ])
+        const userMessage: Message = {
+            id: timestamp,
+            sender: "user",
+            text: trimmed,
+        }
+
+        setMessages((prev) => [...prev, userMessage])
         setInputValue("")
         setIsResponding(true)
 
-        setTimeout(() => {
-            setMessages((prev) => [
-                ...prev,
-                {
-                    id: timestamp + 1,
-                    sender: "bot",
-                    text: createBotResponse(trimmed),
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            ])
+                body: JSON.stringify({
+                    messages: [...messages, userMessage].map((message) => ({
+                        role: message.sender === "bot" ? "assistant" : "user",
+                        content: message.text,
+                    })),
+                }),
+            })
+
+            if (!response.ok) {
+                const errorPayload = (await response.json()) as {
+                    error?: string
+                }
+
+                throw new Error(
+                    errorPayload.error ||
+                        "Sorry, I couldn't reach the assistant. Please try again."
+                )
+            }
+
+            const payload = (await response.json()) as { reply?: string }
+
+            const assistantMessage: Message = {
+                id: timestamp + 1,
+                sender: "bot",
+                text:
+                    payload.reply?.trim() ||
+                    "I'm having trouble thinking of a response right now, but please feel free to ask another question!",
+            }
+
+            setMessages((prev) => [...prev, assistantMessage])
+        } catch (error) {
+            const assistantMessage: Message = {
+                id: timestamp + 1,
+                sender: "bot",
+                text:
+                    error instanceof Error
+                        ? error.message
+                        : "Sorry, something went wrong. Please try again in a moment.",
+            }
+
+            setMessages((prev) => [...prev, assistantMessage])
+        } finally {
             setIsResponding(false)
-        }, 450)
+        }
     }
 
     return (
         <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b bg-muted/60 px-4 py-3">
+            <div className="flex items-center justify-center border-b bg-muted/60 px-4 py-3">
                 <p className="text-sm font-semibold">Chat Assistant</p>
-                <SheetClose asChild>
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
-                        aria-label="Close chat"
-                    >
-                        <X className="h-4 w-4" />
-                    </Button>
-                </SheetClose>
             </div>
             <div className="flex h-full flex-col">
                 <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm">
