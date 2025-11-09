@@ -90,7 +90,7 @@ const markdownComponents: Components = {
 }
 
 export function ChatWidget() {
-    const { messages, setMessages, addMessage } = useChatStore()
+    const { messages, addMessage } = useChatStore()
     const [inputValue, setInputValue] = useState("")
     const [isResponding, setIsResponding] = useState(false)
     const endRef = useRef<HTMLDivElement | null>(null)
@@ -102,7 +102,6 @@ export function ChatWidget() {
 
     useEffect(() => {
         isMounted.current = true
-
         return () => {
             isMounted.current = false
         }
@@ -125,14 +124,12 @@ export function ChatWidget() {
         setInputValue("")
         setIsResponding(true)
 
-        const history = useChatStore.getState().messages
-
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    messages: history.map((message) => ({
+                    messages: [...messages, userMessage].map((message) => ({
                         role: message.sender === "bot" ? "assistant" : "user",
                         content: message.text,
                     })),
@@ -142,8 +139,7 @@ export function ChatWidget() {
             if (!response.ok) {
                 const { error } = (await response.json()) as { error?: string }
                 throw new Error(
-                    error ||
-                        "Sorry, I couldn't reach the assistant. Please try again.",
+                    error || "Sorry, I couldn't reach the assistant. Please try again.",
                 )
             }
 
@@ -157,7 +153,9 @@ export function ChatWidget() {
                     "I'm having trouble thinking of a response right now, but please feel free to ask another question!",
             }
 
-            setMessages([...useChatStore.getState().messages, botMessage])
+            if (isMounted.current) {
+                addMessage(botMessage)
+            }
         } catch (error) {
             const botMessage = {
                 id: timestamp + 1,
@@ -168,11 +166,11 @@ export function ChatWidget() {
                         : "Sorry, something went wrong. Please try again in a moment.",
             }
 
-            setMessages([...useChatStore.getState().messages, botMessage])
-        } finally {
             if (isMounted.current) {
-                setIsResponding(false)
+                addMessage(botMessage)
             }
+        } finally {
+            if (isMounted.current) setIsResponding(false)
         }
     }
 
@@ -205,9 +203,7 @@ export function ChatWidget() {
                             key={message.id}
                             className={cn(
                                 "flex",
-                                message.sender === "user"
-                                    ? "justify-end"
-                                    : "justify-start",
+                                message.sender === "user" ? "justify-end" : "justify-start",
                             )}
                         >
                             <div
