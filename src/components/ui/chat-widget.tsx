@@ -20,6 +20,21 @@ type Message = {
     text: string
 }
 
+function isMessageArray(value: unknown): value is Message[] {
+    return (
+        Array.isArray(value) &&
+        value.every(
+            (message) =>
+                message !== null &&
+                typeof message === "object" &&
+                typeof (message as Message).id === "number" &&
+                ((message as Message).sender === "bot" ||
+                    (message as Message).sender === "user") &&
+                typeof (message as Message).text === "string",
+        )
+    )
+}
+
 const markdownComponents: Components = {
     p: ({ className, ...props }) => (
         <p
@@ -100,6 +115,8 @@ const initialBotMessage: Message = {
     text: "Hi there! I'm your friendly assistant. How can I help you today?",
 }
 
+const STORAGE_KEY = "chat-assistant-messages"
+
 export function ChatWidget() {
     const [messages, setMessages] = useState<Message[]>([initialBotMessage])
     const [inputValue, setInputValue] = useState("")
@@ -107,6 +124,7 @@ export function ChatWidget() {
     const endRef = useRef<HTMLDivElement | null>(null)
     const messagesRef = useRef<Message[]>(messages)
     const isMounted = useRef(false)
+    const hasHydratedStorage = useRef(false)
 
     useEffect(() => {
         messagesRef.current = messages
@@ -120,6 +138,64 @@ export function ChatWidget() {
             isMounted.current = false
         }
     }, [])
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        try {
+            const stored = window.sessionStorage.getItem(STORAGE_KEY)
+            if (stored) {
+                const parsed = JSON.parse(stored)
+                if (isMessageArray(parsed) && parsed.length > 0) {
+                    messagesRef.current = parsed
+                    setMessages(parsed)
+                }
+            }
+        } catch (error) {
+            console.error("Failed to restore chat history", error)
+        } finally {
+            hasHydratedStorage.current = true
+        }
+    }, [])
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        const resetStorage = () => {
+            try {
+                window.sessionStorage.removeItem(STORAGE_KEY)
+            } catch (error) {
+                console.error("Failed to clear chat history", error)
+            }
+        }
+
+        window.addEventListener("beforeunload", resetStorage)
+        window.addEventListener("pagehide", resetStorage)
+
+        return () => {
+            window.removeEventListener("beforeunload", resetStorage)
+            window.removeEventListener("pagehide", resetStorage)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!hasHydratedStorage.current || typeof window === "undefined") {
+            return
+        }
+
+        try {
+            window.sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(messagesRef.current),
+            )
+        } catch (error) {
+            console.error("Failed to persist chat history", error)
+        }
+    }, [messages])
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
