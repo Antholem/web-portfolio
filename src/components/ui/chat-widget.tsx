@@ -13,27 +13,7 @@ import { cn } from "@/lib/utils"
 import { SendHorizontal, X } from "lucide-react"
 import ReactMarkdown, { type Components } from "react-markdown"
 import remarkGfm from "remark-gfm"
-
-type Message = {
-    id: number
-    sender: "user" | "bot"
-    text: string
-}
-
-function isMessageArray(value: unknown): value is Message[] {
-    return (
-        Array.isArray(value) &&
-        value.every(
-            (message) =>
-                message !== null &&
-                typeof message === "object" &&
-                typeof (message as Message).id === "number" &&
-                ((message as Message).sender === "bot" ||
-                    (message as Message).sender === "user") &&
-                typeof (message as Message).text === "string",
-        )
-    )
-}
+import { useChatStore } from "@/lib/chat-store"
 
 const markdownComponents: Components = {
     p: ({ className, ...props }) => (
@@ -109,25 +89,14 @@ const markdownComponents: Components = {
     ),
 }
 
-const initialBotMessage: Message = {
-    id: 0,
-    sender: "bot",
-    text: "Hi there! I'm your friendly assistant. How can I help you today?",
-}
-
-const STORAGE_KEY = "chat-assistant-messages"
-
 export function ChatWidget() {
-    const [messages, setMessages] = useState<Message[]>([initialBotMessage])
+    const { messages, setMessages, addMessage } = useChatStore()
     const [inputValue, setInputValue] = useState("")
     const [isResponding, setIsResponding] = useState(false)
     const endRef = useRef<HTMLDivElement | null>(null)
-    const messagesRef = useRef<Message[]>(messages)
     const isMounted = useRef(false)
-    const hasHydratedStorage = useRef(false)
 
     useEffect(() => {
-        messagesRef.current = messages
         endRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [messages])
 
@@ -139,64 +108,6 @@ export function ChatWidget() {
         }
     }, [])
 
-    useEffect(() => {
-        if (typeof window === "undefined") {
-            return
-        }
-
-        try {
-            const stored = window.sessionStorage.getItem(STORAGE_KEY)
-            if (stored) {
-                const parsed = JSON.parse(stored)
-                if (isMessageArray(parsed) && parsed.length > 0) {
-                    messagesRef.current = parsed
-                    setMessages(parsed)
-                }
-            }
-        } catch (error) {
-            console.error("Failed to restore chat history", error)
-        } finally {
-            hasHydratedStorage.current = true
-        }
-    }, [])
-
-    useEffect(() => {
-        if (typeof window === "undefined") {
-            return
-        }
-
-        const resetStorage = () => {
-            try {
-                window.sessionStorage.removeItem(STORAGE_KEY)
-            } catch (error) {
-                console.error("Failed to clear chat history", error)
-            }
-        }
-
-        window.addEventListener("beforeunload", resetStorage)
-        window.addEventListener("pagehide", resetStorage)
-
-        return () => {
-            window.removeEventListener("beforeunload", resetStorage)
-            window.removeEventListener("pagehide", resetStorage)
-        }
-    }, [])
-
-    useEffect(() => {
-        if (!hasHydratedStorage.current || typeof window === "undefined") {
-            return
-        }
-
-        try {
-            window.sessionStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify(messagesRef.current),
-            )
-        } catch (error) {
-            console.error("Failed to persist chat history", error)
-        }
-    }, [messages])
-
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         if (isResponding) return
@@ -204,27 +115,24 @@ export function ChatWidget() {
         if (!trimmed) return
 
         const timestamp = Date.now()
-        const userMessage: Message = {
+        const userMessage = {
             id: timestamp,
-            sender: "user",
+            sender: "user" as const,
             text: trimmed,
         }
 
-        const nextMessages = [...messagesRef.current, userMessage]
-
-        messagesRef.current = nextMessages
-        setMessages(nextMessages)
+        addMessage(userMessage)
         setInputValue("")
         setIsResponding(true)
+
+        const history = useChatStore.getState().messages
 
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    messages: nextMessages.map((message) => ({
+                    messages: history.map((message) => ({
                         role: message.sender === "bot" ? "assistant" : "user",
                         content: message.text,
                     })),
@@ -232,50 +140,35 @@ export function ChatWidget() {
             })
 
             if (!response.ok) {
-                const errorPayload = (await response.json()) as {
-                    error?: string
-                }
-
+                const { error } = (await response.json()) as { error?: string }
                 throw new Error(
-                    errorPayload.error ||
-                        "Sorry, I couldn't reach the assistant. Please try again."
+                    error ||
+                        "Sorry, I couldn't reach the assistant. Please try again.",
                 )
             }
 
-            const payload = (await response.json()) as { reply?: string }
+            const { reply } = (await response.json()) as { reply?: string }
 
-            const assistantMessage: Message = {
+            const botMessage = {
                 id: timestamp + 1,
-                sender: "bot",
+                sender: "bot" as const,
                 text:
-                    payload.reply?.trim() ||
+                    reply?.trim() ||
                     "I'm having trouble thinking of a response right now, but please feel free to ask another question!",
             }
 
-            const completedMessages = [...messagesRef.current, assistantMessage]
-
-            messagesRef.current = completedMessages
-
-            if (isMounted.current) {
-                setMessages(completedMessages)
-            }
+            setMessages([...useChatStore.getState().messages, botMessage])
         } catch (error) {
-            const assistantMessage: Message = {
+            const botMessage = {
                 id: timestamp + 1,
-                sender: "bot",
+                sender: "bot" as const,
                 text:
                     error instanceof Error
                         ? error.message
                         : "Sorry, something went wrong. Please try again in a moment.",
             }
 
-            const completedMessages = [...messagesRef.current, assistantMessage]
-
-            messagesRef.current = completedMessages
-
-            if (isMounted.current) {
-                setMessages(completedMessages)
-            }
+            setMessages([...useChatStore.getState().messages, botMessage])
         } finally {
             if (isMounted.current) {
                 setIsResponding(false)
@@ -304,6 +197,7 @@ export function ChatWidget() {
                     </SheetClose>
                 </div>
             </div>
+
             <div className="flex h-full min-h-0 flex-col">
                 <div className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm">
                     {messages.map((message) => (
@@ -313,7 +207,7 @@ export function ChatWidget() {
                                 "flex",
                                 message.sender === "user"
                                     ? "justify-end"
-                                    : "justify-start"
+                                    : "justify-start",
                             )}
                         >
                             <div
@@ -321,7 +215,7 @@ export function ChatWidget() {
                                     "max-w-[80%] rounded-lg px-3 py-2 text-sm",
                                     message.sender === "user"
                                         ? "bg-primary text-primary-foreground"
-                                        : "bg-muted text-muted-foreground"
+                                        : "bg-muted text-muted-foreground",
                                 )}
                             >
                                 <ReactMarkdown
@@ -334,20 +228,22 @@ export function ChatWidget() {
                             </div>
                         </div>
                     ))}
-                    {isResponding ? (
+
+                    {isResponding && (
                         <div className="text-xs text-muted-foreground">
                             The assistant is typing...
                         </div>
-                    ) : null}
+                    )}
                     <div ref={endRef} />
                 </div>
+
                 <form
                     onSubmit={handleSubmit}
                     className="flex items-center gap-2 border-t px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]"
                 >
                     <input
                         value={inputValue}
-                        onChange={(event) => setInputValue(event.target.value)}
+                        onChange={(e) => setInputValue(e.target.value)}
                         placeholder="Type your message..."
                         className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     />
