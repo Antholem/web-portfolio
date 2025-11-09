@@ -117,6 +117,18 @@ const initialBotMessage: Message = {
 
 const STORAGE_KEY = "chat-assistant-messages"
 
+function persistMessages(messages: Message[]) {
+    if (typeof window === "undefined") {
+        return
+    }
+
+    try {
+        window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+    } catch (error) {
+        console.error("Failed to persist chat history", error)
+    }
+}
+
 function getStoredMessages(): Message[] {
     if (typeof window === "undefined") {
         return [initialBotMessage]
@@ -142,27 +154,22 @@ export function ChatWidget() {
     const [inputValue, setInputValue] = useState("")
     const [isResponding, setIsResponding] = useState(false)
     const endRef = useRef<HTMLDivElement | null>(null)
-    const [hasHydratedStorage, setHasHydratedStorage] = useState(false)
+    const messagesRef = useRef<Message[]>(messages)
+    const isMounted = useRef(false)
 
     useEffect(() => {
+        messagesRef.current = messages
         endRef.current?.scrollIntoView({ behavior: "smooth" })
+        persistMessages(messages)
     }, [messages])
 
     useEffect(() => {
-        setHasHydratedStorage(true)
+        isMounted.current = true
+
+        return () => {
+            isMounted.current = false
+        }
     }, [])
-
-    useEffect(() => {
-        if (!hasHydratedStorage || typeof window === "undefined") {
-            return
-        }
-
-        try {
-            window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-        } catch (error) {
-            console.error("Failed to persist chat history", error)
-        }
-    }, [messages, hasHydratedStorage])
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -177,9 +184,11 @@ export function ChatWidget() {
             text: trimmed,
         }
 
-        const nextMessages = [...messages, userMessage]
+        const nextMessages = [...messagesRef.current, userMessage]
 
+        messagesRef.current = nextMessages
         setMessages(nextMessages)
+        persistMessages(nextMessages)
         setInputValue("")
         setIsResponding(true)
 
@@ -218,7 +227,14 @@ export function ChatWidget() {
                     "I'm having trouble thinking of a response right now, but please feel free to ask another question!",
             }
 
-            setMessages((prev) => [...prev, assistantMessage])
+            const completedMessages = [...messagesRef.current, assistantMessage]
+
+            messagesRef.current = completedMessages
+            persistMessages(completedMessages)
+
+            if (isMounted.current) {
+                setMessages(completedMessages)
+            }
         } catch (error) {
             const assistantMessage: Message = {
                 id: timestamp + 1,
@@ -229,9 +245,18 @@ export function ChatWidget() {
                         : "Sorry, something went wrong. Please try again in a moment.",
             }
 
-            setMessages((prev) => [...prev, assistantMessage])
+            const completedMessages = [...messagesRef.current, assistantMessage]
+
+            messagesRef.current = completedMessages
+            persistMessages(completedMessages)
+
+            if (isMounted.current) {
+                setMessages(completedMessages)
+            }
         } finally {
-            setIsResponding(false)
+            if (isMounted.current) {
+                setIsResponding(false)
+            }
         }
     }
 

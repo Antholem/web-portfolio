@@ -111,6 +111,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                             </Button>
                         </SheetTrigger>
                         <SheetContent
+                            forceMount
                             side="right"
                             className="flex h-[100dvh] w-screen max-w-full flex-col gap-0 overflow-hidden p-0 sm:h-full sm:w-full sm:max-w-md [&>button[data-radix-dialog-close]]:hidden"
                             style={{
