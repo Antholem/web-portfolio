@@ -9,12 +9,13 @@ import {
     SheetTitle,
     SheetDescription,
 } from "@/components/ui/sheet"
-import { Menu } from "lucide-react"
+import { Menu, MessageCircle } from "lucide-react"
 import { FaMoon, FaSun } from "react-icons/fa"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useThemeStore } from "@/lib/theme-store"
 import { Separator } from "@/components/ui/separator"
+import { ChatWidget } from "@/components/ui/chat-widget"
 
 const links = [
     { href: "#about", label: "About" },
@@ -29,6 +30,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const setTheme = useThemeStore((state) => state.setTheme)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     const [mounted, setMounted] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false)
 
     useEffect(() => {
         if (initialTheme) {
@@ -98,12 +100,22 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        aria-label="Open chat assistant"
+                        onClick={() => setIsChatOpen((prev) => !prev)}
+                    >
+                        <MessageCircle className="h-5 w-5" />
+                    </Button>
                     <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
                 </div>
             </div>
             <Separator />
+            {isChatOpen ? <ChatWidget onClose={() => setIsChatOpen(false)} /> : null}
         </header>
     )
 }
