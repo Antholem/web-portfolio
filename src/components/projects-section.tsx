@@ -24,45 +24,46 @@ type Project = {
 
 const projects: Project[] = [
   {
-    title: "Conversational AI Workspace",
+    title: "Xeenapz",
     description:
-      "Idea-capturing platform where visitors chat with AI using text, voice dictation, or image uploads, while Supabase threads persist history and Gemini suggestions.",
+      "An AI-driven conversational assistant built with Next.js and Chakra UI, integrating Google's Gemini API for natural, context-aware dialogue. Features real-time responses, text-to-speech interaction, and secure data management through Supabase.",
     image: {
       src: "/assets/project-1.png",
-      alt: "Mockup of a conversational AI workspace interface with chat history and controls.",
+      alt: "Xeenapz AI Chatbot",
     },
     technologies: [
-      "Next.js 15",
+      "Next.js",
       "TypeScript",
+      "Chakra UI",
       "Supabase",
       "Google Gemini API",
-      "Chakra UI",
+      "Text-to-Speech",
     ],
-    href: "https://example.com/conversational-ai-workspace",
+    href: "https://xeenapz.vercel.app/",
     hrefLabel: "View project",
   },
   {
-    title: "Responsive SPA From Scratch",
+    title: "Learn Type",
     description:
       "Single-page experience crafted with semantic HTML5, CSS3, and vanilla JavaScript, progressively enhanced into a fully responsive and interactive UI.",
     image: {
       src: "/assets/project-2.png",
       alt: "Responsive single-page application layout displayed across multiple device sizes.",
     },
-    technologies: ["HTML5", "CSS3", "JavaScript", "Responsive Design"],
-    href: "https://example.com/responsive-spa",
+    technologies: ["HTML5", "CSS3", "JavaScript"],
+    href: "https://learn-type.vercel.app/",
     hrefLabel: "View project",
   },
   {
-    title: "Real-Time Crypto Markets",
+    title: "CryptCoin",
     description:
       "React and Material UI dashboard streaming live CoinGecko pricing, watchlists, and dynamic routing for deep dives into individual assets.",
     image: {
       src: "/assets/project-3.png",
       alt: "Real-time cryptocurrency dashboard with charts and market listings.",
     },
-    technologies: ["React", "Material UI", "CoinGecko API", "Real-time Data"],
-    href: "https://example.com/real-time-crypto",
+    technologies: ["React", "Material UI", "CoinGecko API"],
+    href: "https://crypt-coin.vercel.app/",
     hrefLabel: "View project",
   },
 ];
