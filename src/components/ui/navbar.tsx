@@ -1,21 +1,22 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
     Sheet,
     SheetTrigger,
     SheetContent,
     SheetTitle,
     SheetDescription,
-} from "@/components/ui/sheet"
-import { Menu, MessageCircle } from "lucide-react"
-import { FaMoon, FaSun } from "react-icons/fa"
-import Image from "next/image"
-import { useEffect, useState } from "react"
-import { useThemeStore } from "@/lib/theme-store"
-import { Separator } from "@/components/ui/separator"
-import { ChatWidget } from "@/components/ui/chat-widget"
+} from "@/components/ui/sheet";
+import { Menu, MessageCircle } from "lucide-react";
+import { FaMoon, FaSun } from "react-icons/fa";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useThemeStore } from "@/lib/theme-store";
+import { Separator } from "@/components/ui/separator";
+import { ChatWidget } from "@/components/ui/chat-widget";
+import { useChatStore } from "@/lib/chat-store";
 
 const links = [
     { href: "#about", label: "About" },
@@ -23,26 +24,31 @@ const links = [
     { href: "#services", label: "Services" },
     { href: "#projects", label: "Projects" },
     { href: "#contact", label: "Contacts" },
-]
+];
 
-export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dark" }) {
-    const theme = useThemeStore((state) => state.theme)
-    const setTheme = useThemeStore((state) => state.setTheme)
-    const toggleTheme = useThemeStore((state) => state.toggleTheme)
-    const [mounted, setMounted] = useState(false)
+export default function Navbar({
+    initialTheme,
+}: {
+    initialTheme?: "light" | "dark";
+}) {
+    const theme = useThemeStore((state) => state.theme);
+    const setTheme = useThemeStore((state) => state.setTheme);
+    const toggleTheme = useThemeStore((state) => state.toggleTheme);
+    const { hasUnread, setHasUnread } = useChatStore();
+    const [mounted, setMounted] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     useEffect(() => {
-        if (initialTheme) {
-            setTheme(initialTheme)
-        }
-        setMounted(true)
-    }, [initialTheme, setTheme])
+        if (initialTheme) setTheme(initialTheme);
+        setMounted(true);
+    }, [initialTheme, setTheme]);
 
-    const currentTheme = mounted ? theme : initialTheme || theme
+    const currentTheme = mounted ? theme : initialTheme || theme;
 
     return (
         <header className="sticky top-0 z-40 w-full bg-card backdrop-blur">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+                {/* Mobile Menu */}
                 <div className="md:hidden">
                     <Sheet>
                         <SheetTrigger asChild>
@@ -71,6 +77,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                     </Sheet>
                 </div>
 
+                {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 font-semibold">
                     <div className="relative h-6 w-6">
                         <Image
@@ -99,17 +106,27 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
-                    <Sheet>
+                    <Sheet
+                        modal={false}
+                        onOpenChange={(open) => {
+                            setIsChatOpen(open);
+                            if (open) setHasUnread(false);
+                        }}
+                    >
                         <SheetTrigger asChild>
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="size-8"
+                                className="relative size-8"
                                 aria-label="Open chat assistant"
                             >
                                 <MessageCircle className="h-5 w-5" />
+                                {hasUnread && !isChatOpen && (
+                                    <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_2px_rgba(var(--primary-rgb),0.5)]" />
+                                )}
                             </Button>
                         </SheetTrigger>
+
                         <SheetContent
                             forceMount
                             side="right"
@@ -120,21 +137,28 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                                 minHeight: "100svh",
                             }}
                         >
-                            <SheetTitle className="sr-only">
-                                Chat Assistant
-                            </SheetTitle>
+                            <SheetTitle className="sr-only">Chat Assistant</SheetTitle>
                             <SheetDescription className="sr-only">
                                 Start a conversation with the portfolio assistant
                             </SheetDescription>
-                            <ChatWidget />
+
+                            <div className="absolute inset-0">
+                                <ChatWidget />
+                            </div>
                         </SheetContent>
                     </Sheet>
-                    <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
+
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        onClick={toggleTheme}
+                    >
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
                 </div>
             </div>
             <Separator />
         </header>
-    )
+    );
 }

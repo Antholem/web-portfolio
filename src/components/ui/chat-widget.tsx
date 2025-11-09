@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
     FormEvent,
@@ -6,21 +6,18 @@ import {
     useRef,
     useState,
     type HTMLAttributes,
-} from "react"
-import { Button } from "@/components/ui/button"
-import { SheetClose } from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
-import { SendHorizontal, X } from "lucide-react"
-import ReactMarkdown, { type Components } from "react-markdown"
-import remarkGfm from "remark-gfm"
-import { useChatStore } from "@/lib/chat-store"
+} from "react";
+import { Button } from "@/components/ui/button";
+import { SheetClose } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { SendHorizontal, X } from "lucide-react";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { useChatStore } from "@/lib/chat-store";
 
 const markdownComponents: Components = {
     p: ({ className, ...props }) => (
-        <p
-            {...props}
-            className={cn("leading-relaxed [&:not(:first-child)]:mt-2", className)}
-        />
+        <p {...props} className={cn("leading-relaxed [&:not(:first-child)]:mt-2", className)} />
     ),
     strong: ({ className, ...props }) => (
         <strong {...props} className={cn("font-semibold", className)} />
@@ -38,7 +35,7 @@ const markdownComponents: Components = {
             className={cn(
                 "rounded bg-muted px-1 py-0.5 text-[0.85em]",
                 inline ? "" : "block whitespace-pre-wrap",
-                className,
+                className
             )}
         />
     ),
@@ -47,132 +44,71 @@ const markdownComponents: Components = {
             {...props}
             className={cn(
                 "overflow-x-auto rounded-lg bg-muted px-3 py-2 text-sm [&:not(:first-child)]:mt-2",
-                className,
+                className
             )}
         />
     ),
-    ul: ({ className, ...props }) => (
-        <ul
-            {...props}
-            className={cn(
-                "list-disc space-y-1 pl-4 [&:not(:first-child)]:mt-2",
-                className,
-            )}
-        />
-    ),
-    ol: ({ className, ...props }) => (
-        <ol
-            {...props}
-            className={cn(
-                "list-decimal space-y-1 pl-5 [&:not(:first-child)]:mt-2",
-                className,
-            )}
-        />
-    ),
-    li: ({ className, ...props }) => (
-        <li {...props} className={cn("leading-relaxed", className)} />
-    ),
-    a: ({ className, ...props }) => (
-        <a
-            {...props}
-            className={cn("text-primary underline underline-offset-4", className)}
-        />
-    ),
-    blockquote: ({ className, ...props }) => (
-        <blockquote
-            {...props}
-            className={cn(
-                "border-l-2 border-muted-foreground/50 pl-3 italic [&:not(:first-child)]:mt-2",
-                className,
-            )}
-        />
-    ),
-}
+};
 
 export function ChatWidget() {
-    const { messages, addMessage } = useChatStore()
-    const [inputValue, setInputValue] = useState("")
-    const [isResponding, setIsResponding] = useState(false)
-    const endRef = useRef<HTMLDivElement | null>(null)
-    const isMounted = useRef(false)
+    const { messages, addMessage, isResponding, setIsResponding } = useChatStore();
+    const [inputValue, setInputValue] = useState("");
+    const endRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" })
-    }, [messages])
-
-    useEffect(() => {
-        isMounted.current = true
-        return () => {
-            isMounted.current = false
-        }
-    }, [])
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        if (isResponding) return
-        const trimmed = inputValue.trim()
-        if (!trimmed) return
+        event.preventDefault();
+        if (isResponding) return;
+        const trimmed = inputValue.trim();
+        if (!trimmed) return;
 
-        const timestamp = Date.now()
-        const userMessage = {
-            id: timestamp,
-            sender: "user" as const,
-            text: trimmed,
-        }
+        const timestamp = Date.now();
+        const userMessage = { id: timestamp, sender: "user" as const, text: trimmed };
+        addMessage(userMessage);
+        setInputValue("");
+        setIsResponding(true);
 
-        addMessage(userMessage)
-        setInputValue("")
-        setIsResponding(true)
-
-        try {
-            const response = await fetch("/api/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    messages: [...messages, userMessage].map((message) => ({
-                        role: message.sender === "bot" ? "assistant" : "user",
-                        content: message.text,
-                    })),
-                }),
+        fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                messages: [...messages, userMessage].map((m) => ({
+                    role: m.sender === "bot" ? "assistant" : "user",
+                    content: m.text,
+                })),
+            }),
+        })
+            .then(async (response) => {
+                if (!response.ok) {
+                    const { error } = (await response.json()) as { error?: string };
+                    throw new Error(error || "Failed to get assistant response.");
+                }
+                const { reply } = (await response.json()) as { reply?: string };
+                const botMessage = {
+                    id: timestamp + 1,
+                    sender: "bot" as const,
+                    text:
+                        reply?.trim() ||
+                        "I'm having trouble thinking of a response right now. Try again later!",
+                };
+                addMessage(botMessage);
             })
-
-            if (!response.ok) {
-                const { error } = (await response.json()) as { error?: string }
-                throw new Error(
-                    error || "Sorry, I couldn't reach the assistant. Please try again.",
-                )
-            }
-
-            const { reply } = (await response.json()) as { reply?: string }
-
-            const botMessage = {
-                id: timestamp + 1,
-                sender: "bot" as const,
-                text:
-                    reply?.trim() ||
-                    "I'm having trouble thinking of a response right now, but please feel free to ask another question!",
-            }
-
-            if (isMounted.current) {
-                addMessage(botMessage)
-            }
-        } catch (error) {
-            const botMessage = {
-                id: timestamp + 1,
-                sender: "bot" as const,
-                text:
-                    error instanceof Error
-                        ? error.message
-                        : "Sorry, something went wrong. Please try again in a moment.",
-            }
-
-            if (isMounted.current) {
-                addMessage(botMessage)
-            }
-        } finally {
-            if (isMounted.current) setIsResponding(false)
-        }
-    }
+            .catch((error) => {
+                const botMessage = {
+                    id: timestamp + 1,
+                    sender: "bot" as const,
+                    text:
+                        error instanceof Error
+                            ? error.message
+                            : "Something went wrong. Please try again later.",
+                };
+                addMessage(botMessage);
+            })
+            .finally(() => setIsResponding(false));
+    };
 
     return (
         <div className="flex h-full min-h-0 flex-1 flex-col">
@@ -203,7 +139,7 @@ export function ChatWidget() {
                             key={message.id}
                             className={cn(
                                 "flex",
-                                message.sender === "user" ? "justify-end" : "justify-start",
+                                message.sender === "user" ? "justify-end" : "justify-start"
                             )}
                         >
                             <div
@@ -211,7 +147,7 @@ export function ChatWidget() {
                                     "max-w-[80%] rounded-lg px-3 py-2 text-sm",
                                     message.sender === "user"
                                         ? "bg-primary text-primary-foreground"
-                                        : "bg-muted text-muted-foreground",
+                                        : "bg-muted text-muted-foreground"
                                 )}
                             >
                                 <ReactMarkdown
@@ -224,7 +160,6 @@ export function ChatWidget() {
                             </div>
                         </div>
                     ))}
-
                     {isResponding && (
                         <div className="text-xs text-muted-foreground">
                             The assistant is typing...
@@ -249,5 +184,5 @@ export function ChatWidget() {
                 </form>
             </div>
         </div>
-    )
+    );
 }
