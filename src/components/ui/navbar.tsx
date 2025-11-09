@@ -112,7 +112,7 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                         </SheetTrigger>
                         <SheetContent
                             side="right"
-                            className="flex h-full w-full max-w-md flex-col gap-0 p-0"
+                            className="flex h-dvh min-h-[100svh] w-full max-w-md flex-col gap-0 p-0 md:h-screen"
                         >
                             <SheetTitle className="sr-only">
                                 Chat Assistant

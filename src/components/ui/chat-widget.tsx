@@ -97,7 +97,7 @@ export function ChatWidget() {
     }
 
     return (
-        <div className="flex h-full flex-col">
+        <div className="flex h-full min-h-0 flex-1 flex-col">
             <div className="flex items-center justify-center border-b bg-muted/60 px-4 py-3">
                 <p className="text-sm font-semibold">Chat Assistant</p>
             </div>
@@ -134,7 +134,7 @@ export function ChatWidget() {
                 </div>
                 <form
                     onSubmit={handleSubmit}
-                    className="flex items-center gap-2 border-t px-3 py-3"
+                    className="flex items-center gap-2 border-t px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]"
                 >
                     <input
                         value={inputValue}
