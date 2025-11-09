@@ -97,9 +97,9 @@ export function ChatWidget() {
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-1 flex-col">
-            <div className="flex items-center justify-center border-b bg-muted/60 px-4 py-3">
-                <p className="text-sm font-semibold">Chat Assistant</p>
+        <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="sticky top-0 z-10 flex items-center justify-center border-b bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur">
+                Chat Assistant
             </div>
             <div className="flex h-full flex-col">
                 <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm">
