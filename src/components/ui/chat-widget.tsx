@@ -1,6 +1,12 @@
 "use client"
 
-import { FormEvent, useEffect, useRef, useState } from "react"
+import {
+    FormEvent,
+    useEffect,
+    useRef,
+    useState,
+    type HTMLAttributes,
+} from "react"
 import { Button } from "@/components/ui/button"
 import { SheetClose } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
@@ -42,7 +48,11 @@ const markdownComponents: Components = {
     em: ({ className, ...props }) => (
         <em {...props} className={cn("italic", className)} />
     ),
-    code: ({ inline, className, ...props }) => (
+    code: ({
+        inline,
+        className,
+        ...props
+    }: { inline?: boolean; className?: string } & HTMLAttributes<HTMLElement>) => (
         <code
             {...props}
             className={cn(
@@ -107,37 +117,43 @@ const initialBotMessage: Message = {
 
 const STORAGE_KEY = "chat-assistant-messages"
 
+function getStoredMessages(): Message[] {
+    if (typeof window === "undefined") {
+        return [initialBotMessage]
+    }
+
+    try {
+        const stored = window.sessionStorage.getItem(STORAGE_KEY)
+        if (stored) {
+            const parsed = JSON.parse(stored)
+            if (isMessageArray(parsed) && parsed.length > 0) {
+                return parsed
+            }
+        }
+    } catch (error) {
+        console.error("Failed to restore chat history", error)
+    }
+
+    return [initialBotMessage]
+}
+
 export function ChatWidget() {
-    const [messages, setMessages] = useState<Message[]>([initialBotMessage])
+    const [messages, setMessages] = useState<Message[]>(() => getStoredMessages())
     const [inputValue, setInputValue] = useState("")
     const [isResponding, setIsResponding] = useState(false)
     const endRef = useRef<HTMLDivElement | null>(null)
-    const hasHydratedStorage = useRef(false)
+    const [hasHydratedStorage, setHasHydratedStorage] = useState(false)
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [messages])
 
     useEffect(() => {
-        if (typeof window === "undefined") return
-
-        try {
-            const stored = window.sessionStorage.getItem(STORAGE_KEY)
-            if (stored) {
-                const parsed = JSON.parse(stored)
-                if (isMessageArray(parsed) && parsed.length > 0) {
-                    setMessages(parsed)
-                }
-            }
-        } catch (error) {
-            console.error("Failed to restore chat history", error)
-        } finally {
-            hasHydratedStorage.current = true
-        }
+        setHasHydratedStorage(true)
     }, [])
 
     useEffect(() => {
-        if (!hasHydratedStorage.current || typeof window === "undefined") {
+        if (!hasHydratedStorage || typeof window === "undefined") {
             return
         }
 
@@ -146,7 +162,7 @@ export function ChatWidget() {
         } catch (error) {
             console.error("Failed to persist chat history", error)
         }
-    }, [messages])
+    }, [messages, hasHydratedStorage])
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -161,7 +177,9 @@ export function ChatWidget() {
             text: trimmed,
         }
 
-        setMessages((prev) => [...prev, userMessage])
+        const nextMessages = [...messages, userMessage]
+
+        setMessages(nextMessages)
         setInputValue("")
         setIsResponding(true)
 
@@ -172,7 +190,7 @@ export function ChatWidget() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    messages: [...messages, userMessage].map((message) => ({
+                    messages: nextMessages.map((message) => ({
                         role: message.sender === "bot" ? "assistant" : "user",
                         content: message.text,
                     })),
