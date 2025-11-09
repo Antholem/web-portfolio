@@ -2,8 +2,9 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { SheetClose } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { SendHorizontal } from "lucide-react"
+import { SendHorizontal, X } from "lucide-react"
 
 type Message = {
     id: number
@@ -98,8 +99,21 @@ export function ChatWidget() {
 
     return (
         <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="sticky top-0 z-10 flex items-center justify-center border-b bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur">
-                Chat Assistant
+            <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
+                <div className="relative flex items-center justify-center px-4 py-3 text-sm font-semibold">
+                    <span>Chat Assistant</span>
+                    <SheetClose asChild>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-2.5 top-2.5"
+                            aria-label="Close chat assistant"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </SheetClose>
+                </div>
             </div>
             <div className="flex h-full flex-col">
                 <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm">
