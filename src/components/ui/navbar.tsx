@@ -9,7 +9,7 @@ import {
     SheetTitle,
     SheetDescription,
 } from "@/components/ui/sheet"
-import { Menu } from "lucide-react"
+import { Menu, MessageCircle } from "lucide-react"
 import { FaMoon, FaSun } from "react-icons/fa"
 import Image from "next/image"
 import { useEffect, useState } from "react"
@@ -29,6 +29,17 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
     const setTheme = useThemeStore((state) => state.setTheme)
     const toggleTheme = useThemeStore((state) => state.toggleTheme)
     const [mounted, setMounted] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false)
+    const [messages, setMessages] = useState<
+        Array<{ id: number; sender: "user" | "bot"; text: string }>
+    >([
+        {
+            id: 0,
+            sender: "bot",
+            text: "Hi there! How can I help you today?",
+        },
+    ])
+    const [messageInput, setMessageInput] = useState("")
 
     useEffect(() => {
         if (initialTheme) {
@@ -98,10 +109,88 @@ export default function Navbar({ initialTheme }: { initialTheme?: "light" | "dar
                 </nav>
 
                 <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        aria-label={isChatOpen ? "Close chat" : "Open chat"}
+                        onClick={() => setIsChatOpen((prev) => !prev)}
+                    >
+                        <MessageCircle className="h-5 w-5" />
+                    </Button>
                     <Button variant="ghost" size="icon" className="size-8" onClick={toggleTheme}>
                         {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
                     </Button>
                 </div>
+                {isChatOpen ? (
+                    <div className="fixed bottom-20 right-4 z-50 w-72 rounded-lg border bg-background shadow-lg">
+                        <div className="flex items-center justify-between border-b px-4 py-2">
+                            <p className="text-sm font-semibold">Chat with Antholem</p>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-6"
+                                aria-label="Close chat"
+                                onClick={() => setIsChatOpen(false)}
+                            >
+                                ✕
+                            </Button>
+                        </div>
+                        <div className="max-h-64 space-y-2 overflow-y-auto px-4 py-3 text-sm">
+                            {messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={`flex ${
+                                        message.sender === "user" ? "justify-end" : "justify-start"
+                                    }`}
+                                >
+                                    <span
+                                        className={`rounded-2xl px-3 py-2 ${
+                                            message.sender === "user"
+                                                ? "bg-primary text-primary-foreground"
+                                                : "bg-muted text-muted-foreground"
+                                        }`}
+                                    >
+                                        {message.text}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <form
+                            className="flex items-center gap-2 border-t px-3 py-2"
+                            onSubmit={(event) => {
+                                event.preventDefault()
+                                const trimmed = messageInput.trim()
+                                if (!trimmed) return
+                                setMessages((prev) => {
+                                    const nextId = prev.length ? prev[prev.length - 1].id + 1 : 0
+                                    const userMessage = {
+                                        id: nextId,
+                                        sender: "user" as const,
+                                        text: trimmed,
+                                    }
+                                    const botMessage = {
+                                        id: nextId + 1,
+                                        sender: "bot" as const,
+                                        text: "Thanks for your message! I'll get back to you soon.",
+                                    }
+                                    return [...prev, userMessage, botMessage]
+                                })
+                                setMessageInput("")
+                            }}
+                        >
+                            <input
+                                className="flex-1 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                                placeholder="Type a message..."
+                                value={messageInput}
+                                onChange={(event) => setMessageInput(event.target.value)}
+                            />
+                            <Button type="submit" size="sm">
+                                Send
+                            </Button>
+                        </form>
+                    </div>
+                ) : null}
             </div>
             <Separator />
         </header>
