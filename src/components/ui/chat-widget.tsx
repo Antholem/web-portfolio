@@ -294,7 +294,7 @@ export function ChatWidget() {
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex h-full min-h-0 flex-1 flex-col">
             <div
                 className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"
                 style={{ paddingTop: "env(safe-area-inset-top)" }}
@@ -314,8 +314,8 @@ export function ChatWidget() {
                     </SheetClose>
                 </div>
             </div>
-            <div className="flex h-full flex-col">
-                <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm">
+            <div className="flex h-full min-h-0 flex-col">
+                <div className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm">
                     {messages.map((message) => (
                         <div
                             key={message.id}
