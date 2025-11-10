@@ -13,6 +13,7 @@ type ChatState = {
     isChatOpen: boolean;
     inputDraft: string;
     scrollPosition: number;
+    isAtBottom: boolean;
     setMessages: (messages: Message[]) => void;
     addMessage: (message: Message) => void;
     setIsResponding: (state: boolean) => void;
@@ -20,6 +21,7 @@ type ChatState = {
     setIsChatOpen: (state: boolean) => void;
     setInputDraft: (value: string) => void;
     setScrollPosition: (value: number) => void;
+    setIsAtBottom: (value: boolean) => void;
     resetMessages: () => void;
 };
 
@@ -36,6 +38,7 @@ export const useChatStore = create<ChatState>((set) => ({
     isChatOpen: false,
     inputDraft: "",
     scrollPosition: 0,
+    isAtBottom: true,
     setMessages: (messages) => set({ messages }),
     addMessage: (message) =>
         set((state) => ({
@@ -52,6 +55,13 @@ export const useChatStore = create<ChatState>((set) => ({
         })),
     setInputDraft: (value) => set({ inputDraft: value }),
     setScrollPosition: (value) => set({ scrollPosition: value }),
+    setIsAtBottom: (value) => set({ isAtBottom: value }),
     resetMessages: () =>
-        set({ messages: [initialMessage], hasUnread: false, inputDraft: "", scrollPosition: 0 }),
+        set({
+            messages: [initialMessage],
+            hasUnread: false,
+            inputDraft: "",
+            scrollPosition: 0,
+            isAtBottom: true,
+        }),
 }));

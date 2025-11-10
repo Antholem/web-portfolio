@@ -55,14 +55,20 @@ export function ChatWidget() {
         isChatOpen,
         scrollPosition,
         setScrollPosition,
+        isAtBottom,
+        setIsAtBottom,
     } = useChatStore();
     const endRef = useRef<HTMLDivElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const previousOpenStateRef = useRef(isChatOpen);
+    const previousMessageCountRef = useRef(messages.length);
 
     useEffect(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+        if (messages.length > previousMessageCountRef.current && isAtBottom) {
+            endRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+        previousMessageCountRef.current = messages.length;
+    }, [messages, isAtBottom]);
 
     useEffect(() => {
         if (!isChatOpen && scrollContainerRef.current) {
@@ -75,14 +81,21 @@ export function ChatWidget() {
             const container = scrollContainerRef.current;
             requestAnimationFrame(() => {
                 container.scrollTop = scrollPosition;
+                const { scrollHeight, clientHeight, scrollTop } = container;
+                const atBottom = scrollHeight - (scrollTop + clientHeight) < 8;
+                setIsAtBottom(atBottom);
             });
         }
         previousOpenStateRef.current = isChatOpen;
-    }, [isChatOpen, scrollPosition]);
+    }, [isChatOpen, scrollPosition, setIsAtBottom]);
 
     const handleScroll = () => {
         if (scrollContainerRef.current) {
-            setScrollPosition(scrollContainerRef.current.scrollTop);
+            const container = scrollContainerRef.current;
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            const isNearBottom = scrollHeight - (scrollTop + clientHeight) < 8;
+            setScrollPosition(scrollTop);
+            setIsAtBottom(isNearBottom);
         }
     };
 
@@ -94,6 +107,7 @@ export function ChatWidget() {
 
         const timestamp = Date.now();
         const userMessage = { id: timestamp, sender: "user" as const, text: trimmed };
+        setIsAtBottom(true);
         addMessage(userMessage);
         setInputDraft("");
         setIsResponding(true);
