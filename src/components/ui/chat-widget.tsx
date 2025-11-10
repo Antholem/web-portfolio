@@ -60,7 +60,6 @@ export function ChatWidget() {
     } = useChatStore();
     const endRef = useRef<HTMLDivElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-    const previousOpenStateRef = useRef(isChatOpen);
     const previousMessageCountRef = useRef(messages.length);
 
     useEffect(() => {
@@ -70,22 +69,26 @@ export function ChatWidget() {
         previousMessageCountRef.current = messages.length;
     }, [messages, isAtBottom]);
 
+    useLayoutEffect(() => {
+        if (!isChatOpen || !scrollContainerRef.current) return;
+
+        const container = scrollContainerRef.current;
+        if (Math.abs(container.scrollTop - scrollPosition) > 1) {
+            container.scrollTop = scrollPosition;
+        }
+
+        const { scrollHeight, clientHeight, scrollTop } = container;
+        const atBottom = scrollHeight - (scrollTop + clientHeight) < 8;
+        if (atBottom !== isAtBottom) {
+            setIsAtBottom(atBottom);
+        }
+    }, [isChatOpen, scrollPosition, isAtBottom, setIsAtBottom]);
+
     useEffect(() => {
         if (!isChatOpen && scrollContainerRef.current) {
             setScrollPosition(scrollContainerRef.current.scrollTop);
         }
     }, [isChatOpen, setScrollPosition]);
-
-    useLayoutEffect(() => {
-        if (isChatOpen && !previousOpenStateRef.current && scrollContainerRef.current) {
-            const container = scrollContainerRef.current;
-            container.scrollTop = scrollPosition;
-            const { scrollHeight, clientHeight, scrollTop } = container;
-            const atBottom = scrollHeight - (scrollTop + clientHeight) < 8;
-            setIsAtBottom(atBottom);
-        }
-        previousOpenStateRef.current = isChatOpen;
-    }, [isChatOpen, scrollPosition, setIsAtBottom]);
 
     const handleScroll = () => {
         if (scrollContainerRef.current) {
