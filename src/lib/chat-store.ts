@@ -11,11 +11,13 @@ type ChatState = {
     isResponding: boolean;
     hasUnread: boolean;
     isChatOpen: boolean;
+    inputDraft: string;
     setMessages: (messages: Message[]) => void;
     addMessage: (message: Message) => void;
     setIsResponding: (state: boolean) => void;
     setHasUnread: (state: boolean) => void;
     setIsChatOpen: (state: boolean) => void;
+    setInputDraft: (value: string) => void;
     resetMessages: () => void;
 };
 
@@ -30,6 +32,7 @@ export const useChatStore = create<ChatState>((set) => ({
     isResponding: false,
     hasUnread: false,
     isChatOpen: false,
+    inputDraft: "",
     setMessages: (messages) => set({ messages }),
     addMessage: (message) =>
         set((state) => ({
@@ -44,5 +47,6 @@ export const useChatStore = create<ChatState>((set) => ({
             isChatOpen: state,
             hasUnread: state ? false : prevState.hasUnread,
         })),
-    resetMessages: () => set({ messages: [initialMessage], hasUnread: false }),
+    setInputDraft: (value) => set({ inputDraft: value }),
+    resetMessages: () => set({ messages: [initialMessage], hasUnread: false, inputDraft: "" }),
 }));
