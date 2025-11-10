@@ -34,7 +34,7 @@ export default function Navbar({
     const theme = useThemeStore((state) => state.theme);
     const setTheme = useThemeStore((state) => state.setTheme);
     const toggleTheme = useThemeStore((state) => state.toggleTheme);
-    const { hasUnread, setHasUnread } = useChatStore();
+    const { hasUnread, setHasUnread, setIsChatOpen: setChatStoreOpen } = useChatStore();
     const [mounted, setMounted] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -110,6 +110,7 @@ export default function Navbar({
                         modal={false}
                         onOpenChange={(open) => {
                             setIsChatOpen(open);
+                            setChatStoreOpen(open);
                             if (open) setHasUnread(false);
                         }}
                     >
@@ -122,7 +123,7 @@ export default function Navbar({
                             >
                                 <MessageCircle className="h-5 w-5" />
                                 {hasUnread && !isChatOpen && (
-                                    <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_2px_rgba(var(--primary-rgb),0.5)]" />
+                                    <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_2px_rgba(16,185,129,0.55)]" />
                                 )}
                             </Button>
                         </SheetTrigger>

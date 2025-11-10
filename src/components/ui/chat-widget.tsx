@@ -144,10 +144,10 @@ export function ChatWidget() {
                         >
                             <div
                                 className={cn(
-                                    "max-w-[80%] rounded-lg px-3 py-2 text-sm",
+                                    "max-w-[80%] rounded-xl px-3 py-2 text-sm shadow-sm",
                                     message.sender === "user"
                                         ? "bg-primary text-primary-foreground"
-                                        : "bg-muted text-muted-foreground"
+                                        : "bg-gradient-to-br from-muted to-background text-foreground border border-border"
                                 )}
                             >
                                 <ReactMarkdown
