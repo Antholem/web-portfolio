@@ -107,7 +107,6 @@ export default function Navbar({
 
                 <div className="flex items-center gap-2">
                     <Sheet
-                        modal={false}
                         onOpenChange={(open) => {
                             setIsChatOpen(open);
                             setChatStoreOpen(open);
