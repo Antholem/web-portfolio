@@ -1,12 +1,6 @@
 "use client";
 
-import {
-    FormEvent,
-    useEffect,
-    useRef,
-    useState,
-    type HTMLAttributes,
-} from "react";
+import { FormEvent, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
 import { Button } from "@/components/ui/button";
 import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -51,24 +45,72 @@ const markdownComponents: Components = {
 };
 
 export function ChatWidget() {
-    const { messages, addMessage, isResponding, setIsResponding } = useChatStore();
-    const [inputValue, setInputValue] = useState("");
+    const {
+        messages,
+        addMessage,
+        isResponding,
+        setIsResponding,
+        inputDraft,
+        setInputDraft,
+        isChatOpen,
+        scrollPosition,
+        setScrollPosition,
+        isAtBottom,
+        setIsAtBottom,
+    } = useChatStore();
     const endRef = useRef<HTMLDivElement | null>(null);
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+    const previousMessageCountRef = useRef(messages.length);
 
     useEffect(() => {
-        endRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+        if (messages.length > previousMessageCountRef.current && isAtBottom) {
+            endRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+        previousMessageCountRef.current = messages.length;
+    }, [messages, isAtBottom]);
+
+    useLayoutEffect(() => {
+        if (!isChatOpen || !scrollContainerRef.current) return;
+
+        const container = scrollContainerRef.current;
+        if (Math.abs(container.scrollTop - scrollPosition) > 1) {
+            container.scrollTop = scrollPosition;
+        }
+
+        const { scrollHeight, clientHeight, scrollTop } = container;
+        const atBottom = scrollHeight - (scrollTop + clientHeight) < 8;
+        if (atBottom !== isAtBottom) {
+            setIsAtBottom(atBottom);
+        }
+    }, [isChatOpen, scrollPosition, isAtBottom, setIsAtBottom]);
+
+    useEffect(() => {
+        if (!isChatOpen && scrollContainerRef.current) {
+            setScrollPosition(scrollContainerRef.current.scrollTop);
+        }
+    }, [isChatOpen, setScrollPosition]);
+
+    const handleScroll = () => {
+        if (scrollContainerRef.current) {
+            const container = scrollContainerRef.current;
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            const isNearBottom = scrollHeight - (scrollTop + clientHeight) < 8;
+            setScrollPosition(scrollTop);
+            setIsAtBottom(isNearBottom);
+        }
+    };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (isResponding) return;
-        const trimmed = inputValue.trim();
+        const trimmed = inputDraft.trim();
         if (!trimmed) return;
 
         const timestamp = Date.now();
         const userMessage = { id: timestamp, sender: "user" as const, text: trimmed };
+        setIsAtBottom(true);
         addMessage(userMessage);
-        setInputValue("");
+        setInputDraft("");
         setIsResponding(true);
 
         fetch("/api/chat", {
@@ -133,7 +175,11 @@ export function ChatWidget() {
             </div>
 
             <div className="flex h-full min-h-0 flex-col">
-                <div className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm">
+                <div
+                    ref={scrollContainerRef}
+                    onScroll={handleScroll}
+                    className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm"
+                >
                     {messages.map((message) => (
                         <div
                             key={message.id}
@@ -144,10 +190,10 @@ export function ChatWidget() {
                         >
                             <div
                                 className={cn(
-                                    "max-w-[80%] rounded-lg px-3 py-2 text-sm",
+                                    "max-w-[80%] rounded-xl px-3 py-2 text-sm shadow-sm",
                                     message.sender === "user"
                                         ? "bg-primary text-primary-foreground"
-                                        : "bg-muted text-muted-foreground"
+                                        : "bg-gradient-to-br from-muted to-background text-foreground border border-border"
                                 )}
                             >
                                 <ReactMarkdown
@@ -173,8 +219,8 @@ export function ChatWidget() {
                     className="flex items-center gap-2 border-t px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]"
                 >
                     <input
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
+                        value={inputDraft}
+                        onChange={(e) => setInputDraft(e.target.value)}
                         placeholder="Type your message..."
                         className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     />
