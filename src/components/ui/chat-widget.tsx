@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, type HTMLAttributes } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
 import { Button } from "@/components/ui/button";
 import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -76,15 +76,13 @@ export function ChatWidget() {
         }
     }, [isChatOpen, setScrollPosition]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (isChatOpen && !previousOpenStateRef.current && scrollContainerRef.current) {
             const container = scrollContainerRef.current;
-            requestAnimationFrame(() => {
-                container.scrollTop = scrollPosition;
-                const { scrollHeight, clientHeight, scrollTop } = container;
-                const atBottom = scrollHeight - (scrollTop + clientHeight) < 8;
-                setIsAtBottom(atBottom);
-            });
+            container.scrollTop = scrollPosition;
+            const { scrollHeight, clientHeight, scrollTop } = container;
+            const atBottom = scrollHeight - (scrollTop + clientHeight) < 8;
+            setIsAtBottom(atBottom);
         }
         previousOpenStateRef.current = isChatOpen;
     }, [isChatOpen, scrollPosition, setIsAtBottom]);
