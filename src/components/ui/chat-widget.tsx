@@ -45,13 +45,46 @@ const markdownComponents: Components = {
 };
 
 export function ChatWidget() {
-    const { messages, addMessage, isResponding, setIsResponding, inputDraft, setInputDraft } =
-        useChatStore();
+    const {
+        messages,
+        addMessage,
+        isResponding,
+        setIsResponding,
+        inputDraft,
+        setInputDraft,
+        isChatOpen,
+        scrollPosition,
+        setScrollPosition,
+    } = useChatStore();
     const endRef = useRef<HTMLDivElement | null>(null);
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+    const previousOpenStateRef = useRef(isChatOpen);
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    useEffect(() => {
+        if (!isChatOpen && scrollContainerRef.current) {
+            setScrollPosition(scrollContainerRef.current.scrollTop);
+        }
+    }, [isChatOpen, setScrollPosition]);
+
+    useEffect(() => {
+        if (isChatOpen && !previousOpenStateRef.current && scrollContainerRef.current) {
+            const container = scrollContainerRef.current;
+            requestAnimationFrame(() => {
+                container.scrollTop = scrollPosition;
+            });
+        }
+        previousOpenStateRef.current = isChatOpen;
+    }, [isChatOpen, scrollPosition]);
+
+    const handleScroll = () => {
+        if (scrollContainerRef.current) {
+            setScrollPosition(scrollContainerRef.current.scrollTop);
+        }
+    };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -127,7 +160,11 @@ export function ChatWidget() {
             </div>
 
             <div className="flex h-full min-h-0 flex-col">
-                <div className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm">
+                <div
+                    ref={scrollContainerRef}
+                    onScroll={handleScroll}
+                    className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm"
+                >
                     {messages.map((message) => (
                         <div
                             key={message.id}
