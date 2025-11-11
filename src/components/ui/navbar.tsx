@@ -17,6 +17,7 @@ import { useThemeStore } from "@/lib/theme-store";
 import { Separator } from "@/components/ui/separator";
 import { ChatWidget } from "@/components/ui/chat-widget";
 import { useChatStore } from "@/lib/chat-store";
+import { cn } from "@/lib/utils";
 
 const links = [
     { href: "#about", label: "About" },
@@ -34,7 +35,8 @@ export default function Navbar({
     const theme = useThemeStore((state) => state.theme);
     const setTheme = useThemeStore((state) => state.setTheme);
     const toggleTheme = useThemeStore((state) => state.toggleTheme);
-    const { hasUnread, setHasUnread, setIsChatOpen: setChatStoreOpen } = useChatStore();
+    const { hasUnread, setHasUnread, setIsChatOpen: setChatStoreOpen, viewMode, setViewMode } =
+        useChatStore();
     const [mounted, setMounted] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -113,6 +115,7 @@ export default function Navbar({
                         onOpenChange={(open) => {
                             setIsChatOpen(open);
                             setChatStoreOpen(open);
+                            if (!open) setViewMode("docked");
                             if (open) setHasUnread(false);
                         }}
                     >
@@ -133,12 +136,16 @@ export default function Navbar({
                         <SheetContent
                             forceMount
                             side="right"
-                            className="flex h-[100dvh] w-screen max-w-full flex-col gap-0 overflow-hidden p-0 sm:h-full sm:w-full sm:max-w-md [&>button[data-radix-dialog-close]]:hidden"
-                            style={{
-                                height: "100dvh",
-                                maxHeight: "100dvh",
-                                minHeight: "100svh",
-                            }}
+                            overlayClassName={cn(
+                                viewMode === "minimized" && "bg-transparent pointer-events-none",
+                            )}
+                            className={cn(
+                                "flex h-[100dvh] w-screen max-w-full flex-col gap-0 overflow-hidden p-0 sm:right-6 sm:top-6 sm:bottom-6 sm:h-auto sm:max-h-[min(100vh-3rem,40rem)] sm:w-full sm:max-w-md sm:rounded-xl sm:border sm:border-border sm:bg-background sm:shadow-2xl [&>button[data-radix-dialog-close]]:hidden",
+                                viewMode === "fullscreen" &&
+                                    "sm:bottom-0 sm:right-0 sm:top-0 sm:max-h-none sm:max-w-full sm:rounded-none sm:border-none sm:shadow-none",
+                                viewMode === "minimized" &&
+                                    "h-auto max-h-none sm:top-auto sm:bottom-6 sm:h-auto sm:max-h-none sm:w-80",
+                            )}
                         >
                             <SheetTitle className="sr-only">Chat Assistant</SheetTitle>
                             <SheetDescription className="sr-only">

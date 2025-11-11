@@ -6,6 +6,8 @@ export type Message = {
     text: string;
 };
 
+export type ChatViewMode = "docked" | "fullscreen" | "minimized";
+
 type ChatState = {
     messages: Message[];
     isResponding: boolean;
@@ -14,6 +16,7 @@ type ChatState = {
     inputDraft: string;
     scrollPosition: number;
     isAtBottom: boolean;
+    viewMode: ChatViewMode;
     setMessages: (messages: Message[]) => void;
     addMessage: (message: Message) => void;
     setIsResponding: (state: boolean) => void;
@@ -22,6 +25,7 @@ type ChatState = {
     setInputDraft: (value: string) => void;
     setScrollPosition: (value: number) => void;
     setIsAtBottom: (value: boolean) => void;
+    setViewMode: (mode: ChatViewMode) => void;
     resetMessages: () => void;
 };
 
@@ -39,6 +43,7 @@ export const useChatStore = create<ChatState>((set) => ({
     inputDraft: "",
     scrollPosition: 0,
     isAtBottom: true,
+    viewMode: "docked",
     setMessages: (messages) => set({ messages }),
     addMessage: (message) =>
         set((state) => ({
@@ -52,10 +57,12 @@ export const useChatStore = create<ChatState>((set) => ({
         set((prevState) => ({
             isChatOpen: state,
             hasUnread: state ? false : prevState.hasUnread,
+            viewMode: state ? prevState.viewMode : "docked",
         })),
     setInputDraft: (value) => set({ inputDraft: value }),
     setScrollPosition: (value) => set({ scrollPosition: value }),
     setIsAtBottom: (value) => set({ isAtBottom: value }),
+    setViewMode: (mode) => set({ viewMode: mode }),
     resetMessages: () =>
         set({
             messages: [initialMessage],
@@ -63,5 +70,6 @@ export const useChatStore = create<ChatState>((set) => ({
             inputDraft: "",
             scrollPosition: 0,
             isAtBottom: true,
+            viewMode: "docked",
         }),
 }));

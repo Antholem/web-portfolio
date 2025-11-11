@@ -1,10 +1,10 @@
 "use client";
 
-import { FormEvent, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes } from "react";
 import { Button } from "@/components/ui/button";
 import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { SendHorizontal, X } from "lucide-react";
+import { Maximize2, Minus, Minimize2, SendHorizontal, Square, X } from "lucide-react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useChatStore } from "@/lib/chat-store";
@@ -57,20 +57,49 @@ export function ChatWidget() {
         setScrollPosition,
         isAtBottom,
         setIsAtBottom,
+        viewMode,
+        setViewMode,
     } = useChatStore();
     const endRef = useRef<HTMLDivElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const previousMessageCountRef = useRef(messages.length);
+    const [isLargeScreen, setIsLargeScreen] = useState(false);
 
     useEffect(() => {
-        if (messages.length > previousMessageCountRef.current && isAtBottom) {
+        const query = window.matchMedia("(min-width: 1024px)");
+        const update = (event?: MediaQueryListEvent) => {
+            setIsLargeScreen(event ? event.matches : query.matches);
+        };
+
+        update();
+
+        if (typeof query.addEventListener === "function") {
+            query.addEventListener("change", update);
+            return () => query.removeEventListener("change", update);
+        }
+
+        query.addListener(update);
+        return () => query.removeListener(update);
+    }, []);
+
+    useEffect(() => {
+        if (!isLargeScreen && viewMode !== "docked") {
+            setViewMode("docked");
+        }
+    }, [isLargeScreen, setViewMode, viewMode]);
+
+    const isFullscreen = viewMode === "fullscreen";
+    const isMinimized = viewMode === "minimized";
+
+    useEffect(() => {
+        if (messages.length > previousMessageCountRef.current && isAtBottom && !isMinimized) {
             endRef.current?.scrollIntoView({ behavior: "smooth" });
         }
         previousMessageCountRef.current = messages.length;
-    }, [messages, isAtBottom]);
+    }, [messages, isAtBottom, isMinimized]);
 
     useLayoutEffect(() => {
-        if (!isChatOpen || !scrollContainerRef.current) return;
+        if (!isChatOpen || !scrollContainerRef.current || isMinimized) return;
 
         const container = scrollContainerRef.current;
         if (Math.abs(container.scrollTop - scrollPosition) > 1) {
@@ -82,7 +111,7 @@ export function ChatWidget() {
         if (atBottom !== isAtBottom) {
             setIsAtBottom(atBottom);
         }
-    }, [isChatOpen, scrollPosition, isAtBottom, setIsAtBottom]);
+    }, [isChatOpen, scrollPosition, isAtBottom, setIsAtBottom, isMinimized]);
 
     useEffect(() => {
         if (!isChatOpen && scrollContainerRef.current) {
@@ -91,7 +120,7 @@ export function ChatWidget() {
     }, [isChatOpen, setScrollPosition]);
 
     const handleScroll = () => {
-        if (scrollContainerRef.current) {
+        if (scrollContainerRef.current && !isMinimized) {
             const container = scrollContainerRef.current;
             const { scrollTop, scrollHeight, clientHeight } = container;
             const isNearBottom = scrollHeight - (scrollTop + clientHeight) < 8;
@@ -152,29 +181,76 @@ export function ChatWidget() {
             .finally(() => setIsResponding(false));
     };
 
+    const toggleFullscreen = () => {
+        setViewMode(isFullscreen ? "docked" : "fullscreen");
+    };
+
+    const toggleMinimize = () => {
+        setViewMode(isMinimized ? "docked" : "minimized");
+    };
+
     return (
         <div className="flex h-full min-h-0 flex-1 flex-col">
             <div
-                className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"
+                className={cn(
+                    "sticky top-0 z-10 border-b bg-background/95 backdrop-blur",
+                    isMinimized && "relative border-none bg-background",
+                )}
                 style={{ paddingTop: "env(safe-area-inset-top)" }}
             >
                 <div className="relative flex items-center justify-center px-4 py-3 text-sm font-semibold">
                     <span>Chat Assistant</span>
-                    <SheetClose asChild>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2"
-                            aria-label="Close chat assistant"
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
-                    </SheetClose>
+                    <div className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
+                        {isLargeScreen && (
+                            <>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={toggleMinimize}
+                                    aria-label={isMinimized ? "Restore chat assistant" : "Minimize chat assistant"}
+                                    className="pointer-events-auto"
+                                >
+                                    {isMinimized ? (
+                                        <Square className="h-4 w-4" />
+                                    ) : (
+                                        <Minus className="h-4 w-4" />
+                                    )}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={toggleFullscreen}
+                                    aria-label={
+                                        isFullscreen ? "Exit fullscreen chat assistant" : "Enter fullscreen chat assistant"
+                                    }
+                                    className="pointer-events-auto"
+                                >
+                                    {isFullscreen ? (
+                                        <Minimize2 className="h-4 w-4" />
+                                    ) : (
+                                        <Maximize2 className="h-4 w-4" />
+                                    )}
+                                </Button>
+                            </>
+                        )}
+                        <SheetClose asChild>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Close chat assistant"
+                                className="pointer-events-auto"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </SheetClose>
+                    </div>
                 </div>
             </div>
 
-            <div className="flex h-full min-h-0 flex-col">
+            <div className={cn("flex h-full min-h-0 flex-col", isMinimized && "hidden")}>
                 <div
                     ref={scrollContainerRef}
                     onScroll={handleScroll}
