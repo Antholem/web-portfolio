@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useLayoutEffect, useRef, type HTMLAttributes } fr
 import { Button } from "@/components/ui/button";
 import { SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { SendHorizontal, X } from "lucide-react";
+import { Maximize2, Minimize2, Minus, SendHorizontal, Square, X } from "lucide-react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useChatStore } from "@/lib/chat-store";
@@ -57,6 +57,10 @@ export function ChatWidget() {
         setScrollPosition,
         isAtBottom,
         setIsAtBottom,
+        isFullscreen,
+        setIsFullscreen,
+        isMinimized,
+        setIsMinimized,
     } = useChatStore();
     const endRef = useRef<HTMLDivElement | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -70,7 +74,7 @@ export function ChatWidget() {
     }, [messages, isAtBottom]);
 
     useLayoutEffect(() => {
-        if (!isChatOpen || !scrollContainerRef.current) return;
+        if (!isChatOpen || !scrollContainerRef.current || isMinimized) return;
 
         const container = scrollContainerRef.current;
         if (Math.abs(container.scrollTop - scrollPosition) > 1) {
@@ -82,22 +86,35 @@ export function ChatWidget() {
         if (atBottom !== isAtBottom) {
             setIsAtBottom(atBottom);
         }
-    }, [isChatOpen, scrollPosition, isAtBottom, setIsAtBottom]);
+    }, [isChatOpen, scrollPosition, isAtBottom, setIsAtBottom, isMinimized]);
 
     useEffect(() => {
-        if (!isChatOpen && scrollContainerRef.current) {
+        if ((!isChatOpen || isMinimized) && scrollContainerRef.current) {
             setScrollPosition(scrollContainerRef.current.scrollTop);
         }
-    }, [isChatOpen, setScrollPosition]);
+    }, [isChatOpen, isMinimized, setScrollPosition]);
+
+    useEffect(() => {
+        if (!isMinimized || !scrollContainerRef.current) return;
+        setScrollPosition(scrollContainerRef.current.scrollTop);
+    }, [isMinimized, setScrollPosition]);
 
     const handleScroll = () => {
-        if (scrollContainerRef.current) {
+        if (scrollContainerRef.current && !isMinimized) {
             const container = scrollContainerRef.current;
             const { scrollTop, scrollHeight, clientHeight } = container;
             const isNearBottom = scrollHeight - (scrollTop + clientHeight) < 8;
             setScrollPosition(scrollTop);
             setIsAtBottom(isNearBottom);
         }
+    };
+
+    const handleToggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+    };
+
+    const handleToggleMinimize = () => {
+        setIsMinimized(!isMinimized);
     };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -153,24 +170,58 @@ export function ChatWidget() {
     };
 
     return (
-        <div className="flex h-full min-h-0 flex-1 flex-col">
+        <div
+            className={cn(
+                "flex min-h-0 flex-1 flex-col",
+                isMinimized ? "h-auto flex-none" : "h-full"
+            )}
+        >
             <div
                 className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"
                 style={{ paddingTop: "env(safe-area-inset-top)" }}
             >
                 <div className="relative flex items-center justify-center px-4 py-3 text-sm font-semibold">
                     <span>Chat Assistant</span>
-                    <SheetClose asChild>
+                    <div className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
                         <Button
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2"
-                            aria-label="Close chat assistant"
+                            className="hidden lg:flex"
+                            onClick={handleToggleFullscreen}
+                            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                         >
-                            <X className="h-4 w-4" />
+                            {isFullscreen ? (
+                                <Minimize2 className="h-4 w-4" />
+                            ) : (
+                                <Maximize2 className="h-4 w-4" />
+                            )}
                         </Button>
-                    </SheetClose>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="hidden lg:flex"
+                            onClick={handleToggleMinimize}
+                            aria-label={isMinimized ? "Restore chat" : "Minimize chat"}
+                        >
+                            {isMinimized ? (
+                                <Square className="h-4 w-4" />
+                            ) : (
+                                <Minus className="h-4 w-4" />
+                            )}
+                        </Button>
+                        <SheetClose asChild>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Close chat assistant"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </SheetClose>
+                    </div>
                 </div>
             </div>
 
@@ -178,7 +229,10 @@ export function ChatWidget() {
                 <div
                     ref={scrollContainerRef}
                     onScroll={handleScroll}
-                    className="flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm"
+                    className={cn(
+                        "flex-1 min-h-0 space-y-3 overflow-y-auto px-4 py-3 text-sm",
+                        isMinimized && "hidden"
+                    )}
                 >
                     {messages.map((message) => (
                         <div
@@ -216,7 +270,10 @@ export function ChatWidget() {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="flex items-center gap-2 border-t px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]"
+                    className={cn(
+                        "flex items-center gap-2 border-t px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]",
+                        isMinimized && "hidden"
+                    )}
                 >
                     <input
                         value={inputDraft}

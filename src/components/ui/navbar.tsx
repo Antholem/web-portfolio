@@ -17,6 +17,7 @@ import { useThemeStore } from "@/lib/theme-store";
 import { Separator } from "@/components/ui/separator";
 import { ChatWidget } from "@/components/ui/chat-widget";
 import { useChatStore } from "@/lib/chat-store";
+import { cn } from "@/lib/utils";
 
 const links = [
     { href: "#about", label: "About" },
@@ -34,7 +35,13 @@ export default function Navbar({
     const theme = useThemeStore((state) => state.theme);
     const setTheme = useThemeStore((state) => state.setTheme);
     const toggleTheme = useThemeStore((state) => state.toggleTheme);
-    const { hasUnread, setHasUnread, setIsChatOpen: setChatStoreOpen } = useChatStore();
+    const {
+        hasUnread,
+        setHasUnread,
+        setIsChatOpen: setChatStoreOpen,
+        isFullscreen,
+        isMinimized,
+    } = useChatStore();
     const [mounted, setMounted] = useState(false);
     const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -133,21 +140,28 @@ export default function Navbar({
                         <SheetContent
                             forceMount
                             side="right"
-                            className="flex h-[100dvh] w-screen max-w-full flex-col gap-0 overflow-hidden p-0 sm:h-full sm:w-full sm:max-w-md [&>button[data-radix-dialog-close]]:hidden"
-                            style={{
-                                height: "100dvh",
-                                maxHeight: "100dvh",
-                                minHeight: "100svh",
-                            }}
+                            className={cn(
+                                "flex w-screen max-w-full flex-col gap-0 overflow-hidden p-0 [&>button[data-radix-dialog-close]]:hidden",
+                                isFullscreen ? "sm:max-w-full lg:max-w-none" : "sm:max-w-md",
+                                isFullscreen && "sm:rounded-none",
+                                isMinimized ? "h-auto min-h-0" : "h-[100dvh] sm:h-full"
+                            )}
+                            style={
+                                isMinimized
+                                    ? undefined
+                                    : {
+                                          height: "100dvh",
+                                          maxHeight: "100dvh",
+                                          minHeight: "100svh",
+                                      }
+                            }
                         >
                             <SheetTitle className="sr-only">Chat Assistant</SheetTitle>
                             <SheetDescription className="sr-only">
                                 Start a conversation with the portfolio assistant
                             </SheetDescription>
 
-                            <div className="absolute inset-0">
-                                <ChatWidget />
-                            </div>
+                            <ChatWidget />
                         </SheetContent>
                     </Sheet>
 

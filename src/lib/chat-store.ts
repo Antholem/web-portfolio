@@ -11,6 +11,8 @@ type ChatState = {
     isResponding: boolean;
     hasUnread: boolean;
     isChatOpen: boolean;
+    isFullscreen: boolean;
+    isMinimized: boolean;
     inputDraft: string;
     scrollPosition: number;
     isAtBottom: boolean;
@@ -19,6 +21,8 @@ type ChatState = {
     setIsResponding: (state: boolean) => void;
     setHasUnread: (state: boolean) => void;
     setIsChatOpen: (state: boolean) => void;
+    setIsFullscreen: (state: boolean) => void;
+    setIsMinimized: (state: boolean) => void;
     setInputDraft: (value: string) => void;
     setScrollPosition: (value: number) => void;
     setIsAtBottom: (value: boolean) => void;
@@ -36,6 +40,8 @@ export const useChatStore = create<ChatState>((set) => ({
     isResponding: false,
     hasUnread: false,
     isChatOpen: false,
+    isFullscreen: false,
+    isMinimized: false,
     inputDraft: "",
     scrollPosition: 0,
     isAtBottom: true,
@@ -52,6 +58,18 @@ export const useChatStore = create<ChatState>((set) => ({
         set((prevState) => ({
             isChatOpen: state,
             hasUnread: state ? false : prevState.hasUnread,
+            isFullscreen: state ? prevState.isFullscreen : false,
+            isMinimized: state ? prevState.isMinimized : false,
+        })),
+    setIsFullscreen: (state) =>
+        set((prevState) => ({
+            isFullscreen: state,
+            isMinimized: state ? false : prevState.isMinimized,
+        })),
+    setIsMinimized: (state) =>
+        set((prevState) => ({
+            isMinimized: state,
+            isFullscreen: state ? false : prevState.isFullscreen,
         })),
     setInputDraft: (value) => set({ inputDraft: value }),
     setScrollPosition: (value) => set({ scrollPosition: value }),
@@ -60,6 +78,8 @@ export const useChatStore = create<ChatState>((set) => ({
         set({
             messages: [initialMessage],
             hasUnread: false,
+            isFullscreen: false,
+            isMinimized: false,
             inputDraft: "",
             scrollPosition: 0,
             isAtBottom: true,
