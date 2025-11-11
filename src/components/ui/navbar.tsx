@@ -47,7 +47,7 @@ export default function Navbar({
 
     return (
         <header className="sticky top-0 z-40 w-full bg-card backdrop-blur">
-            <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+            <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 relative">
                 {/* Mobile Menu */}
                 <div className="md:hidden">
                     <Sheet>
@@ -78,7 +78,10 @@ export default function Navbar({
                 </div>
 
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 font-semibold">
+                <Link
+                    href="/"
+                    className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 font-semibold md:relative md:left-0 md:translate-x-0"
+                >
                     <div className="relative h-6 w-6">
                         <Image
                             src="/logo-dark.svg"
