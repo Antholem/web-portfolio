@@ -1,3 +1,5 @@
+import { promises as fs } from "fs"
+import path from "path"
 import { NextResponse } from "next/server"
 
 const MODEL_NAME = process.env.GEMINI_MODEL ?? "gemini-2.0-flash"
@@ -10,8 +12,14 @@ type ChatMessage = {
     content: string
 }
 
+type GeminiInlineData = {
+    mimeType: string
+    data: string
+}
+
 type GeminiPart = {
     text?: string
+    inlineData?: GeminiInlineData
 }
 
 type GeminiContent = {
@@ -39,11 +47,52 @@ type ChatRequestBody = {
     messages?: ChatMessage[]
 }
 
-const buildContents = (messages: ChatMessage[]): GeminiContent[] =>
-    messages.map((message) => ({
-        role: message.role === "assistant" ? "model" : "user",
-        parts: [{ text: message.content }],
-    }))
+const RESUME_IMAGES: { filename: string; mimeType: string }[] = [
+    { filename: "resume_page_0001.jpg", mimeType: "image/jpeg" },
+    { filename: "resume_page_0002.jpg", mimeType: "image/jpeg" },
+]
+
+let resumeImagePartsPromise: Promise<GeminiPart[]> | null = null
+
+const loadResumeImageParts = async (): Promise<GeminiPart[]> => {
+    if (!resumeImagePartsPromise) {
+        resumeImagePartsPromise = Promise.all(
+            RESUME_IMAGES.map(async ({ filename, mimeType }) => {
+                const filePath = path.join(process.cwd(), "public", "assets", filename)
+                const file = await fs.readFile(filePath)
+
+                return {
+                    inlineData: {
+                        mimeType,
+                        data: file.toString("base64"),
+                    },
+                }
+            })
+        ).catch((error) => {
+            resumeImagePartsPromise = null
+            throw error
+        })
+    }
+
+    return resumeImagePartsPromise!
+}
+
+const buildContents = (
+    messages: ChatMessage[],
+    resumeImageParts: GeminiPart[]
+): GeminiContent[] =>
+    messages.map((message, index) => {
+        const parts: GeminiPart[] = [{ text: message.content }]
+
+        if (message.role === "user" && index === messages.length - 1) {
+            parts.push(...resumeImageParts)
+        }
+
+        return {
+            role: message.role === "assistant" ? "model" : "user",
+            parts,
+        }
+    })
 
 const extractReply = (payload: GeminiResponse): string | null => {
     if (!payload.candidates?.length) {
@@ -103,7 +152,20 @@ export async function POST(request: Request) {
         )
     }
 
-    const contents = buildContents(messages)
+    let resumeImageParts: GeminiPart[]
+
+    try {
+        resumeImageParts = await loadResumeImageParts()
+    } catch (error) {
+        const message =
+            error instanceof Error && error.message
+                ? error.message
+                : "Failed to load resume images."
+
+        return NextResponse.json({ error: message }, { status: 500 })
+    }
+
+    const contents = buildContents(messages, resumeImageParts)
 
     try {
         const response = await fetch(`${GENERATE_CONTENT_ENDPOINT}?key=${apiKey}`, {
