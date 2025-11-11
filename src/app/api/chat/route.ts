@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server"
+import { readFile } from "fs/promises"
+import { join } from "path"
 
 const MODEL_NAME = process.env.GEMINI_MODEL ?? "gemini-2.0-flash"
 const GENERATE_CONTENT_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`
@@ -12,6 +14,10 @@ type ChatMessage = {
 
 type GeminiPart = {
     text?: string
+    inlineData?: {
+        mimeType: string
+        data: string
+    }
 }
 
 type GeminiContent = {
@@ -39,11 +45,47 @@ type ChatRequestBody = {
     messages?: ChatMessage[]
 }
 
-const buildContents = (messages: ChatMessage[]): GeminiContent[] =>
-    messages.map((message) => ({
+const RESUME_IMAGE_FILENAMES = [
+    "resume_page_0001.jpg",
+    "resume_page_0002.jpg",
+]
+
+let cachedResumeImageParts: GeminiPart[] | null = null
+
+const loadResumeImageParts = async (): Promise<GeminiPart[]> => {
+    if (cachedResumeImageParts) {
+        return cachedResumeImageParts
+    }
+
+    const parts = await Promise.all(
+        RESUME_IMAGE_FILENAMES.map(async (filename) => {
+            const filePath = join(process.cwd(), "public", "assets", filename)
+            const fileBuffer = await readFile(filePath)
+
+            return {
+                inlineData: {
+                    mimeType: "image/jpeg",
+                    data: fileBuffer.toString("base64"),
+                },
+            } satisfies GeminiPart
+        })
+    )
+
+    cachedResumeImageParts = parts
+    return parts
+}
+
+const buildContents = async (messages: ChatMessage[]): Promise<GeminiContent[]> => {
+    const resumeImageParts = await loadResumeImageParts()
+
+    return messages.map((message) => ({
         role: message.role === "assistant" ? "model" : "user",
-        parts: [{ text: message.content }],
+        parts:
+            message.role === "assistant"
+                ? [{ text: message.content }]
+                : [{ text: message.content }, ...resumeImageParts],
     }))
+}
 
 const extractReply = (payload: GeminiResponse): string | null => {
     if (!payload.candidates?.length) {
@@ -103,7 +145,7 @@ export async function POST(request: Request) {
         )
     }
 
-    const contents = buildContents(messages)
+    const contents = await buildContents(messages)
 
     try {
         const response = await fetch(`${GENERATE_CONTENT_ENDPOINT}?key=${apiKey}`, {
