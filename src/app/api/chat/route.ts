@@ -51,10 +51,14 @@ type ChatRequestBody = {
     messages?: ChatMessage[]
 }
 
-const RESUME_IMAGE_PATHS = [
-    path.join(process.cwd(), "public", "assets", "resume_page_0001.jpg"),
-    path.join(process.cwd(), "public", "assets", "resume_page_0002.jpg"),
+const RESUME_IMAGE_FILENAMES = [
+    "resume_page-0001.jpg",
+    "resume_page-0002.jpg",
 ] as const
+
+const RESUME_IMAGE_PATHS = RESUME_IMAGE_FILENAMES.map((fileName) =>
+    path.join(process.cwd(), "public", "assets", fileName)
+) as readonly string[]
 
 const loadResumeImageParts = async (): Promise<GeminiImagePart[]> => {
     const images = await Promise.all(
