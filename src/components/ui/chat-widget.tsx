@@ -209,7 +209,7 @@ export function ChatWidget() {
                   "max-w-[80%] rounded-xl px-3 py-2 text-sm shadow-sm",
                   message.sender === "user"
                     ? "bg-primary text-primary-foreground"
-                    : "bg-gradient-to-br from-muted to-background text-foreground border border-border"
+                    : "bg-muted text-foreground border border-border"
                 )}
               >
                 <ReactMarkdown
