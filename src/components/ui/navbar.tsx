@@ -9,8 +9,7 @@ import {
     SheetTitle,
     SheetDescription,
 } from "@/components/ui/sheet";
-import { Menu, MessageCircle } from "lucide-react";
-import { FaMoon, FaSun } from "react-icons/fa";
+import { Menu, MessageCircle, Moon, Sun } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useThemeStore } from "@/lib/theme-store";
@@ -157,7 +156,11 @@ export default function Navbar({
                         className="size-8"
                         onClick={toggleTheme}
                     >
-                        {currentTheme === "dark" ? <FaSun /> : <FaMoon />}
+                        {currentTheme === "dark" ? (
+                            <Sun className="h-5 w-5" />
+                        ) : (
+                            <Moon className="h-5 w-5" />
+                        )}
                     </Button>
                 </div>
             </div>
