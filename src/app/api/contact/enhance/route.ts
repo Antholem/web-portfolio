@@ -3,9 +3,24 @@ import { NextResponse } from 'next/server';
 const MODEL_NAME = process.env.GEMINI_MODEL ?? 'gemini-2.0-flash-lite';
 const GENERATE_CONTENT_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
 
+type EnhanceMode = 'enhance' | 'grammar' | 'paraphrase' | 'shorten';
+
 interface EnhanceRequestBody {
   message?: string;
+  mode?: string;
 }
+
+const enhancementInstructions: Record<EnhanceMode, string> = {
+  enhance: 'Improve grammar, clarity, and tone while keeping the original intent.',
+  grammar: 'Focus on correcting grammar, spelling, and punctuation while preserving the tone and length.',
+  paraphrase: 'Paraphrase the message with fresh, professional wording while retaining the original meaning and key details.',
+  shorten: 'Make the message more concise by removing filler while preserving the essential information and professional tone.',
+};
+
+const DEFAULT_MODE: EnhanceMode = 'enhance';
+
+const isEnhanceMode = (value: unknown): value is EnhanceMode =>
+  typeof value === 'string' && value in enhancementInstructions;
 
 interface GeminiContentPart {
   text?: string;
@@ -75,6 +90,19 @@ export async function POST(request: Request) {
     );
   }
 
+  let mode: EnhanceMode = DEFAULT_MODE;
+
+  if (typeof body.mode !== 'undefined') {
+    if (isEnhanceMode(body.mode)) {
+      mode = body.mode;
+    } else {
+      return NextResponse.json(
+        { error: 'Invalid enhancement mode.' },
+        { status: 400 },
+      );
+    }
+  }
+
   try {
     const response = await fetch(`${GENERATE_CONTENT_ENDPOINT}?key=${apiKey}`, {
       method: 'POST',
@@ -89,7 +117,7 @@ export async function POST(request: Request) {
               {
                 text: [
                   'You are an assistant that enhances professional emails for a portfolio contact form.',
-                  'Improve grammar, clarity, and tone while keeping the original intent.',
+                  enhancementInstructions[mode],
                   'Do not add new ideas or placeholders and respond with the refined message only.',
                   `Original message: ${message}`,
                 ].join('\n\n'),

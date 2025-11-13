@@ -1,6 +1,6 @@
 'use client';
 
-import { type ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
+import { type ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -8,7 +8,7 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
+import { Bold, ChevronDown, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -161,12 +161,51 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   },
 ];
 
+type EnhanceMode = 'enhance' | 'grammar' | 'paraphrase' | 'shorten';
+
+interface EnhanceOption {
+  mode: EnhanceMode;
+  label: string;
+  loadingLabel: string;
+  description: string;
+}
+
+const enhanceOptions: EnhanceOption[] = [
+  {
+    mode: 'enhance',
+    label: 'Enhance message',
+    loadingLabel: 'Enhancing…',
+    description: 'Polish grammar, clarity, and tone while keeping the intent.',
+  },
+  {
+    mode: 'grammar',
+    label: 'Fix grammar',
+    loadingLabel: 'Fixing grammar…',
+    description: 'Correct spelling, punctuation, and grammatical issues only.',
+  },
+  {
+    mode: 'paraphrase',
+    label: 'Paraphrase',
+    loadingLabel: 'Paraphrasing…',
+    description: 'Rephrase the message with fresh wording and the same meaning.',
+  },
+  {
+    mode: 'shorten',
+    label: 'Make concise',
+    loadingLabel: 'Shortening…',
+    description: 'Trim the message to keep only the essential information.',
+  },
+];
+
 export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [selectedEnhanceOption, setSelectedEnhanceOption] = useState<EnhanceOption>(enhanceOptions[0]);
+  const [isEnhanceMenuOpen, setIsEnhanceMenuOpen] = useState(false);
   const [, setEditorStateVersion] = useState(0);
+  const enhanceMenuRef = useRef<HTMLDivElement | null>(null);
 
   const updateEditorEmptyState = useCallback(
     (instance: TiptapEditor) => {
@@ -223,6 +262,36 @@ export default function ContactForm() {
 
     updateEditorEmptyState(editor);
   }, [editor, updateEditorEmptyState]);
+
+  useEffect(() => {
+    if (!isEnhanceMenuOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        enhanceMenuRef.current &&
+        event.target instanceof Node &&
+        !enhanceMenuRef.current.contains(event.target)
+      ) {
+        setIsEnhanceMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsEnhanceMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isEnhanceMenuOpen]);
 
   const handleChange = (field: keyof FormValues) =>
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -297,7 +366,7 @@ export default function ContactForm() {
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
   const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
 
-  const handleEnhance = async () => {
+  const handleEnhance = async (mode: EnhanceMode = selectedEnhanceOption.mode) => {
     if (!editor) {
       toast.error('Editor failed to load. Please refresh the page.');
       return;
@@ -315,13 +384,14 @@ export default function ContactForm() {
       return;
     }
 
+    setIsEnhanceMenuOpen(false);
     setIsEnhancing(true);
 
     try {
       const response = await fetch('/api/contact/enhance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: plainMessage }),
+        body: JSON.stringify({ message: plainMessage, mode }),
       });
 
       const payload = (await response.json()) as { suggestion?: string; error?: string };
@@ -454,22 +524,96 @@ export default function ContactForm() {
                 'Send message'
               )}
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
-              onClick={handleEnhance}
-              className="w-full justify-center md:w-auto"
+            <div
+              className="relative flex w-full items-center md:w-auto"
+              ref={enhanceMenuRef}
+              onBlur={(event) => {
+                if (
+                  enhanceMenuRef.current &&
+                  event.relatedTarget instanceof Node &&
+                  enhanceMenuRef.current.contains(event.relatedTarget)
+                ) {
+                  return;
+                }
+                setIsEnhanceMenuOpen(false);
+              }}
             >
-              {isEnhancing ? (
-                <>
-                  <Loader2 className="animate-spin" aria-hidden="true" />
-                  Enhancing…
-                </>
-              ) : (
-                'Enhance message'
-              )}
-            </Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
+                onClick={() => {
+                  void handleEnhance();
+                }}
+                className="w-full justify-center rounded-r-none md:w-auto"
+              >
+                {isEnhancing ? (
+                  <>
+                    <Loader2 className="animate-spin" aria-hidden="true" />
+                    {selectedEnhanceOption.loadingLabel}
+                  </>
+                ) : (
+                  selectedEnhanceOption.label
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="-ml-px rounded-l-none px-3"
+                aria-haspopup="menu"
+                aria-expanded={isEnhanceMenuOpen}
+                aria-controls="enhance-menu"
+                aria-label="More message enhancement options"
+                disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
+                onClick={() => {
+                  setIsEnhanceMenuOpen((current) => !current);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    setIsEnhanceMenuOpen(true);
+                  }
+                }}
+              >
+                <ChevronDown className="h-4 w-4" aria-hidden />
+              </Button>
+              {isEnhanceMenuOpen ? (
+                <div
+                  id="enhance-menu"
+                  role="menu"
+                  aria-label="Message enhancement options"
+                  className="absolute right-0 top-full z-10 mt-2 w-64 overflow-hidden rounded-md border bg-background p-1 shadow-lg"
+                >
+                  {enhanceOptions.map((option) => {
+                    const isSelected = option.mode === selectedEnhanceOption.mode;
+                    return (
+                      <button
+                        key={option.mode}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={isSelected}
+                        className={`flex w-full flex-col items-start gap-1 rounded-sm px-3 py-2 text-left text-sm transition hover:bg-accent hover:text-accent-foreground ${
+                          isSelected ? 'bg-muted text-foreground' : 'text-foreground'
+                        }`}
+                        onClick={() => {
+                          setSelectedEnhanceOption(option);
+                          const canEnhance = !isEnhancing && !isSubmitting && editor && !isEditorEmpty;
+                          if (canEnhance) {
+                            void handleEnhance(option.mode);
+                            return;
+                          }
+
+                          setIsEnhanceMenuOpen(false);
+                        }}
+                      >
+                        <span className="font-medium">{option.label}</span>
+                        <span className="text-xs text-muted-foreground">{option.description}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
           </div>
         </CardFooter>
       </form>
