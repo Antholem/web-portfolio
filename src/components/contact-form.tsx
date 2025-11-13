@@ -564,7 +564,7 @@ export default function ContactForm() {
                 aria-expanded={isEnhanceMenuOpen}
                 aria-controls="enhance-menu"
                 aria-label="More message enhancement options"
-                disabled={isEnhancing || isSubmitting || !editor}
+                disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
                 onClick={() => {
                   setIsEnhanceMenuOpen((current) => !current);
                 }}
