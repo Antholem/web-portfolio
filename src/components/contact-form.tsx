@@ -8,7 +8,22 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, ChevronDown, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
+import {
+  Bold,
+  ChevronDown,
+  Code,
+  Heading2,
+  Heading3,
+  Italic,
+  List,
+  ListOrdered,
+  Loader2,
+  Minus,
+  Quote,
+  Redo2,
+  Strikethrough,
+  Undo2,
+} from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -64,9 +79,13 @@ const editorClassName = [
   'h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
   'focus:outline-none focus-visible:outline-none',
   '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5',
+  '[&_pre]:mb-3 [&_pre]:overflow-x-auto [&_pre]:rounded-md [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-xs',
   '[&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0',
   '[&_ul]:list-disc [&_ul]:pl-6',
   '[&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
+  '[&_h2]:mb-3 [&_h2]:mt-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground',
+  '[&_h3]:mb-3 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-foreground',
+  '[&_hr]:my-6 [&_hr]:border-muted',
 ].join(' ');
 
 const nodeHasMeaningfulText = (node: JSONContent | null | undefined): boolean => {
@@ -139,6 +158,20 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
     isDisabled: (instance) => !instance.can().chain().focus().toggleItalic().run(),
   },
   {
+    label: 'Strikethrough',
+    icon: Strikethrough,
+    run: (instance) => instance.chain().focus().toggleStrike().run(),
+    isActive: (instance) => instance.isActive('strike'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleStrike().run(),
+  },
+  {
+    label: 'Inline code',
+    icon: Code,
+    run: (instance) => instance.chain().focus().toggleCode().run(),
+    isActive: (instance) => instance.isActive('code'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleCode().run(),
+  },
+  {
     label: 'Bullet list',
     icon: List,
     run: (instance) => instance.chain().focus().toggleBulletList().run(),
@@ -153,11 +186,46 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
     isDisabled: (instance) => !instance.can().chain().focus().toggleOrderedList().run(),
   },
   {
+    label: 'Heading 2',
+    icon: Heading2,
+    run: (instance) => instance.chain().focus().toggleHeading({ level: 2 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 2 }),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleHeading({ level: 2 }).run(),
+  },
+  {
+    label: 'Heading 3',
+    icon: Heading3,
+    run: (instance) => instance.chain().focus().toggleHeading({ level: 3 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 3 }),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleHeading({ level: 3 }).run(),
+  },
+  {
     label: 'Quote',
     icon: Quote,
     run: (instance) => instance.chain().focus().toggleBlockquote().run(),
     isActive: (instance) => instance.isActive('blockquote'),
     isDisabled: (instance) => !instance.can().chain().focus().toggleBlockquote().run(),
+  },
+  {
+    label: 'Divider',
+    icon: Minus,
+    run: (instance) => instance.chain().focus().setHorizontalRule().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !instance.can().chain().focus().setHorizontalRule().run(),
+  },
+  {
+    label: 'Undo',
+    icon: Undo2,
+    run: (instance) => instance.chain().focus().undo().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !instance.can().chain().focus().undo().run(),
+  },
+  {
+    label: 'Redo',
+    icon: Redo2,
+    run: (instance) => instance.chain().focus().redo().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !instance.can().chain().focus().redo().run(),
   },
 ];
 
