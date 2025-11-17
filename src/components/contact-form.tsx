@@ -142,90 +142,132 @@ interface FormattingOptionDefinition {
   isDisabled: (editor: TiptapEditor) => boolean;
 }
 
+type RichTextChain = ReturnType<TiptapEditor['chain']> & {
+  focus?: () => RichTextChain;
+  toggleBold: () => RichTextChain;
+  toggleItalic: () => RichTextChain;
+  toggleStrike: () => RichTextChain;
+  toggleCode: () => RichTextChain;
+  toggleBulletList: () => RichTextChain;
+  toggleOrderedList: () => RichTextChain;
+  toggleHeading: (attributes: { level: number }) => RichTextChain;
+  toggleBlockquote: () => RichTextChain;
+  setHorizontalRule: () => RichTextChain;
+  undo: () => RichTextChain;
+  redo: () => RichTextChain;
+};
+
+const toRichTextChain = (chain: unknown): RichTextChain => chain as RichTextChain;
+
+const runRichTextCommand = (
+  editor: TiptapEditor,
+  callback: (chain: RichTextChain) => RichTextChain,
+) => {
+  const chain = toRichTextChain(editor.chain());
+  const focusedChain = typeof chain.focus === 'function' ? chain.focus() : chain;
+  return callback(focusedChain).run();
+};
+
+const canRunRichTextCommand = (
+  editor: TiptapEditor,
+  callback: (chain: RichTextChain) => RichTextChain,
+) => {
+  const chain = toRichTextChain(editor.can().chain());
+  const focusedChain = typeof chain.focus === 'function' ? chain.focus() : chain;
+  return callback(focusedChain).run();
+};
+
 const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Bold',
     icon: Bold,
-    run: (instance) => instance.chain().focus().toggleBold().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleBold()),
     isActive: (instance) => instance.isActive('bold'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleBold().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleBold()),
   },
   {
     label: 'Italic',
     icon: Italic,
-    run: (instance) => instance.chain().focus().toggleItalic().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleItalic()),
     isActive: (instance) => instance.isActive('italic'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleItalic().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleItalic()),
   },
   {
     label: 'Strikethrough',
     icon: Strikethrough,
-    run: (instance) => instance.chain().focus().toggleStrike().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleStrike()),
     isActive: (instance) => instance.isActive('strike'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleStrike().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleStrike()),
   },
   {
     label: 'Inline code',
     icon: Code,
-    run: (instance) => instance.chain().focus().toggleCode().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleCode()),
     isActive: (instance) => instance.isActive('code'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleCode().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleCode()),
   },
   {
     label: 'Bullet list',
     icon: List,
-    run: (instance) => instance.chain().focus().toggleBulletList().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleBulletList()),
     isActive: (instance) => instance.isActive('bulletList'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleBulletList().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleBulletList()),
   },
   {
     label: 'Numbered list',
     icon: ListOrdered,
-    run: (instance) => instance.chain().focus().toggleOrderedList().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleOrderedList()),
     isActive: (instance) => instance.isActive('orderedList'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleOrderedList().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleOrderedList()),
   },
   {
     label: 'Heading 2',
     icon: Heading2,
-    run: (instance) => instance.chain().focus().toggleHeading({ level: 2 }).run(),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 2 })),
     isActive: (instance) => instance.isActive('heading', { level: 2 }),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleHeading({ level: 2 }).run(),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 2 })),
   },
   {
     label: 'Heading 3',
     icon: Heading3,
-    run: (instance) => instance.chain().focus().toggleHeading({ level: 3 }).run(),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 3 })),
     isActive: (instance) => instance.isActive('heading', { level: 3 }),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleHeading({ level: 3 }).run(),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 3 })),
   },
   {
     label: 'Quote',
     icon: Quote,
-    run: (instance) => instance.chain().focus().toggleBlockquote().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleBlockquote()),
     isActive: (instance) => instance.isActive('blockquote'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleBlockquote().run(),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleBlockquote()),
   },
   {
     label: 'Divider',
     icon: Minus,
-    run: (instance) => instance.chain().focus().setHorizontalRule().run(),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.setHorizontalRule()),
     isActive: () => false,
-    isDisabled: (instance) => !instance.can().chain().focus().setHorizontalRule().run(),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.setHorizontalRule()),
   },
   {
     label: 'Undo',
     icon: Undo2,
-    run: (instance) => instance.chain().focus().undo().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.undo()),
     isActive: () => false,
-    isDisabled: (instance) => !instance.can().chain().focus().undo().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.undo()),
   },
   {
     label: 'Redo',
     icon: Redo2,
-    run: (instance) => instance.chain().focus().redo().run(),
+    run: (instance) => runRichTextCommand(instance, (chain) => chain.redo()),
     isActive: () => false,
-    isDisabled: (instance) => !instance.can().chain().focus().redo().run(),
+    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.redo()),
   },
 ];
 
