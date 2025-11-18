@@ -352,7 +352,6 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
-  const [messageCharacterCount, setMessageCharacterCount] = useState(0);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [selectedEnhanceOption, setSelectedEnhanceOption] =
     useState<EnhanceOption>(enhanceOptions[0]);
@@ -365,7 +364,6 @@ export default function ContactForm() {
       const plainText = sanitizeEditorText(
         instance.getText({ blockSeparator: "\n" })
       );
-      setMessageCharacterCount(plainText.length);
 
       if (plainText.length > 0) {
         setIsEditorEmpty(false);
@@ -375,7 +373,7 @@ export default function ContactForm() {
       const documentJson = instance.getJSON() as JSONContent;
       setIsEditorEmpty(!nodeHasMeaningfulText(documentJson));
     },
-    [setIsEditorEmpty, setMessageCharacterCount]
+    [setIsEditorEmpty]
   );
 
   const editor = useEditor({
@@ -523,12 +521,15 @@ export default function ContactForm() {
     }
   };
 
+  const currentPlainMessage = editor
+    ? sanitizeEditorText(editor.getText({ blockSeparator: "\n" }))
+    : "";
+  const isMessageTooLong = currentPlainMessage.length > MAX_MESSAGE_LENGTH;
   const isSubmitting = status.state === "submitting";
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
   const isNameValid = trimmedName.length > 0;
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
-  const isMessageTooLong = messageCharacterCount > MAX_MESSAGE_LENGTH;
   const isFormValid =
     isNameValid && isEmailValid && !isEditorEmpty && !isMessageTooLong;
   const isEnhanceActionDisabled =
@@ -694,20 +695,6 @@ export default function ContactForm() {
                     </div>
                   )}
                 </div>
-              </div>
-              <div className="flex items-center justify-end pt-1 text-xs">
-                <span
-                  className={`font-medium ${
-                    isMessageTooLong
-                      ? "text-destructive"
-                      : "text-muted-foreground"
-                  }`}
-                  aria-live="polite"
-                >
-                  {messageCharacterCount.toLocaleString()} /
-                  {" "}
-                  {MAX_MESSAGE_LENGTH.toLocaleString()} characters
-                </span>
               </div>
             </div>
           </div>
