@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
+import UnderlineExtension from "@tiptap/extension-underline";
 import {
   EditorContent,
   type Editor as TiptapEditor,
@@ -33,6 +34,7 @@ import {
   Quote,
   Redo2,
   Strikethrough,
+  Underline,
   Undo2,
 } from "lucide-react";
 
@@ -214,6 +216,15 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
       !canRunRichTextCommand(instance, (chain) => chain.toggleItalic()),
   },
   {
+    label: "Underline",
+    icon: Underline,
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleUnderline()),
+    isActive: (instance) => instance.isActive("underline"),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleUnderline()),
+  },
+  {
     label: "Strikethrough",
     icon: Strikethrough,
     run: (instance) =>
@@ -352,6 +363,7 @@ export default function ContactForm() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
+  const [messageCharacterCount, setMessageCharacterCount] = useState(0);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [selectedEnhanceOption, setSelectedEnhanceOption] =
     useState<EnhanceOption>(enhanceOptions[0]);
@@ -364,6 +376,7 @@ export default function ContactForm() {
       const plainText = sanitizeEditorText(
         instance.getText({ blockSeparator: "\n" })
       );
+      setMessageCharacterCount(plainText.length);
 
       if (plainText.length > 0) {
         setIsEditorEmpty(false);
@@ -373,11 +386,12 @@ export default function ContactForm() {
       const documentJson = instance.getJSON() as JSONContent;
       setIsEditorEmpty(!nodeHasMeaningfulText(documentJson));
     },
-    [setIsEditorEmpty]
+    [setIsEditorEmpty, setMessageCharacterCount]
   );
 
   const editor = useEditor({
     extensions: [
+      UnderlineExtension,
       StarterKit.configure({
         bulletList: { keepAttributes: false, keepMarks: true },
         orderedList: { keepAttributes: false, keepMarks: true },
@@ -526,7 +540,11 @@ export default function ContactForm() {
   const trimmedEmail = values.email.trim();
   const isNameValid = trimmedName.length > 0;
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
-  const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
+  const isMessageTooLong = messageCharacterCount > MAX_MESSAGE_LENGTH;
+  const isFormValid =
+    isNameValid && isEmailValid && !isEditorEmpty && !isMessageTooLong;
+  const isEnhanceActionDisabled =
+    isEnhancing || isSubmitting || !editor || isEditorEmpty || isMessageTooLong;
 
   const handleEnhance = async (
     mode: EnhanceMode = selectedEnhanceOption.mode
@@ -689,6 +707,20 @@ export default function ContactForm() {
                   )}
                 </div>
               </div>
+              <div className="flex items-center justify-end pt-1 text-xs">
+                <span
+                  className={`font-medium ${
+                    isMessageTooLong
+                      ? "text-destructive"
+                      : "text-muted-foreground"
+                  }`}
+                  aria-live="polite"
+                >
+                  {messageCharacterCount.toLocaleString()} /
+                  {" "}
+                  {MAX_MESSAGE_LENGTH.toLocaleString()} characters
+                </span>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -726,9 +758,7 @@ export default function ContactForm() {
               <Button
                 type="button"
                 variant="outline"
-                disabled={
-                  isEnhancing || isSubmitting || !editor || isEditorEmpty
-                }
+                disabled={isEnhanceActionDisabled}
                 onClick={() => {
                   void handleEnhance();
                 }}
@@ -751,9 +781,7 @@ export default function ContactForm() {
                 aria-expanded={isEnhanceMenuOpen}
                 aria-controls="enhance-menu"
                 aria-label="More message enhancement options"
-                disabled={
-                  isEnhancing || isSubmitting || !editor || isEditorEmpty
-                }
+                disabled={isEnhanceActionDisabled}
                 onClick={() => {
                   setIsEnhanceMenuOpen((current) => !current);
                 }}
@@ -793,7 +821,8 @@ export default function ContactForm() {
                             !isEnhancing &&
                             !isSubmitting &&
                             editor &&
-                            !isEditorEmpty;
+                            !isEditorEmpty &&
+                            !isMessageTooLong;
                           if (canEnhance) {
                             void handleEnhance(option.mode);
                             return;
