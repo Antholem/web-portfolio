@@ -138,6 +138,21 @@ interface FormattingOptionDefinition {
   isDisabled: (editor: TiptapEditor) => boolean;
 }
 
+type ChainableEditorCommands = ReturnType<TiptapEditor['chain']>;
+
+type RichTextChain = ChainableEditorCommands & {
+  focus: () => RichTextChain;
+  toggleStrike: () => RichTextChain;
+  toggleCodeBlock: () => RichTextChain;
+  toggleHeading: (attrs: { level: number }) => RichTextChain;
+  setHorizontalRule: () => RichTextChain;
+  undo: () => RichTextChain;
+  redo: () => RichTextChain;
+};
+
+const createRichTextChain = (editor: TiptapEditor) => editor.chain() as RichTextChain;
+const createRichTextCanChain = (editor: TiptapEditor) => editor.can().chain() as RichTextChain;
+
 const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Bold',
@@ -156,16 +171,16 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Strikethrough',
     icon: Strikethrough,
-    run: (instance) => (instance as any).chain().focus().toggleStrike().run(),
+    run: (instance) => createRichTextChain(instance).focus().toggleStrike().run(),
     isActive: (instance) => instance.isActive('strike'),
-    isDisabled: (instance) => !(instance as any).can().chain().toggleStrike().run(),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleStrike().run(),
   },
   {
     label: 'Code block',
     icon: Code,
-    run: (instance) => (instance as any).chain().focus().toggleCodeBlock().run(),
+    run: (instance) => createRichTextChain(instance).focus().toggleCodeBlock().run(),
     isActive: (instance) => instance.isActive('codeBlock'),
-    isDisabled: (instance) => !(instance as any).can().chain().toggleCodeBlock().run(),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleCodeBlock().run(),
   },
   {
     label: 'Bullet list',
@@ -184,16 +199,16 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Heading level 2',
     icon: Heading2,
-    run: (instance) => (instance as any).chain().focus().toggleHeading({ level: 2 }).run(),
-    isActive: (instance) => (instance as any).isActive('heading', { level: 2 }),
-    isDisabled: (instance) => !(instance as any).can().chain().toggleHeading({ level: 2 }).run(),
+    run: (instance) => createRichTextChain(instance).focus().toggleHeading({ level: 2 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 2 }),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleHeading({ level: 2 }).run(),
   },
   {
     label: 'Heading level 3',
     icon: Heading3,
-    run: (instance) => (instance as any).chain().focus().toggleHeading({ level: 3 }).run(),
-    isActive: (instance) => (instance as any).isActive('heading', { level: 3 }),
-    isDisabled: (instance) => !(instance as any).can().chain().toggleHeading({ level: 3 }).run(),
+    run: (instance) => createRichTextChain(instance).focus().toggleHeading({ level: 3 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 3 }),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleHeading({ level: 3 }).run(),
   },
   {
     label: 'Quote',
@@ -205,23 +220,23 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Horizontal rule',
     icon: Minus,
-    run: (instance) => (instance as any).chain().focus().setHorizontalRule().run(),
+    run: (instance) => createRichTextChain(instance).focus().setHorizontalRule().run(),
     isActive: () => false,
-    isDisabled: (instance) => !(instance as any).can().chain().setHorizontalRule().run(),
+    isDisabled: (instance) => !createRichTextCanChain(instance).setHorizontalRule().run(),
   },
   {
     label: 'Undo',
     icon: Undo2,
-    run: (instance) => (instance as any).chain().focus().undo().run(),
+    run: (instance) => createRichTextChain(instance).focus().undo().run(),
     isActive: () => false,
-    isDisabled: (instance) => !(instance as any).can().chain().undo().run(),
+    isDisabled: (instance) => !createRichTextCanChain(instance).undo().run(),
   },
   {
     label: 'Redo',
     icon: Redo2,
-    run: (instance) => (instance as any).chain().focus().redo().run(),
+    run: (instance) => createRichTextChain(instance).focus().redo().run(),
     isActive: () => false,
-    isDisabled: (instance) => !(instance as any).can().chain().redo().run(),
+    isDisabled: (instance) => !createRichTextCanChain(instance).redo().run(),
   },
 ];
 
