@@ -8,7 +8,22 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, ChevronDown, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
+import {
+  Bold,
+  ChevronDown,
+  Code,
+  Heading2,
+  Heading3,
+  Italic,
+  List,
+  ListOrdered,
+  Loader2,
+  Minus,
+  Quote,
+  Redo2,
+  Strikethrough,
+  Undo2,
+} from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -139,6 +154,20 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
     isDisabled: (instance) => !instance.can().chain().focus().toggleItalic().run(),
   },
   {
+    label: 'Strikethrough',
+    icon: Strikethrough,
+    run: (instance) => instance.chain().focus().toggleStrike().run(),
+    isActive: (instance) => instance.isActive('strike'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleStrike().run(),
+  },
+  {
+    label: 'Code block',
+    icon: Code,
+    run: (instance) => instance.chain().focus().toggleCodeBlock().run(),
+    isActive: (instance) => instance.isActive('codeBlock'),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleCodeBlock().run(),
+  },
+  {
     label: 'Bullet list',
     icon: List,
     run: (instance) => instance.chain().focus().toggleBulletList().run(),
@@ -153,11 +182,46 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
     isDisabled: (instance) => !instance.can().chain().focus().toggleOrderedList().run(),
   },
   {
+    label: 'Heading level 2',
+    icon: Heading2,
+    run: (instance) => instance.chain().focus().toggleHeading({ level: 2 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 2 }),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleHeading({ level: 2 }).run(),
+  },
+  {
+    label: 'Heading level 3',
+    icon: Heading3,
+    run: (instance) => instance.chain().focus().toggleHeading({ level: 3 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 3 }),
+    isDisabled: (instance) => !instance.can().chain().focus().toggleHeading({ level: 3 }).run(),
+  },
+  {
     label: 'Quote',
     icon: Quote,
     run: (instance) => instance.chain().focus().toggleBlockquote().run(),
     isActive: (instance) => instance.isActive('blockquote'),
     isDisabled: (instance) => !instance.can().chain().focus().toggleBlockquote().run(),
+  },
+  {
+    label: 'Horizontal rule',
+    icon: Minus,
+    run: (instance) => instance.chain().focus().setHorizontalRule().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !instance.can().chain().focus().setHorizontalRule().run(),
+  },
+  {
+    label: 'Undo',
+    icon: Undo2,
+    run: (instance) => instance.chain().focus().undo().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !instance.can().chain().focus().undo().run(),
+  },
+  {
+    label: 'Redo',
+    icon: Redo2,
+    run: (instance) => instance.chain().focus().redo().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !instance.can().chain().focus().redo().run(),
   },
 ];
 
