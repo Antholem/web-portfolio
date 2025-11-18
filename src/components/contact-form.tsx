@@ -1,13 +1,24 @@
-'use client';
+"use client";
 
-import { type ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { toast } from '@/components/ui/sonner';
-import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import type { LucideIcon } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { toast } from "@/components/ui/sonner";
+import {
+  EditorContent,
+  type Editor as TiptapEditor,
+  useEditor,
+} from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import type { LucideIcon } from "lucide-react";
 import {
   Bold,
   ChevronDown,
@@ -23,7 +34,7 @@ import {
   Redo2,
   Strikethrough,
   Undo2,
-} from 'lucide-react';
+} from "lucide-react";
 
 type JSONContent = {
   type?: string;
@@ -37,7 +48,10 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_MESSAGE_LENGTH = 5000;
 
 const sanitizeEditorText = (value: string) =>
-  value.replace(ZERO_WIDTH_SPACE_REGEX, '').replace(NON_BREAKING_SPACE_REGEX, ' ').trim();
+  value
+    .replace(ZERO_WIDTH_SPACE_REGEX, "")
+    .replace(NON_BREAKING_SPACE_REGEX, " ")
+    .trim();
 
 const convertTextToDoc = (value: string): JSONContent => {
   const paragraphs = value
@@ -50,54 +64,67 @@ const convertTextToDoc = (value: string): JSONContent => {
         const nodes: JSONContent[] = [];
 
         if (line.length > 0) {
-          nodes.push({ type: 'text', text: line });
+          nodes.push({ type: "text", text: line });
         }
 
         if (index < lines.length - 1) {
-          nodes.push({ type: 'hardBreak' });
+          nodes.push({ type: "hardBreak" });
         }
 
         return nodes;
       });
 
       return {
-        type: 'paragraph',
-        content: content.length > 0 ? content : [{ type: 'text', text: '' }],
+        type: "paragraph",
+        content: content.length > 0 ? content : [{ type: "text", text: "" }],
       };
     });
 
   if (paragraphs.length === 0) {
-    return { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: '' }] }] };
+    return {
+      type: "doc",
+      content: [{ type: "paragraph", content: [{ type: "text", text: "" }] }],
+    };
   }
 
-  return { type: 'doc', content: paragraphs };
+  return { type: "doc", content: paragraphs };
 };
 
-const WRAPPER_NODE_TYPES = new Set(['bulletList', 'orderedList', 'blockquote', 'listItem']);
+const WRAPPER_NODE_TYPES = new Set([
+  "bulletList",
+  "orderedList",
+  "blockquote",
+  "listItem",
+]);
 
 const editorClassName = [
-  'h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none',
-  'focus:outline-none focus-visible:outline-none',
-  '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5',
-  '[&_pre]:mb-3 [&_pre]:overflow-x-auto [&_pre]:rounded-md [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-xs',
-  '[&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0',
-  '[&_ul]:list-disc [&_ul]:pl-6',
-  '[&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground',
-  '[&_h2]:mb-3 [&_h2]:mt-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground',
-  '[&_h3]:mb-3 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-foreground',
-  '[&_hr]:my-6 [&_hr]:border-muted',
-].join(' ');
+  "h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none",
+  "focus:outline-none focus-visible:outline-none",
+  "[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5",
+  "[&_pre]:mb-3 [&_pre]:overflow-x-auto [&_pre]:rounded-md [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-xs",
+  "[&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_p:last-child]:mb-0",
+  "[&_ul]:list-disc [&_ul]:pl-6",
+  "[&_blockquote]:border-l-2 [&_blockquote]:border-primary/40 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground",
+  "[&_h2]:mb-3 [&_h2]:mt-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground",
+  "[&_h3]:mb-3 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-foreground",
+  "[&_hr]:my-6 [&_hr]:border-muted",
+].join(" ");
 
-const nodeHasMeaningfulText = (node: JSONContent | null | undefined): boolean => {
+const nodeHasMeaningfulText = (
+  node: JSONContent | null | undefined
+): boolean => {
   if (!node) {
     return false;
   }
 
-  if (typeof node.text === 'string' && sanitizeEditorText(node.text).length > 0) {
+  if (
+    typeof node.text === "string" &&
+    sanitizeEditorText(node.text).length > 0
+  ) {
     return true;
   }
 
-  if (node.type === 'hardBreak') {
+  if (node.type === "hardBreak") {
     return true;
   }
 
@@ -122,17 +149,17 @@ interface FormValues {
 }
 
 type FormStatus =
-  | { state: 'idle'; message: string | null }
-  | { state: 'submitting'; message: string | null }
-  | { state: 'success'; message: string }
-  | { state: 'error'; message: string };
+  | { state: "idle"; message: string | null }
+  | { state: "submitting"; message: string | null }
+  | { state: "success"; message: string }
+  | { state: "error"; message: string };
 
 const initialValues: FormValues = {
-  name: '',
-  email: '',
+  name: "",
+  email: "",
 };
 
-const initialStatus: FormStatus = { state: 'idle', message: null };
+const initialStatus: FormStatus = { state: "idle", message: null };
 
 interface FormattingOptionDefinition {
   label: string;
@@ -142,112 +169,123 @@ interface FormattingOptionDefinition {
   isDisabled: (editor: TiptapEditor) => boolean;
 }
 
-type RichTextChain = ReturnType<TiptapEditor['chain']> & {
-  focus?: () => RichTextChain;
-  toggleBold: () => RichTextChain;
-  toggleItalic: () => RichTextChain;
-  toggleStrike: () => RichTextChain;
-  toggleCode: () => RichTextChain;
-  toggleBulletList: () => RichTextChain;
-  toggleOrderedList: () => RichTextChain;
-  toggleHeading: (attributes: { level: number }) => RichTextChain;
-  toggleBlockquote: () => RichTextChain;
-  setHorizontalRule: () => RichTextChain;
-  undo: () => RichTextChain;
-  redo: () => RichTextChain;
-};
+type RichTextChain = ReturnType<TiptapEditor["chain"]> & Record<string, any>;
 
-const toRichTextChain = (chain: unknown): RichTextChain => chain as RichTextChain;
+const toRichTextChain = (chain: unknown): RichTextChain =>
+  chain as RichTextChain;
 
 const runRichTextCommand = (
   editor: TiptapEditor,
-  callback: (chain: RichTextChain) => RichTextChain,
+  callback: (chain: RichTextChain) => RichTextChain
 ) => {
   const chain = toRichTextChain(editor.chain());
-  const focusedChain = typeof chain.focus === 'function' ? chain.focus() : chain;
+  const focusedChain =
+    typeof chain.focus === "function" ? chain.focus() : chain;
   return callback(focusedChain).run();
 };
 
 const canRunRichTextCommand = (
   editor: TiptapEditor,
-  callback: (chain: RichTextChain) => RichTextChain,
+  callback: (chain: RichTextChain) => RichTextChain
 ) => {
   const chain = toRichTextChain(editor.can().chain());
-  const focusedChain = typeof chain.focus === 'function' ? chain.focus() : chain;
+  const focusedChain =
+    typeof chain.focus === "function" ? chain.focus() : chain;
   return callback(focusedChain).run();
 };
 
 const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
-    label: 'Bold',
+    label: "Bold",
     icon: Bold,
-    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleBold()),
-    isActive: (instance) => instance.isActive('bold'),
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleBold()),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleBold()),
+    isActive: (instance) => instance.isActive("bold"),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleBold()),
   },
   {
-    label: 'Italic',
+    label: "Italic",
     icon: Italic,
-    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleItalic()),
-    isActive: (instance) => instance.isActive('italic'),
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleItalic()),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleItalic()),
+    isActive: (instance) => instance.isActive("italic"),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleItalic()),
   },
   {
-    label: 'Strikethrough',
+    label: "Strikethrough",
     icon: Strikethrough,
-    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleStrike()),
-    isActive: (instance) => instance.isActive('strike'),
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleStrike()),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleStrike()),
+    isActive: (instance) => instance.isActive("strike"),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleStrike()),
   },
   {
-    label: 'Inline code',
+    label: "Inline code",
     icon: Code,
-    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleCode()),
-    isActive: (instance) => instance.isActive('code'),
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleCode()),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleCode()),
+    isActive: (instance) => instance.isActive("code"),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleCode()),
   },
   {
-    label: 'Bullet list',
+    label: "Bullet list",
     icon: List,
-    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleBulletList()),
-    isActive: (instance) => instance.isActive('bulletList'),
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleBulletList()),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleBulletList()),
+    isActive: (instance) => instance.isActive("bulletList"),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleBulletList()),
   },
   {
-    label: 'Numbered list',
+    label: "Numbered list",
     icon: ListOrdered,
-    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleOrderedList()),
-    isActive: (instance) => instance.isActive('orderedList'),
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.toggleOrderedList()),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleOrderedList()),
+    isActive: (instance) => instance.isActive("orderedList"),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.toggleOrderedList()),
   },
   {
-    label: 'Heading 2',
+    label: "Heading 2",
     icon: Heading2,
     run: (instance) =>
-      runRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 2 })),
-    isActive: (instance) => instance.isActive('heading', { level: 2 }),
+      runRichTextCommand(instance, (chain) =>
+        chain.toggleHeading({ level: 2 })
+      ),
+    isActive: (instance) => (instance as any).isActive("heading", { level: 2 }),
     isDisabled: (instance) =>
-      !canRunRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 2 })),
+      !canRunRichTextCommand(instance, (chain) =>
+        chain.toggleHeading({ level: 2 })
+      ),
   },
   {
-    label: 'Heading 3',
+    label: "Heading 3",
     icon: Heading3,
     run: (instance) =>
-      runRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 3 })),
-    isActive: (instance) => instance.isActive('heading', { level: 3 }),
+      runRichTextCommand(instance, (chain) =>
+        chain.toggleHeading({ level: 3 })
+      ),
+    isActive: (instance) => (instance as any).isActive("heading", { level: 3 }),
     isDisabled: (instance) =>
-      !canRunRichTextCommand(instance, (chain) => chain.toggleHeading({ level: 3 })),
+      !canRunRichTextCommand(instance, (chain) =>
+        chain.toggleHeading({ level: 3 })
+      ),
   },
   {
-    label: 'Quote',
+    label: "Quote",
     icon: Quote,
-    run: (instance) => runRichTextCommand(instance, (chain) => chain.toggleBlockquote()),
-    isActive: (instance) => instance.isActive('blockquote'),
+    run: (instance) =>
+      runRichTextCommand(instance, (chain) => chain.toggleBlockquote()),
+    isActive: (instance) => instance.isActive("blockquote"),
     isDisabled: (instance) =>
       !canRunRichTextCommand(instance, (chain) => chain.toggleBlockquote()),
   },
   {
-    label: 'Divider',
+    label: "Divider",
     icon: Minus,
     run: (instance) =>
       runRichTextCommand(instance, (chain) => chain.setHorizontalRule()),
@@ -256,22 +294,24 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
       !canRunRichTextCommand(instance, (chain) => chain.setHorizontalRule()),
   },
   {
-    label: 'Undo',
+    label: "Undo",
     icon: Undo2,
     run: (instance) => runRichTextCommand(instance, (chain) => chain.undo()),
     isActive: () => false,
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.undo()),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.undo()),
   },
   {
-    label: 'Redo',
+    label: "Redo",
     icon: Redo2,
     run: (instance) => runRichTextCommand(instance, (chain) => chain.redo()),
     isActive: () => false,
-    isDisabled: (instance) => !canRunRichTextCommand(instance, (chain) => chain.redo()),
+    isDisabled: (instance) =>
+      !canRunRichTextCommand(instance, (chain) => chain.redo()),
   },
 ];
 
-type EnhanceMode = 'enhance' | 'grammar' | 'paraphrase' | 'shorten';
+type EnhanceMode = "enhance" | "grammar" | "paraphrase" | "shorten";
 
 interface EnhanceOption {
   mode: EnhanceMode;
@@ -282,28 +322,29 @@ interface EnhanceOption {
 
 const enhanceOptions: EnhanceOption[] = [
   {
-    mode: 'enhance',
-    label: 'Enhance message',
-    loadingLabel: 'Enhancing…',
-    description: 'Polish grammar, clarity, and tone while keeping the intent.',
+    mode: "enhance",
+    label: "Enhance message",
+    loadingLabel: "Enhancing…",
+    description: "Polish grammar, clarity, and tone while keeping the intent.",
   },
   {
-    mode: 'grammar',
-    label: 'Fix grammar',
-    loadingLabel: 'Fixing grammar…',
-    description: 'Correct spelling, punctuation, and grammatical issues only.',
+    mode: "grammar",
+    label: "Fix grammar",
+    loadingLabel: "Fixing grammar…",
+    description: "Correct spelling, punctuation, and grammatical issues only.",
   },
   {
-    mode: 'paraphrase',
-    label: 'Paraphrase',
-    loadingLabel: 'Paraphrasing…',
-    description: 'Rephrase the message with fresh wording and the same meaning.',
+    mode: "paraphrase",
+    label: "Paraphrase",
+    loadingLabel: "Paraphrasing…",
+    description:
+      "Rephrase the message with fresh wording and the same meaning.",
   },
   {
-    mode: 'shorten',
-    label: 'Make concise',
-    loadingLabel: 'Shortening…',
-    description: 'Trim the message to keep only the essential information.',
+    mode: "shorten",
+    label: "Make concise",
+    loadingLabel: "Shortening…",
+    description: "Trim the message to keep only the essential information.",
   },
 ];
 
@@ -312,14 +353,17 @@ export default function ContactForm() {
   const [status, setStatus] = useState<FormStatus>(initialStatus);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [isEnhancing, setIsEnhancing] = useState(false);
-  const [selectedEnhanceOption, setSelectedEnhanceOption] = useState<EnhanceOption>(enhanceOptions[0]);
+  const [selectedEnhanceOption, setSelectedEnhanceOption] =
+    useState<EnhanceOption>(enhanceOptions[0]);
   const [isEnhanceMenuOpen, setIsEnhanceMenuOpen] = useState(false);
   const [, setEditorStateVersion] = useState(0);
   const enhanceMenuRef = useRef<HTMLDivElement | null>(null);
 
   const updateEditorEmptyState = useCallback(
     (instance: TiptapEditor) => {
-      const plainText = sanitizeEditorText(instance.getText({ blockSeparator: '\n' }));
+      const plainText = sanitizeEditorText(
+        instance.getText({ blockSeparator: "\n" })
+      );
 
       if (plainText.length > 0) {
         setIsEditorEmpty(false);
@@ -329,7 +373,7 @@ export default function ContactForm() {
       const documentJson = instance.getJSON() as JSONContent;
       setIsEditorEmpty(!nodeHasMeaningfulText(documentJson));
     },
-    [setIsEditorEmpty],
+    [setIsEditorEmpty]
   );
 
   const editor = useEditor({
@@ -362,7 +406,7 @@ export default function ContactForm() {
       return;
     }
 
-    editor.setEditable(status.state !== 'submitting');
+    editor.setEditable(status.state !== "submitting");
   }, [editor, status.state]);
 
   useEffect(() => {
@@ -389,22 +433,22 @@ export default function ContactForm() {
     };
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setIsEnhanceMenuOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isEnhanceMenuOpen]);
 
-  const handleChange = (field: keyof FormValues) =>
-    (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange =
+    (field: keyof FormValues) => (event: ChangeEvent<HTMLInputElement>) => {
       setValues((previous) => ({ ...previous, [field]: event.target.value }));
     };
 
@@ -412,18 +456,20 @@ export default function ContactForm() {
     event.preventDefault();
 
     if (!editor) {
-      const message = 'Editor failed to load. Please refresh the page.';
-      setStatus({ state: 'error', message });
+      const message = "Editor failed to load. Please refresh the page.";
+      setStatus({ state: "error", message });
       toast.error(message);
       return;
     }
 
-    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+    const plainMessage = sanitizeEditorText(
+      editor.getText({ blockSeparator: "\n" })
+    );
     const messageHtml = editor.getHTML();
 
     if (!plainMessage) {
-      const message = 'Please include a message.';
-      setStatus({ state: 'error', message });
+      const message = "Please include a message.";
+      setStatus({ state: "error", message });
       toast.error(message);
       return;
     }
@@ -431,66 +477,78 @@ export default function ContactForm() {
     if (plainMessage.length > MAX_MESSAGE_LENGTH) {
       const message = `Message is too long. Please keep it under ${MAX_MESSAGE_LENGTH} characters.`;
       setStatus({
-        state: 'error',
+        state: "error",
         message,
       });
       toast.error(message);
       return;
     }
 
-    setStatus({ state: 'submitting', message: 'Sending your message…' });
+    setStatus({ state: "submitting", message: "Sending your message…" });
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...values, message: plainMessage, messageHtml }),
       });
 
-      const payload = (await response.json()) as { error?: string } | { success?: boolean };
+      const payload = (await response.json()) as
+        | { error?: string }
+        | { success?: boolean };
 
       if (!response.ok) {
-        throw new Error('error' in payload && payload.error ? payload.error : 'Failed to send message.');
+        throw new Error(
+          "error" in payload && payload.error
+            ? payload.error
+            : "Failed to send message."
+        );
       }
 
       setValues(initialValues);
       editor.commands.clearContent(true);
       updateEditorEmptyState(editor);
-      const message = 'Thanks! Your message has been delivered.';
-      setStatus({ state: 'success', message });
+      const message = "Thanks! Your message has been delivered.";
+      setStatus({ state: "success", message });
       toast.success(message);
     } catch (error) {
       const message =
         error instanceof Error && error.message
           ? error.message
-          : 'Something went wrong while sending your message.';
-      setStatus({ state: 'error', message });
+          : "Something went wrong while sending your message.";
+      setStatus({ state: "error", message });
       toast.error(message);
     }
   };
 
-  const isSubmitting = status.state === 'submitting';
+  const isSubmitting = status.state === "submitting";
   const trimmedName = values.name.trim();
   const trimmedEmail = values.email.trim();
   const isNameValid = trimmedName.length > 0;
   const isEmailValid = EMAIL_REGEX.test(trimmedEmail);
   const isFormValid = isNameValid && isEmailValid && !isEditorEmpty;
 
-  const handleEnhance = async (mode: EnhanceMode = selectedEnhanceOption.mode) => {
+  const handleEnhance = async (
+    mode: EnhanceMode = selectedEnhanceOption.mode
+  ) => {
     if (!editor) {
-      toast.error('Editor failed to load. Please refresh the page.');
+      toast.error("Editor failed to load. Please refresh the page.");
       return;
     }
 
-    const plainMessage = sanitizeEditorText(editor.getText({ blockSeparator: '\n' }));
+    const plainMessage = sanitizeEditorText(
+      editor.getText({ blockSeparator: "\n" })
+    );
 
     if (!plainMessage) {
-      toast.error('Please write a message before enhancing it.');
+      toast.error("Please write a message before enhancing it.");
       return;
     }
 
     if (plainMessage.length > MAX_MESSAGE_LENGTH) {
-      toast.error(`Message is too long. Please keep it under ${MAX_MESSAGE_LENGTH} characters.`);
+      toast.error(
+        `Message is too long. Please keep it under ${MAX_MESSAGE_LENGTH} characters.`
+      );
       return;
     }
 
@@ -498,60 +556,69 @@ export default function ContactForm() {
     setIsEnhancing(true);
 
     try {
-      const response = await fetch('/api/contact/enhance', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/contact/enhance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: plainMessage, mode }),
       });
 
-      const payload = (await response.json()) as { suggestion?: string; error?: string };
+      const payload = (await response.json()) as {
+        suggestion?: string;
+        error?: string;
+      };
 
       if (!response.ok) {
-        throw new Error(payload.error ?? 'Failed to enhance your message.');
+        throw new Error(payload.error ?? "Failed to enhance your message.");
       }
 
       if (!payload.suggestion) {
-        throw new Error('The AI response was empty. Please try again.');
+        throw new Error("The AI response was empty. Please try again.");
       }
 
       editor.commands.setContent(convertTextToDoc(payload.suggestion), false);
       updateEditorEmptyState(editor);
-      toast.success('Message enhanced successfully.');
+      toast.success("Message enhanced successfully.");
     } catch (error) {
       const message =
         error instanceof Error && error.message
           ? error.message
-          : 'Something went wrong while enhancing your message.';
+          : "Something went wrong while enhancing your message.";
       toast.error(message);
     } finally {
       setIsEnhancing(false);
     }
   };
 
-  const formattingButtons = formattingOptionDefinitions.map(({ label, icon: Icon, run, isActive, isDisabled }) => {
-    const isButtonActive = editor ? isActive(editor) : false;
-    const isButtonDisabled = isSubmitting || !editor || (editor ? isDisabled(editor) : true);
+  const formattingButtons = formattingOptionDefinitions.map(
+    ({ label, icon: Icon, run, isActive, isDisabled }) => {
+      const isButtonActive = editor ? isActive(editor) : false;
+      const isButtonDisabled =
+        isSubmitting || !editor || (editor ? isDisabled(editor) : true);
 
-    return (
-      <button
-        key={label}
-        type="button"
-        onClick={
-          editor
-            ? () => {
-              run(editor);
-            }
-            : undefined
-        }
-        disabled={isButtonDisabled}
-        aria-label={label}
-        className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${isButtonActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-          } ${isButtonDisabled ? 'opacity-50' : ''}`}
-      >
-        <Icon className="h-4 w-4" />
-      </button>
-    );
-  });
+      return (
+        <button
+          key={label}
+          type="button"
+          onClick={
+            editor
+              ? () => {
+                  run(editor);
+                }
+              : undefined
+          }
+          disabled={isButtonDisabled}
+          aria-label={label}
+          className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+            isButtonActive
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          } ${isButtonDisabled ? "opacity-50" : ""}`}
+        >
+          <Icon className="h-4 w-4" />
+        </button>
+      );
+    }
+  );
 
   return (
     <Card className="mx-auto max-w-3xl">
@@ -559,7 +626,10 @@ export default function ContactForm() {
         <CardContent className="space-y-6 p-6 pt-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <label htmlFor="name" className="text-sm font-medium text-foreground">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-foreground"
+              >
                 Your name
               </label>
               <input
@@ -568,13 +638,16 @@ export default function ContactForm() {
                 type="text"
                 required
                 value={values.name}
-                onChange={handleChange('name')}
+                onChange={handleChange("name")}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                 placeholder="Enter your full name"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="text-sm font-medium text-foreground">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-foreground"
+              >
                 Your email
               </label>
               <input
@@ -583,13 +656,15 @@ export default function ContactForm() {
                 type="email"
                 required
                 value={values.email}
-                onChange={handleChange('email')}
+                onChange={handleChange("email")}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                 placeholder="Enter your email"
               />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
-              <span className="text-sm font-medium text-foreground">How can I help?</span>
+              <span className="text-sm font-medium text-foreground">
+                How can I help?
+              </span>
               <div className="flex flex-col overflow-hidden rounded-md border border-input bg-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
                 <div className="flex flex-wrap items-center gap-1 border-b border-border bg-muted/80 px-2 py-1">
                   {formattingButtons}
@@ -631,7 +706,7 @@ export default function ContactForm() {
                   Sending…
                 </>
               ) : (
-                'Send message'
+                "Send message"
               )}
             </Button>
             <div
@@ -651,7 +726,9 @@ export default function ContactForm() {
               <Button
                 type="button"
                 variant="outline"
-                disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
+                disabled={
+                  isEnhancing || isSubmitting || !editor || isEditorEmpty
+                }
                 onClick={() => {
                   void handleEnhance();
                 }}
@@ -674,12 +751,14 @@ export default function ContactForm() {
                 aria-expanded={isEnhanceMenuOpen}
                 aria-controls="enhance-menu"
                 aria-label="More message enhancement options"
-                disabled={isEnhancing || isSubmitting || !editor || isEditorEmpty}
+                disabled={
+                  isEnhancing || isSubmitting || !editor || isEditorEmpty
+                }
                 onClick={() => {
                   setIsEnhanceMenuOpen((current) => !current);
                 }}
                 onKeyDown={(event) => {
-                  if (event.key === 'ArrowDown') {
+                  if (event.key === "ArrowDown") {
                     event.preventDefault();
                     setIsEnhanceMenuOpen(true);
                   }
@@ -695,7 +774,8 @@ export default function ContactForm() {
                   className="absolute right-0 top-full z-10 mt-2 w-64 overflow-hidden rounded-md border bg-background p-1 shadow-lg"
                 >
                   {enhanceOptions.map((option) => {
-                    const isSelected = option.mode === selectedEnhanceOption.mode;
+                    const isSelected =
+                      option.mode === selectedEnhanceOption.mode;
                     return (
                       <button
                         key={option.mode}
@@ -703,11 +783,17 @@ export default function ContactForm() {
                         role="menuitemradio"
                         aria-checked={isSelected}
                         className={`flex w-full flex-col items-start gap-1 rounded-sm px-3 py-2 text-left text-sm transition hover:bg-accent hover:text-accent-foreground ${
-                          isSelected ? 'bg-muted text-foreground' : 'text-foreground'
+                          isSelected
+                            ? "bg-muted text-foreground"
+                            : "text-foreground"
                         }`}
                         onClick={() => {
                           setSelectedEnhanceOption(option);
-                          const canEnhance = !isEnhancing && !isSubmitting && editor && !isEditorEmpty;
+                          const canEnhance =
+                            !isEnhancing &&
+                            !isSubmitting &&
+                            editor &&
+                            !isEditorEmpty;
                           if (canEnhance) {
                             void handleEnhance(option.mode);
                             return;
@@ -717,7 +803,9 @@ export default function ContactForm() {
                         }}
                       >
                         <span className="font-medium">{option.label}</span>
-                        <span className="text-xs text-muted-foreground">{option.description}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {option.description}
+                        </span>
                       </button>
                     );
                   })}
