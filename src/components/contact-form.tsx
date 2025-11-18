@@ -156,16 +156,16 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Strikethrough',
     icon: Strikethrough,
-    run: (instance) => instance.chain().focus().toggleStrike().run(),
+    run: (instance) => (instance as any).chain().focus().toggleStrike().run(),
     isActive: (instance) => instance.isActive('strike'),
-    isDisabled: (instance) => !instance.can().chain().toggleStrike().run(),
+    isDisabled: (instance) => !(instance as any).can().chain().toggleStrike().run(),
   },
   {
     label: 'Code block',
     icon: Code,
-    run: (instance) => instance.chain().focus().toggleCodeBlock().run(),
+    run: (instance) => (instance as any).chain().focus().toggleCodeBlock().run(),
     isActive: (instance) => instance.isActive('codeBlock'),
-    isDisabled: (instance) => !instance.can().chain().toggleCodeBlock().run(),
+    isDisabled: (instance) => !(instance as any).can().chain().toggleCodeBlock().run(),
   },
   {
     label: 'Bullet list',
@@ -184,16 +184,16 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Heading level 2',
     icon: Heading2,
-    run: (instance) => instance.chain().focus().toggleHeading({ level: 2 }).run(),
-    isActive: (instance) => instance.isActive('heading', { level: 2 }),
-    isDisabled: (instance) => !instance.can().chain().toggleHeading({ level: 2 }).run(),
+    run: (instance) => (instance as any).chain().focus().toggleHeading({ level: 2 }).run(),
+    isActive: (instance) => (instance as any).isActive('heading', { level: 2 }),
+    isDisabled: (instance) => !(instance as any).can().chain().toggleHeading({ level: 2 }).run(),
   },
   {
     label: 'Heading level 3',
     icon: Heading3,
-    run: (instance) => instance.chain().focus().toggleHeading({ level: 3 }).run(),
-    isActive: (instance) => instance.isActive('heading', { level: 3 }),
-    isDisabled: (instance) => !instance.can().chain().toggleHeading({ level: 3 }).run(),
+    run: (instance) => (instance as any).chain().focus().toggleHeading({ level: 3 }).run(),
+    isActive: (instance) => (instance as any).isActive('heading', { level: 3 }),
+    isDisabled: (instance) => !(instance as any).can().chain().toggleHeading({ level: 3 }).run(),
   },
   {
     label: 'Quote',
@@ -205,23 +205,23 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Horizontal rule',
     icon: Minus,
-    run: (instance) => instance.chain().focus().setHorizontalRule().run(),
+    run: (instance) => (instance as any).chain().focus().setHorizontalRule().run(),
     isActive: () => false,
-    isDisabled: (instance) => !instance.can().chain().setHorizontalRule().run(),
+    isDisabled: (instance) => !(instance as any).can().chain().setHorizontalRule().run(),
   },
   {
     label: 'Undo',
     icon: Undo2,
-    run: (instance) => instance.chain().focus().undo().run(),
+    run: (instance) => (instance as any).chain().focus().undo().run(),
     isActive: () => false,
-    isDisabled: (instance) => !instance.can().chain().undo().run(),
+    isDisabled: (instance) => !(instance as any).can().chain().undo().run(),
   },
   {
     label: 'Redo',
     icon: Redo2,
-    run: (instance) => instance.chain().focus().redo().run(),
+    run: (instance) => (instance as any).chain().focus().redo().run(),
     isActive: () => false,
-    isDisabled: (instance) => !instance.can().chain().redo().run(),
+    isDisabled: (instance) => !(instance as any).can().chain().redo().run(),
   },
 ];
 
@@ -493,8 +493,8 @@ export default function ContactForm() {
         onClick={
           editor
             ? () => {
-              run(editor);
-            }
+                run(editor);
+              }
             : undefined
         }
         disabled={isButtonDisabled}
