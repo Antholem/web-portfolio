@@ -169,29 +169,34 @@ interface FormattingOptionDefinition {
   isDisabled: (editor: TiptapEditor) => boolean;
 }
 
-type RichTextChain = ReturnType<TiptapEditor["chain"]> & Record<string, any>;
+type CommandChain = ReturnType<TiptapEditor["chain"]>;
+type CanCommandChain = ReturnType<ReturnType<TiptapEditor["can"]>["chain"]>;
 
-const toRichTextChain = (chain: unknown): RichTextChain =>
-  chain as RichTextChain;
+const focusChain = <TChain>(chain: TChain): TChain => {
+  type FocusableChain = TChain & { focus?: () => TChain };
+  const focusableChain = chain as FocusableChain;
+
+  if (typeof focusableChain.focus === "function") {
+    return focusableChain.focus();
+  }
+
+  return chain;
+};
 
 const runRichTextCommand = (
   editor: TiptapEditor,
-  callback: (chain: RichTextChain) => RichTextChain
+  callback: (chain: CommandChain) => CommandChain
 ) => {
-  const chain = toRichTextChain(editor.chain());
-  const focusedChain =
-    typeof chain.focus === "function" ? chain.focus() : chain;
-  return callback(focusedChain).run();
+  const chain = focusChain(editor.chain());
+  return callback(chain).run();
 };
 
 const canRunRichTextCommand = (
   editor: TiptapEditor,
-  callback: (chain: RichTextChain) => RichTextChain
+  callback: (chain: CanCommandChain) => CanCommandChain
 ) => {
-  const chain = toRichTextChain(editor.can().chain());
-  const focusedChain =
-    typeof chain.focus === "function" ? chain.focus() : chain;
-  return callback(focusedChain).run();
+  const chain = focusChain(editor.can().chain());
+  return callback(chain).run();
 };
 
 const formattingOptionDefinitions: FormattingOptionDefinition[] = [
@@ -256,7 +261,7 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
       runRichTextCommand(instance, (chain) =>
         chain.toggleHeading({ level: 2 })
       ),
-    isActive: (instance) => (instance as any).isActive("heading", { level: 2 }),
+    isActive: (instance) => instance.isActive("heading", { level: 2 }),
     isDisabled: (instance) =>
       !canRunRichTextCommand(instance, (chain) =>
         chain.toggleHeading({ level: 2 })
@@ -269,7 +274,7 @@ const formattingOptionDefinitions: FormattingOptionDefinition[] = [
       runRichTextCommand(instance, (chain) =>
         chain.toggleHeading({ level: 3 })
       ),
-    isActive: (instance) => (instance as any).isActive("heading", { level: 3 }),
+    isActive: (instance) => instance.isActive("heading", { level: 3 }),
     isDisabled: (instance) =>
       !canRunRichTextCommand(instance, (chain) =>
         chain.toggleHeading({ level: 3 })
