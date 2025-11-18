@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
-import UnderlineExtension from "@tiptap/extension-underline";
+import { Mark, mergeAttributes } from "@tiptap/core";
 import {
   EditorContent,
   type Editor as TiptapEditor,
@@ -98,6 +98,55 @@ const WRAPPER_NODE_TYPES = new Set([
   "blockquote",
   "listItem",
 ]);
+
+const UnderlineExtension = Mark.create({
+  name: "underline",
+
+  addOptions() {
+    return {
+      HTMLAttributes: {},
+    };
+  },
+
+  parseHTML() {
+    return [
+      { tag: "u" },
+      {
+        style: "text-decoration",
+        consuming: false,
+        getAttrs: (value: string) => {
+          const segments = value
+            .split(" ")
+            .map((segment) => segment.trim().toLowerCase());
+          return segments.includes("underline") ? {} : false;
+        },
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "span",
+      mergeAttributes({ style: "text-decoration: underline" }, HTMLAttributes),
+      0,
+    ];
+  },
+
+  addCommands() {
+    return {
+      toggleUnderline:
+        () =>
+        ({ commands }) =>
+          commands.toggleMark(this.name),
+    };
+  },
+
+  addKeyboardShortcuts() {
+    return {
+      "Mod-u": () => this.editor.commands.toggleUnderline(),
+    };
+  },
+});
 
 const editorClassName = [
   "h-56 w-full cursor-text overflow-y-auto px-3 py-2 text-sm leading-6 text-foreground caret-primary outline-none",
