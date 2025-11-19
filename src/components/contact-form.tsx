@@ -8,7 +8,22 @@ import { toast } from '@/components/ui/sonner';
 import { EditorContent, type Editor as TiptapEditor, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type { LucideIcon } from 'lucide-react';
-import { Bold, ChevronDown, Italic, List, ListOrdered, Loader2, Quote } from 'lucide-react';
+import {
+  Bold,
+  ChevronDown,
+  Code,
+  Heading2,
+  Heading3,
+  Italic,
+  List,
+  ListOrdered,
+  Loader2,
+  Minus,
+  Quote,
+  Redo2,
+  Strikethrough,
+  Undo2,
+} from 'lucide-react';
 
 type JSONContent = {
   type?: string;
@@ -123,41 +138,106 @@ interface FormattingOptionDefinition {
   isDisabled: (editor: TiptapEditor) => boolean;
 }
 
+type ChainableEditorCommands = ReturnType<TiptapEditor['chain']>;
+
+type RichTextChain = ChainableEditorCommands & {
+  focus: () => RichTextChain;
+  toggleStrike: () => RichTextChain;
+  toggleCodeBlock: () => RichTextChain;
+  toggleHeading: (attrs: { level: number }) => RichTextChain;
+  setHorizontalRule: () => RichTextChain;
+  undo: () => RichTextChain;
+  redo: () => RichTextChain;
+};
+
+const createRichTextChain = (editor: TiptapEditor): RichTextChain => editor.chain() as RichTextChain;
+const createRichTextCanChain = (editor: TiptapEditor): RichTextChain =>
+  editor.can().chain() as RichTextChain;
+
 const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
     label: 'Bold',
     icon: Bold,
     run: (instance) => instance.chain().focus().toggleBold().run(),
     isActive: (instance) => instance.isActive('bold'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleBold().run(),
+    isDisabled: (instance) => !instance.can().chain().toggleBold().run(),
   },
   {
     label: 'Italic',
     icon: Italic,
     run: (instance) => instance.chain().focus().toggleItalic().run(),
     isActive: (instance) => instance.isActive('italic'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleItalic().run(),
+    isDisabled: (instance) => !instance.can().chain().toggleItalic().run(),
+  },
+  {
+    label: 'Strikethrough',
+    icon: Strikethrough,
+    run: (instance) => createRichTextChain(instance).focus().toggleStrike().run(),
+    isActive: (instance) => instance.isActive('strike'),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleStrike().run(),
+  },
+  {
+    label: 'Code block',
+    icon: Code,
+    run: (instance) => createRichTextChain(instance).focus().toggleCodeBlock().run(),
+    isActive: (instance) => instance.isActive('codeBlock'),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleCodeBlock().run(),
   },
   {
     label: 'Bullet list',
     icon: List,
     run: (instance) => instance.chain().focus().toggleBulletList().run(),
     isActive: (instance) => instance.isActive('bulletList'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleBulletList().run(),
+    isDisabled: (instance) => !instance.can().chain().toggleBulletList().run(),
   },
   {
     label: 'Numbered list',
     icon: ListOrdered,
     run: (instance) => instance.chain().focus().toggleOrderedList().run(),
     isActive: (instance) => instance.isActive('orderedList'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleOrderedList().run(),
+    isDisabled: (instance) => !instance.can().chain().toggleOrderedList().run(),
+  },
+  {
+    label: 'Heading level 2',
+    icon: Heading2,
+    run: (instance) => createRichTextChain(instance).focus().toggleHeading({ level: 2 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 2 }),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleHeading({ level: 2 }).run(),
+  },
+  {
+    label: 'Heading level 3',
+    icon: Heading3,
+    run: (instance) => createRichTextChain(instance).focus().toggleHeading({ level: 3 }).run(),
+    isActive: (instance) => instance.isActive('heading', { level: 3 }),
+    isDisabled: (instance) => !createRichTextCanChain(instance).toggleHeading({ level: 3 }).run(),
   },
   {
     label: 'Quote',
     icon: Quote,
     run: (instance) => instance.chain().focus().toggleBlockquote().run(),
     isActive: (instance) => instance.isActive('blockquote'),
-    isDisabled: (instance) => !instance.can().chain().focus().toggleBlockquote().run(),
+    isDisabled: (instance) => !instance.can().chain().toggleBlockquote().run(),
+  },
+  {
+    label: 'Horizontal rule',
+    icon: Minus,
+    run: (instance) => createRichTextChain(instance).focus().setHorizontalRule().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !createRichTextCanChain(instance).setHorizontalRule().run(),
+  },
+  {
+    label: 'Undo',
+    icon: Undo2,
+    run: (instance) => createRichTextChain(instance).focus().undo().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !createRichTextCanChain(instance).undo().run(),
+  },
+  {
+    label: 'Redo',
+    icon: Redo2,
+    run: (instance) => createRichTextChain(instance).focus().redo().run(),
+    isActive: () => false,
+    isDisabled: (instance) => !createRichTextCanChain(instance).redo().run(),
   },
 ];
 
@@ -429,8 +509,8 @@ export default function ContactForm() {
         onClick={
           editor
             ? () => {
-              run(editor);
-            }
+                run(editor);
+              }
             : undefined
         }
         disabled={isButtonDisabled}
