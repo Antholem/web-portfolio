@@ -150,8 +150,9 @@ type RichTextChain = ChainableEditorCommands & {
   redo: () => RichTextChain;
 };
 
-const createRichTextChain = (editor: TiptapEditor) => editor.chain() as RichTextChain;
-const createRichTextCanChain = (editor: TiptapEditor) => editor.can().chain() as RichTextChain;
+const createRichTextChain = (editor: TiptapEditor): RichTextChain => editor.chain() as RichTextChain;
+const createRichTextCanChain = (editor: TiptapEditor): RichTextChain =>
+  editor.can().chain() as RichTextChain;
 
 const formattingOptionDefinitions: FormattingOptionDefinition[] = [
   {
