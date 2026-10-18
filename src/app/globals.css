@@ -230,8 +230,11 @@
 }
 
 /*
- * Theme changes crossfade two compositor snapshots (see ThemeToggle) instead of
- * transitioning colours on every element that has a CSS transition.
+ * Theme changes reveal the new theme in a circle growing from the toggle
+ * (see ThemeToggle). A full-page crossfade blends both themes into a grey
+ * midpoint, which reads as a flash; a clip reveal never mixes them.
+ * Per-element colour transitions are off for the duration so the live "new"
+ * layer is already in its final colours.
  */
 :root:active-view-transition *,
 :root:active-view-transition ::before,
@@ -241,8 +244,23 @@
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.25s;
-  animation-timing-function: ease;
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: theme-reveal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--reveal-x, 50%) var(--reveal-y, 0));
+  }
+  to {
+    clip-path: circle(
+      var(--reveal-r, 150vmax) at var(--reveal-x, 50%) var(--reveal-y, 0)
+    );
+  }
 }
 
 /*

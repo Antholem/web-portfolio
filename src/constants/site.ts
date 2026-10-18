@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Sam Antholem Manalo",
   handle: "antholem",
   role: "Software Engineer",
-  title: "Sam Antholem Manalo — Portfolio",
+  title: "Sam Antholem Manalo",
   description:
     "Software engineer building scalable digital platforms where robust architecture meets a refined user experience.",
   email: "antholemlemmanalo@gmail.com",

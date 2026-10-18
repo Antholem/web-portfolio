@@ -1,5 +1,6 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { flushSync } from "react-dom";
@@ -18,7 +19,7 @@ function ThemeToggle() {
       ? "Switch to light mode"
       : "Switch to dark mode";
 
-  function toggleTheme() {
+  function toggleTheme(event: MouseEvent<HTMLButtonElement>) {
     // next-themes writes the class in an effect; flushSync commits it (and the
     // effect) before the view transition captures the "new" snapshot.
     const apply = () => flushSync(() => setTheme(isDark ? "light" : "dark"));
@@ -30,6 +31,22 @@ function ThemeToggle() {
       apply();
       return;
     }
+
+    // Set before the transition starts so the reveal's first frame is already
+    // anchored on the button (no flash of the unclipped new theme).
+    const { left, top, width, height } =
+      event.currentTarget.getBoundingClientRect();
+    const x = left + width / 2;
+    const y = top + height / 2;
+    const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    );
+    const root = document.documentElement.style;
+    root.setProperty("--reveal-x", `${x}px`);
+    root.setProperty("--reveal-y", `${y}px`);
+    root.setProperty("--reveal-r", `${radius}px`);
+
     document.startViewTransition(apply);
   }
 
