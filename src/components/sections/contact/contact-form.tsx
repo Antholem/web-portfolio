@@ -76,8 +76,7 @@ function ContactForm() {
     setField("message", message);
   }
 
-  // Placeholder for a real model call: polishes locally after a short delay
-  // so the loading state can be seen.
+  // Stand-in for a model call; the delay mirrors real latency so the loading state is exercised.
   function handleRefine() {
     if (!values.message.trim()) return;
     setRefineState("refining");

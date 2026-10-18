@@ -16,7 +16,6 @@ const MOBILE_NAV_ID = "mobile-nav";
 const navLinkClass =
   "rounded-lg px-3 py-2 text-[14px] text-muted-foreground transition-[color,background-color] duration-150 ease-[ease] hover:bg-accent hover:text-foreground";
 
-/** Sticky translucent nav. Below 960px the links collapse into a full-width sheet. */
 function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);

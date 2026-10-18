@@ -2,11 +2,6 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* -------------------------------------------------------------------------- */
-/* Design tokens — shadcn/ui semantic names. Components reference tokens,     */
-/* never hex values; toggling `.dark` on <html> re-themes everything.          */
-/* -------------------------------------------------------------------------- */
-
 :root {
   --background: #fafafa;
   --foreground: #0a0a0a;
@@ -14,19 +9,19 @@
   --card-foreground: #0a0a0a;
   --popover: #ffffff;
   --popover-foreground: #0a0a0a;
-  --surface: #f7f7f7; /* tags, icon wells, window chrome */
+  --surface: #f7f7f7;
   --muted: #f2f2f2;
   --muted-foreground: #525252;
-  --subtle-foreground: #6b6b6b; /* captions, mono labels */
+  --subtle-foreground: #6b6b6b;
   --border: #e6e6e6;
-  --input: #d4d4d4; /* input + outline-button borders */
+  --input: #d4d4d4;
   --primary: #0a0a0a;
   --primary-foreground: #fafafa;
   --primary-hover: #2a2a2a;
   --secondary: #efefef;
   --secondary-foreground: #0a0a0a;
   --secondary-hover: #e4e4e4;
-  --accent: #f0f0f0; /* hover fill: ghost, outline, nav links */
+  --accent: #f0f0f0;
   --accent-foreground: #0a0a0a;
   --ring: #525252;
   --focus-halo: rgba(0, 0, 0, 0.06);
@@ -46,7 +41,7 @@
   );
   --elevation:
     0 1px 2px rgba(0, 0, 0, 0.04), 0 30px 60px -32px rgba(0, 0, 0, 0.22);
-  --radius: 0.625rem; /* 10px */
+  --radius: 0.625rem;
   color-scheme: light;
 }
 
@@ -136,7 +131,7 @@
 }
 
 @theme {
-  /* Breakpoints: 640 · 960 · 1100 */
+  /* 640 · 960 · 1100px */
   --breakpoint-sm: 40rem;
   --breakpoint-md: 60rem;
   --breakpoint-lg: 68.75rem;
@@ -157,13 +152,21 @@
     }
   }
 
+  /*
+   * Same 3px → 7px halo as the spec, but driven by transform/opacity on a
+   * pseudo-element so it runs on the compositor. Animating box-shadow forced a
+   * style recalc + repaint every frame for as long as the page was open.
+   * Scale is relative to the 8px dot: (8 + 2·3) / 8 = 1.75, (8 + 2·7) / 8 = 2.75.
+   */
   @keyframes status-pulse {
     0%,
     100% {
-      box-shadow: 0 0 0 3px color-mix(in oklab, var(--success) 28%, transparent);
+      transform: scale(1.75);
+      opacity: 0.28;
     }
     50% {
-      box-shadow: 0 0 0 7px color-mix(in oklab, var(--success) 0%, transparent);
+      transform: scale(2.75);
+      opacity: 0;
     }
   }
 }
@@ -182,9 +185,6 @@
     line-height: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition:
-      background-color 0.25s ease,
-      color 0.25s ease;
   }
 
   ::selection {
@@ -198,7 +198,6 @@
   }
 }
 
-/* Faint 64px grid behind the hero, fading out from the top centre. */
 @utility grid-backdrop {
   background-image:
     linear-gradient(var(--grid-line) 1px, transparent 1px),
@@ -211,12 +210,10 @@
   );
 }
 
-/* Radial "photo stage" behind the transparent portrait. */
 @utility stage-backdrop {
   background: var(--stage);
 }
 
-/* Soft fade on both horizontal edges (marquee). */
 @utility fade-x {
   mask-image: linear-gradient(
     90deg,
@@ -227,8 +224,33 @@
   );
 }
 
-/* Hairline-outlined display text (footer wordmark). */
 @utility text-outline {
   color: transparent;
   -webkit-text-stroke: 1px var(--input);
+}
+
+/*
+ * Theme changes crossfade two compositor snapshots (see ThemeToggle) instead of
+ * transitioning colours on every element that has a CSS transition.
+ */
+:root:active-view-transition *,
+:root:active-view-transition ::before,
+:root:active-view-transition ::after {
+  transition: none !important;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+  animation-timing-function: ease;
+}
+
+/*
+ * Off-screen sections skip style, layout and paint until they near the
+ * viewport, so a theme flip only restyles what is visible. `auto` keeps the
+ * last rendered height once a section has been seen, avoiding scroll jumps.
+ */
+@utility render-when-visible {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }

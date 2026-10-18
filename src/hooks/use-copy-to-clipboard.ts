@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Copies text and flips `copied` to `true` for `resetAfterMs`. */
 export function useCopyToClipboard(resetAfterMs = 1600) {
   const [copied, setCopied] = useState(false);
   const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);

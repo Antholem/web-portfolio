@@ -8,7 +8,6 @@ const str = (value: string) => (
   <span className="text-foreground">{`"${value}"`}</span>
 );
 
-/** Floating `sam.config.ts` card that overlaps the portrait's bottom-left corner. */
 function CodeCard() {
   return (
     <Card
@@ -42,7 +41,6 @@ function CodeCard() {
   );
 }
 
-/** 4:5 portrait on the radial stage gradient, plus the overlapping code card. */
 function HeroPortrait() {
   return (
     <div className="relative">

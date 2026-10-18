@@ -29,7 +29,6 @@ const chartArea =
 const rowClass =
   "grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2 px-0.5 py-1.75";
 
-/** Illustrative dashboard for the featured project. Decorative only. */
 function LedgerlinePreview() {
   return (
     <div className="w-full overflow-hidden rounded-xl border border-input bg-card shadow-elevated">

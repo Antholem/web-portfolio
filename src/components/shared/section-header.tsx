@@ -8,7 +8,6 @@ type SectionHeaderProps = {
   className?: string;
 };
 
-/** Mono index + label with a hairline running to the edge. */
 function SectionHeader({ index, label, className }: SectionHeaderProps) {
   return (
     <div className={cn("mb-14 flex items-center gap-4", className)}>

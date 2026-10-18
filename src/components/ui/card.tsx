@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 
 type CardProps = React.ComponentProps<"div"> & {
   asChild?: boolean;
-  /** Strengthens the border on hover — the only hover treatment cards get. */
   interactive?: boolean;
 };
 

@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Quiet mono pill for technologies — never competes with headings. */
 function Tag({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

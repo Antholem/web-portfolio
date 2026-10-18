@@ -2,7 +2,7 @@ import { useSyncExternalStore } from "react";
 
 const subscribe = () => () => {};
 
-/** `false` during SSR and hydration, `true` once running on the client. */
+/** Hydration-safe mounted flag: no setState-in-effect and no extra render pass. */
 export function useMounted() {
   return useSyncExternalStore(
     subscribe,

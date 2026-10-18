@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/** Green status dot — the only hue in the system, and the only animated status. */
 function StatusDot({
   pulse = false,
   className,
@@ -12,8 +11,9 @@ function StatusDot({
     <span
       aria-hidden
       className={cn(
-        "size-2 shrink-0 rounded-full bg-success",
-        pulse && "animate-status-pulse motion-reduce:animate-none",
+        "relative size-2 shrink-0 rounded-full bg-success",
+        pulse &&
+          "before:absolute before:inset-0 before:animate-status-pulse before:rounded-full before:bg-success motion-reduce:before:hidden",
         className,
       )}
     />

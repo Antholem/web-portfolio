@@ -1,6 +1,5 @@
 import type { SectionMeta } from "@/types/content";
 
-/** Single source for section anchors, nav labels and "01 / About" eyebrows. */
 export const SECTIONS = {
   about: { id: "about", index: "01", navLabel: "About", eyebrow: "About" },
   experience: {

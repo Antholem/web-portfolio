@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Underlined inline link; the underline darkens to the foreground on hover. */
 function TextLink({ className, ...props }: React.ComponentProps<"a">) {
   return (
     <a

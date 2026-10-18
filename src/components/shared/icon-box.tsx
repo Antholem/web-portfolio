@@ -2,7 +2,6 @@ import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-/** 40px icon well on the surface colour with an 18px icon. */
 function IconBox({
   icon: Icon,
   className,

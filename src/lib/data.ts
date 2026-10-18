@@ -23,8 +23,6 @@ import type {
   StackGroup,
 } from "@/types/content";
 
-/* ---------------------------------- Hero ---------------------------------- */
-
 export const hero = {
   availability: "Open to new opportunities",
   nameLines: ["Sam Antholem", "Manalo."],
@@ -50,8 +48,6 @@ export const techMarquee = [
   "shadcn/ui",
   "Gemini API",
 ];
-
-/* ---------------------------------- About --------------------------------- */
 
 export const about = {
   title: "Building scalable and reliable systems.",
@@ -88,8 +84,6 @@ export const about = {
   ] satisfies FocusArea[],
 };
 
-/* ------------------------------- Experience ------------------------------- */
-
 // TODO: fill companies and years from the résumé.
 export const experience = {
   title: "Where I’ve shipped.",
@@ -123,8 +117,6 @@ export const experience = {
     },
   ] satisfies ExperienceItem[],
 };
-
-/* ---------------------------------- Stack --------------------------------- */
 
 export const stack = {
   title: "End-to-end engineering for modern web apps.",
@@ -171,8 +163,6 @@ export const stack = {
   ] satisfies StackGroup[],
 };
 
-/* -------------------------------- Services -------------------------------- */
-
 export const services = {
   title: "Technical solutions for modern product teams.",
   items: [
@@ -211,8 +201,6 @@ export const services = {
     },
   ] satisfies Service[],
 };
-
-/* ---------------------------------- Work ---------------------------------- */
 
 // TODO: projects are mockup content — replace with real ones and real links.
 export const work = {
@@ -291,8 +279,6 @@ export const work = {
   ] satisfies Project[],
 };
 
-/* --------------------------------- Contact -------------------------------- */
-
 export const contact = {
   title: "Let’s collaborate on your next project.",
   lead: "Have a product to build, a platform to scale or a team that needs another senior engineer? Send a note — I reply within two business days.",
@@ -312,8 +298,6 @@ export const contact = {
     reset: "Send another",
   },
 };
-
-/* --------------------------------- Footer --------------------------------- */
 
 export const footer = {
   tagline:

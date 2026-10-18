@@ -24,10 +24,7 @@ export function validateContactForm(
   return errors;
 }
 
-/**
- * There is no mail backend yet, so the form hands off to the visitor's email
- * client with everything pre-filled. Swap this for a server action when one exists.
- */
+// No mail backend yet: hand off to the visitor's mail client. Replace with a server action.
 export function buildContactMailto(
   values: ContactFormValues,
   topicLabel: string,
@@ -37,10 +34,6 @@ export function buildContactMailto(
   return `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-/**
- * Local stand-in for the "Refine with AI" action: tidies whitespace,
- * capitalises the first letter and closes the sentence.
- */
 export function polishMessage(message: string) {
   const text = message.trim().replace(/\s+/g, " ");
   if (!text) return text;

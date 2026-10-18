@@ -6,13 +6,11 @@ import { cn } from "@/lib/utils";
 const SA_MONOGRAM_RATIO = 618 / 521;
 
 type SaMonogramProps = {
-  /** Rendered height in px — 56 hero · 40 footer · 30 nav · 20 min. */
   height: number;
   alt?: string;
   className?: string;
 };
 
-/** Personal SA monogram (black PNG), inverted in dark mode. */
 function SaMonogram({ height, alt = "", className }: SaMonogramProps) {
   return (
     <Image
@@ -30,10 +28,6 @@ type AntholemMarkProps = React.ComponentProps<"svg"> & {
   title?: string;
 };
 
-/**
- * The Antholem "A" drawn as the corner of a cube. One flat `currentColor`
- * shape, so it follows the foreground token in both themes. 16px minimum.
- */
 function AntholemMark({ title, className, ...props }: AntholemMarkProps) {
   return (
     <svg

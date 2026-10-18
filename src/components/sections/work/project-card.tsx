@@ -5,7 +5,6 @@ import type { Project } from "@/types/content";
 
 import { PROJECT_PREVIEWS } from "./previews/project-previews";
 
-/** Project card recipe: preview on a muted stage, then title, summary, tags, links. */
 function ProjectCard({ project }: { project: Project }) {
   const Preview = PROJECT_PREVIEWS[project.slug];
 

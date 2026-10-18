@@ -2,11 +2,11 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { flushSync } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { useMounted } from "@/hooks/use-mounted";
 
-/** Ghost icon button: sun in dark mode, moon in light mode. */
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
@@ -18,15 +18,30 @@ function ThemeToggle() {
       ? "Switch to light mode"
       : "Switch to dark mode";
 
+  function toggleTheme() {
+    // next-themes writes the class in an effect; flushSync commits it (and the
+    // effect) before the view transition captures the "new" snapshot.
+    const apply = () => flushSync(() => setTheme(isDark ? "light" : "dark"));
+
+    if (
+      typeof document.startViewTransition !== "function" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      apply();
+      return;
+    }
+    document.startViewTransition(apply);
+  }
+
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon"
       aria-label={label}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={toggleTheme}
     >
-      {/* Icons swap via the `.dark` class so the first paint is already correct. */}
+      {/* Swapped by the `.dark` class so the server-rendered icon is already correct. */}
       <Sun className="hidden dark:block" aria-hidden />
       <Moon className="dark:hidden" aria-hidden />
     </Button>

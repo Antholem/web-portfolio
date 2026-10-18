@@ -1,6 +1,5 @@
 import { techMarquee } from "@/lib/data";
 
-/** Mono, uppercase tech names scrolling left; paused for reduced motion. */
 function TechMarquee() {
   // The list is doubled so the -50% translate loops seamlessly.
   const items = [...techMarquee, ...techMarquee];

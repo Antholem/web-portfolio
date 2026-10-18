@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Browser-window-ish frame that peeks up from the bottom of a project card. */
 function PreviewFrame({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

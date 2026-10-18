@@ -57,7 +57,6 @@ export type Project = {
   name: string;
   year: string;
   category: ProjectCategory;
-  /** Short label shown next to the year, e.g. "Web app". */
   kind: string;
   summary: string;
   tags: string[];

@@ -9,7 +9,6 @@ import type { FeaturedProject } from "@/types/content";
 
 import { PROJECT_PREVIEWS } from "./previews/project-previews";
 
-/** Text + large UI preview side by side; stacks below 960px. */
 function FeaturedProjectCard({ project }: { project: FeaturedProject }) {
   const Preview = PROJECT_PREVIEWS[project.slug];
 

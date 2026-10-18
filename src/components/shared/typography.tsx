@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Geist Mono 12px, uppercase, +0.08em — e.g. `01 / About`. */
 function Eyebrow({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -15,7 +14,6 @@ function Eyebrow({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
-/** H2 · Section — clamp(32–52) / 1.06 / −0.035em / 600. */
 function SectionTitle({ className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
@@ -28,7 +26,6 @@ function SectionTitle({ className, ...props }: React.ComponentProps<"h2">) {
   );
 }
 
-/** Lead paragraph — 17px / 1.65, muted. */
 function Lead({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -41,7 +38,6 @@ function Lead({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-/** Renders `**phrase**` in the foreground colour; the rest inherits. */
 function HighlightedText({ text }: { text: string }) {
   const parts = text.split(/\*\*(.+?)\*\*/g);
 

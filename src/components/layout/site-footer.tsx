@@ -18,7 +18,7 @@ function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="overflow-hidden border-t border-border">
+    <footer className="overflow-hidden border-t border-border render-when-visible">
       <Container className="flex flex-col gap-12 pt-16 pb-8">
         <div className="flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex max-w-[40ch] flex-col gap-3">

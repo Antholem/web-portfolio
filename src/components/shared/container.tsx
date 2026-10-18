@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 
 type ContainerProps = React.ComponentProps<"div"> & { asChild?: boolean };
 
-/** 1200px max width, 24px gutters (20px on phones). */
 function Container({ className, asChild = false, ...props }: ContainerProps) {
   const Comp = asChild ? Slot.Root : "div";
 
