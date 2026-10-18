@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* -------------------------------------------------------------------------- */
+/* Design tokens — shadcn/ui semantic names. Components reference tokens,     */
+/* never hex values; toggling `.dark` on <html> re-themes everything.          */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --surface: #f7f7f7; /* tags, icon wells, window chrome */
+  --muted: #f2f2f2;
+  --muted-foreground: #525252;
+  --subtle-foreground: #6b6b6b; /* captions, mono labels */
+  --border: #e6e6e6;
+  --input: #d4d4d4; /* input + outline-button borders */
+  --primary: #0a0a0a;
+  --primary-foreground: #fafafa;
+  --primary-hover: #2a2a2a;
+  --secondary: #efefef;
+  --secondary-foreground: #0a0a0a;
+  --secondary-hover: #e4e4e4;
+  --accent: #f0f0f0; /* hover fill: ghost, outline, nav links */
+  --accent-foreground: #0a0a0a;
+  --ring: #525252;
+  --focus-halo: rgba(0, 0, 0, 0.06);
+  --success: #16a34a; /* availability dot ONLY */
+  --destructive: #dc2626;
+  --destructive-solid: #dc2626;
+  --destructive-solid-hover: #b91c1c;
+  --tooltip: #0a0a0a;
+  --tooltip-foreground: #fafafa;
+  --nav: rgba(250, 250, 250, 0.78);
+  --grid-line: rgba(0, 0, 0, 0.05);
+  --stage: radial-gradient(
+    120% 90% at 50% 28%,
+    #ffffff 0%,
+    #ededee 58%,
+    #e2e2e4 100%
+  );
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.04), 0 30px 60px -32px rgba(0, 0, 0, 0.22);
+  --radius: 0.625rem; /* 10px */
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #111111;
+  --card-foreground: #fafafa;
+  --popover: #111111;
+  --popover-foreground: #fafafa;
+  --surface: #161616;
+  --muted: #171717;
+  --muted-foreground: #a1a1a1;
+  --subtle-foreground: #8f8f8f;
+  --border: #232323;
+  --input: #363636;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --primary-hover: #e2e2e2;
+  --secondary: #1c1c1c;
+  --secondary-foreground: #fafafa;
+  --secondary-hover: #262626;
+  --accent: #1a1a1a;
+  --accent-foreground: #fafafa;
+  --ring: #a1a1a1;
+  --focus-halo: rgba(255, 255, 255, 0.08);
+  --success: #3ecf8e;
+  --destructive: #f2555a; /* text; solid destructive buttons use #dc2626 */
+  --destructive-solid: #dc2626;
+  --destructive-solid-hover: #b91c1c;
+  --tooltip: #fafafa;
+  --tooltip-foreground: #0a0a0a;
+  --nav: rgba(10, 10, 10, 0.72);
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --stage: radial-gradient(
+    120% 90% at 50% 28%,
+    #2e2e31 0%,
+    #19191b 55%,
+    #111112 100%
+  );
+  --elevation:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 30px 60px -30px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-focus-halo: var(--focus-halo);
+  --color-success: var(--success);
+  --color-destructive: var(--destructive);
+  --color-destructive-solid: var(--destructive-solid);
+  --color-destructive-solid-hover: var(--destructive-solid-hover);
+  --color-tooltip: var(--tooltip);
+  --color-tooltip-foreground: var(--tooltip-foreground);
+  --color-nav: var(--nav);
+  --color-grid-line: var(--grid-line);
+
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+
+  --shadow-elevated: var(--elevation);
+}
+
+@theme {
+  /* Breakpoints: 640 · 960 · 1100 */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 60rem;
+  --breakpoint-lg: 68.75rem;
+
+  --animate-spin: spin 0.8s linear infinite;
+  --animate-marquee: marquee 50s linear infinite;
+  --animate-status-pulse: status-pulse 2.4s ease-in-out infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes status-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--success) 28%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 7px color-mix(in oklab, var(--success) 0%, transparent);
+    }
+  }
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    line-height: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  ::selection {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Faint 64px grid behind the hero, fading out from the top centre. */
+@utility grid-backdrop {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(
+    ellipse 75% 65% at 50% 0%,
+    #000 25%,
+    transparent 75%
+  );
+}
+
+/* Radial "photo stage" behind the transparent portrait. */
+@utility stage-backdrop {
+  background: var(--stage);
+}
+
+/* Soft fade on both horizontal edges (marquee). */
+@utility fade-x {
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+/* Hairline-outlined display text (footer wordmark). */
+@utility text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--input);
+}
