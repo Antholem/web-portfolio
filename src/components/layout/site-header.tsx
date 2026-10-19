@@ -27,9 +27,11 @@ function SiteHeader() {
     const desktop = window.matchMedia("(min-width: 60rem)");
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
+      const menu = document.getElementById(MOBILE_NAV_ID);
+      const focusInMenu = menu?.contains(document.activeElement) ?? false;
       setMenuOpen(false);
-      // Focus may be on a link that is about to unmount; keep it in the header.
-      menuButtonRef.current?.focus();
+      // Only rescue focus that is about to unmount with the menu; leave it alone elsewhere.
+      if (focusInMenu) menuButtonRef.current?.focus();
     };
     const onBreakpointChange = (event: MediaQueryListEvent) => {
       if (event.matches) setMenuOpen(false);

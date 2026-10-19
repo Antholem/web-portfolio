@@ -3,6 +3,15 @@
 import { useEffect } from "react";
 
 const MAX_FRAMES = 20;
+
+// Shared links can carry a malformed fragment such as "#100%".
+const decodeFragment = (fragment: string) => {
+  try {
+    return decodeURIComponent(fragment);
+  } catch {
+    return fragment;
+  }
+};
 const STABLE_FRAMES = 3;
 
 function isAligned(target: HTMLElement) {
@@ -55,10 +64,10 @@ function AnchorScrollSettler() {
       const href = (event.target as Element | null)
         ?.closest?.('a[href^="#"]')
         ?.getAttribute("href");
-      if (href) settle(decodeURIComponent(href.slice(1)));
+      if (href) settle(decodeFragment(href.slice(1)));
     };
     const onHashChange = () =>
-      settle(decodeURIComponent(window.location.hash.slice(1)));
+      settle(decodeFragment(window.location.hash.slice(1)));
 
     document.addEventListener("click", onClick);
     window.addEventListener("hashchange", onHashChange);

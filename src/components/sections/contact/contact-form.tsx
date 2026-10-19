@@ -34,6 +34,12 @@ import {
 import { contact } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
+// Never trim the visitor's words to make room for added punctuation.
+const polishWithinLimit = (message: string) => {
+  const polished = polishMessage(message);
+  return polished.length <= contact.messageMaxLength ? polished : message;
+};
+
 type RefineState = "idle" | "refining" | "refined";
 
 const INITIAL_VALUES: ContactFormValues = {
@@ -102,10 +108,7 @@ function ContactForm() {
     refineTimer.current = setTimeout(() => {
       setValues((current) => ({
         ...current,
-        message: polishMessage(current.message).slice(
-          0,
-          contact.messageMaxLength,
-        ),
+        message: polishWithinLimit(current.message),
       }));
       setRefineState("refined");
     }, 1100);
@@ -131,10 +134,18 @@ function ContactForm() {
     setErrors({});
     setSendFailed(false);
     startSending(async () => {
-      const result = await sendContactMessage({
-        ...values,
-        website: honeypotRef.current?.value,
-      });
+      let result;
+      try {
+        result = await sendContactMessage({
+          ...values,
+          website: honeypotRef.current?.value,
+        });
+      } catch {
+        // Network or server failure: the action call itself rejects. Uncaught,
+        // it would escape the transition and replace the page with an error.
+        setSendFailed(true);
+        return;
+      }
       if (result.ok) setSubmitted(true);
       else if ("errors" in result) showErrors(result.errors);
       else setSendFailed(true);
