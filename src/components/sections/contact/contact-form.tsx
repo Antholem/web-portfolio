@@ -1,7 +1,22 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { Check, LoaderCircle, Send, Sparkles } from "lucide-react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useTransition,
+  type FormEvent,
+} from "react";
+import {
+  Check,
+  LoaderCircle,
+  Send,
+  Sparkles,
+  TriangleAlert,
+} from "lucide-react";
+
+import { sendContactMessage } from "@/app/actions/contact";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
@@ -10,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
-  buildContactMailto,
+  CONTACT_LIMITS,
   polishMessage,
   validateContactForm,
   type ContactFormErrors,
@@ -47,11 +62,14 @@ function ContactForm() {
   const [errors, setErrors] = useState<ContactFormErrors>({});
   const [refineState, setRefineState] = useState<RefineState>("idle");
   const [submitted, setSubmitted] = useState(false);
+  const [sendFailed, setSendFailed] = useState(false);
+  const [sending, startSending] = useTransition();
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const successRef = useRef<HTMLHeadingElement>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const refineTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => () => clearTimeout(refineTimer.current), []);
@@ -84,27 +102,43 @@ function ContactForm() {
     refineTimer.current = setTimeout(() => {
       setValues((current) => ({
         ...current,
-        message: polishMessage(current.message),
+        message: polishMessage(current.message).slice(
+          0,
+          contact.messageMaxLength,
+        ),
       }));
       setRefineState("refined");
     }, 1100);
   }
 
+  function showErrors(nextErrors: ContactFormErrors) {
+    setErrors(nextErrors);
+    if (nextErrors.name) nameRef.current?.focus();
+    else if (nextErrors.email) emailRef.current?.focus();
+    else if (nextErrors.message) messageRef.current?.focus();
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (sending) return;
 
     const nextErrors = validateContactForm(values);
-    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      showErrors(nextErrors);
+      return;
+    }
 
-    if (nextErrors.name) return nameRef.current?.focus();
-    if (nextErrors.email) return emailRef.current?.focus();
-    if (nextErrors.message) return messageRef.current?.focus();
-
-    const topicLabel =
-      contact.topics.find((topic) => topic.value === values.topic)?.label ??
-      "Project";
-    window.location.href = buildContactMailto(values, topicLabel);
-    setSubmitted(true);
+    setErrors({});
+    setSendFailed(false);
+    startSending(async () => {
+      const result = await sendContactMessage({
+        ...values,
+        website: honeypotRef.current?.value,
+      });
+      if (result.ok) setSubmitted(true);
+      else if ("errors" in result) showErrors(result.errors);
+      else setSendFailed(true);
+    });
   }
 
   function handleReset() {
@@ -112,6 +146,7 @@ function ContactForm() {
     setValues(INITIAL_VALUES);
     setErrors({});
     setRefineState("idle");
+    setSendFailed(false);
     setSubmitted(false);
   }
 
@@ -159,6 +194,7 @@ function ContactForm() {
             name="name"
             placeholder="Your name"
             autoComplete="name"
+            maxLength={CONTACT_LIMITS.name}
             value={values.name}
             onChange={(event) => setField("name", event.target.value)}
             aria-invalid={errors.name ? true : undefined}
@@ -175,6 +211,7 @@ function ContactForm() {
             type="email"
             placeholder="you@company.com"
             autoComplete="email"
+            maxLength={CONTACT_LIMITS.email}
             value={values.email}
             onChange={(event) => setField("email", event.target.value)}
             aria-invalid={errors.email ? true : undefined}
@@ -258,9 +295,63 @@ function ContactForm() {
         <FieldError id={`${ids.message}-error`}>{errors.message}</FieldError>
       </Field>
 
-      <Button type="submit" size="lg" className="w-full">
-        Send message
-        <Send aria-hidden />
+      {/* Honeypot: display:none keeps it away from people and assistive tech. */}
+      <div hidden>
+        <label>
+          Website
+          <input
+            ref={honeypotRef}
+            name="website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </label>
+      </div>
+
+      {sendFailed ? (
+        <div
+          role="alert"
+          className="flex gap-3 rounded-xl border border-destructive bg-card px-4 py-3.5"
+        >
+          <TriangleAlert
+            size={18}
+            className="mt-px shrink-0 text-destructive"
+            aria-hidden
+          />
+          <div className="flex flex-col gap-1">
+            <p className="text-[14px] font-semibold text-destructive">
+              {contact.failure.title}
+            </p>
+            <p className="text-[13.5px] leading-[1.55] text-muted-foreground">
+              {contact.failure.description}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full"
+        disabled={sending}
+        aria-busy={sending || undefined}
+      >
+        {sending ? (
+          <>
+            <LoaderCircle
+              className="animate-spin motion-reduce:animate-none"
+              strokeWidth={2}
+              aria-hidden
+            />
+            Sending…
+          </>
+        ) : (
+          <>
+            Send message
+            <Send aria-hidden />
+          </>
+        )}
       </Button>
     </form>
   );

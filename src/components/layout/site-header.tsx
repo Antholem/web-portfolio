@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Download, Menu, X } from "lucide-react";
 
 import { Container } from "@/components/shared/container";
@@ -18,6 +18,7 @@ const navLinkClass =
 
 function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
@@ -25,7 +26,10 @@ function SiteHeader() {
 
     const desktop = window.matchMedia("(min-width: 60rem)");
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      // Focus may be on a link that is about to unmount; keep it in the header.
+      menuButtonRef.current?.focus();
     };
     const onBreakpointChange = (event: MediaQueryListEvent) => {
       if (event.matches) setMenuOpen(false);
@@ -43,11 +47,7 @@ function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border bg-nav backdrop-blur-[14px] backdrop-saturate-160">
       <Container className="flex h-17 items-center justify-between gap-4">
         {/* `#top` scrolls to the top of the document (HTML spec), no element needed. */}
-        <a
-          href="#top"
-          aria-label={`${siteConfig.name} — home`}
-          className="flex items-center gap-2.5"
-        >
+        <a href="#top" className="flex items-center gap-2.5">
           <SaMonogram height={30} />
           <span className="text-[15px] font-semibold tracking-[-0.02em]">
             {siteConfig.handle}
@@ -55,6 +55,8 @@ function SiteHeader() {
           <span className="hidden font-mono text-[12px] text-subtle-foreground md:inline">
             / {siteConfig.role.toLowerCase()}
           </span>
+          {/* Appended, not an aria-label, so the name still contains the visible text (WCAG 2.5.3). */}
+          <span className="sr-only"> — home</span>
         </a>
 
         <nav
@@ -89,6 +91,7 @@ function SiteHeader() {
             variant="outline"
             size="icon"
             className="md:hidden"
+            ref={menuButtonRef}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             aria-controls={menuOpen ? MOBILE_NAV_ID : undefined}
@@ -124,7 +127,9 @@ function SiteHeader() {
             ))}
             <div className="mt-3 grid grid-cols-2 gap-2.5">
               <Button asChild variant="outline">
-                <a href={siteConfig.links.resume}>Résumé</a>
+                <a href={siteConfig.links.resume} onClick={closeMenu}>
+                  Résumé
+                </a>
               </Button>
               <Button asChild>
                 <a href={`#${SECTIONS.contact.id}`} onClick={closeMenu}>

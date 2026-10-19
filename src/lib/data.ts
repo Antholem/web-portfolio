@@ -11,6 +11,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 
+import { CONTACT_LIMITS } from "@/lib/contact";
+
 import type {
   ContactTopic,
   ExperienceItem,
@@ -288,14 +290,18 @@ export const contact = {
     { value: "ai", label: "AI integration" },
     { value: "consulting", label: "Consulting" },
   ] satisfies ContactTopic[],
-  messageMaxLength: 1000,
+  messageMaxLength: CONTACT_LIMITS.message,
   messagePlaceholder:
     "Tell me about the product, timeline and what success looks like…",
   success: {
-    title: "Almost there",
+    title: "Message sent",
     description:
-      "Your email app should open with the message ready — hit send and I’ll get back to you within two business days.",
+      "Thanks for reaching out — I’ll get back to you within two business days.",
     reset: "Send another",
+  },
+  failure: {
+    title: "Couldn’t send your message",
+    description: "Check your connection and try again.",
   },
 };
 
