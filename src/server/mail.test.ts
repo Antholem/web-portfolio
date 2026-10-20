@@ -58,6 +58,26 @@ describe("sendContactEmail", () => {
     expect(sendMail).toHaveBeenCalledTimes(3);
   });
 
+  it("rebuilds the transport when the credentials change (e.g. .env edit in dev)", async () => {
+    const sendMail = vi.fn().mockResolvedValue({ messageId: "x" });
+    const close = vi.fn();
+    createTransport.mockReturnValue({ sendMail, close } as never);
+    const { sendContactEmail } = await loadMail();
+
+    await sendContactEmail(email);
+    vi.stubEnv("APP_FROM_EMAIL", "new-sender@example.test");
+    vi.stubEnv("APP_FROM_PASSWORD", "new-app-password");
+    await sendContactEmail(email);
+
+    expect(createTransport).toHaveBeenCalledTimes(2);
+    expect(createTransport).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        auth: { user: "new-sender@example.test", pass: "new-app-password" },
+      }),
+    );
+    expect(close).toHaveBeenCalledOnce();
+  });
+
   it("switches to nodemailer's JSON transport when MAIL_TRANSPORT=json", async () => {
     vi.stubEnv("MAIL_TRANSPORT", "json");
     fakeTransport();
