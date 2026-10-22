@@ -250,6 +250,12 @@ test.describe("keyboard", () => {
       page.getByRole("radio", { name: "Design system" }),
     ).toHaveAttribute("aria-checked", "true");
 
+    // The formatting toolbar is a single tab stop; arrows move within it.
+    await tabTo(page);
+    await expect(page.getByRole("button", { name: "Bold" })).toBeFocused();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("button", { name: "Italic" })).toBeFocused();
+
     await tabTo(page);
     await expect(page.getByRole("textbox", { name: "Message" })).toBeFocused();
     await page.keyboard.type("Hello");

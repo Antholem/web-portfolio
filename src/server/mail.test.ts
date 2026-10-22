@@ -109,8 +109,9 @@ describe("sendContactEmail", () => {
       from: { name: "Portfolio contact form", address: "from@example.test" },
       to: "inbox@example.test",
       replyTo: { name: "Jane Doe", address: "jane@example.com" },
-      subject: "[Portfolio] AI integration — Jane Doe",
-      text: "Hello there.\n\nSecond paragraph.\n\n—\nFrom: Jane Doe <jane@example.com>\nTopic: AI integration",
+      subject: "New inquiry from Jane Doe — AI integration",
+      text: expect.stringContaining("From:      Jane Doe <jane@example.com>"),
+      html: expect.stringContaining("New message from Jane Doe"),
     });
   });
 
@@ -126,9 +127,11 @@ describe("sendContactEmail", () => {
       const { sendContactEmail } = await loadMail();
       await sendContactEmail({ ...email, name });
       const message = sendMail.mock.calls[0][0];
-      expect(message.subject).toBe(`[Portfolio] AI integration — ${clean}`);
+      expect(message.subject).toBe(
+        `New inquiry from ${clean} — AI integration`,
+      );
       expect(message.replyTo.name).toBe(clean);
-      expect(message.text).toContain(`From: ${clean} <jane@example.com>`);
+      expect(message.text).toContain(`From:      ${clean} <jane@example.com>`);
       expect(message.subject).not.toMatch(/[\r\n]/);
     },
   );
@@ -137,8 +140,8 @@ describe("sendContactEmail", () => {
     const sendMail = fakeTransport();
     const { sendContactEmail } = await loadMail();
     await sendContactEmail({ ...email, message: "a\nb\n\nc" });
-    expect(sendMail.mock.calls[0][0].text.startsWith("a\nb\n\nc\n\n—\n")).toBe(
-      true,
+    expect(sendMail.mock.calls[0][0].text).toContain(
+      "Message\n-------\na\nb\n\nc\n\n—\n",
     );
   });
 

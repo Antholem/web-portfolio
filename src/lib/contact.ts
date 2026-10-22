@@ -44,8 +44,22 @@ export function validateContactForm(
 // Ends with . ! ? or …, optionally followed by closing quotes or brackets.
 const SENTENCE_END = /[.!?…]["'”’)\]]*$/;
 
+const LIST_LINE = /^(\s*(?:[-*•]|\d{1,3}[.)])\s+)(.*)$/;
+
+const capitalise = (text: string) =>
+  text.charAt(0).toUpperCase() + text.slice(1);
+
 const polishParagraph = (paragraph: string) => {
-  const text = paragraph.charAt(0).toUpperCase() + paragraph.slice(1);
+  const lines = paragraph.split("\n");
+  // Lists keep their markers and get no trailing full stop.
+  if (lines.every((line) => LIST_LINE.test(line))) {
+    return lines
+      .map((line) =>
+        line.replace(LIST_LINE, (_, marker, item) => marker + capitalise(item)),
+      )
+      .join("\n");
+  }
+  const text = capitalise(paragraph);
   return SENTENCE_END.test(text) ? text : `${text}.`;
 };
 

@@ -2,14 +2,13 @@ import "server-only";
 
 import nodemailer, { type Transporter } from "nodemailer";
 
+import {
+  renderContactEmail,
+  type ContactEmailInput,
+} from "./email/contact-email";
 import { getMailEnv } from "./env";
 
-export type ContactEmail = {
-  name: string;
-  email: string;
-  topicLabel: string;
-  message: string;
-};
+export type ContactEmail = ContactEmailInput;
 
 // Keyed by credentials: a long-lived server (or `next dev` after an .env edit)
 // must not keep authenticating with credentials that have since changed.
@@ -37,22 +36,17 @@ function getTransport(user: string, pass: string) {
   return smtpTransport.transport;
 }
 
-const singleLine = (value: string) => value.replace(/[\r\n]+/g, " ").trim();
-
-export async function sendContactEmail({
-  name,
-  email,
-  topicLabel,
-  message,
-}: ContactEmail) {
+export async function sendContactEmail(input: ContactEmail) {
   const env = getMailEnv();
-  const sender = singleLine(name);
+  const { subject, text, html } = renderContactEmail(input);
+  const sender = input.name.replace(/[\r\n]+/g, " ").trim();
 
   await getTransport(env.fromEmail, env.fromPassword).sendMail({
     from: { name: "Portfolio contact form", address: env.fromEmail },
     to: env.toEmail,
-    replyTo: { name: sender, address: email },
-    subject: `[Portfolio] ${topicLabel} — ${sender}`,
-    text: `${message}\n\n—\nFrom: ${sender} <${email}>\nTopic: ${topicLabel}`,
+    replyTo: { name: sender, address: input.email },
+    subject,
+    text,
+    html,
   });
 }

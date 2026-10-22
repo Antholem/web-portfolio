@@ -15,6 +15,7 @@ export const siteConfig = {
     full: "Clark, Pampanga, Philippines",
     coordinates: "15.18° N · 120.54° E",
     timezone: "GMT+8",
+    timeZoneId: "Asia/Manila",
   },
   links: {
     github: "https://github.com/Antholem",

@@ -31,8 +31,11 @@ import {
   type ContactFormErrors,
   type ContactFormValues,
 } from "@/lib/contact";
+import { useTextFormatting } from "@/hooks/use-text-formatting";
 import { contact } from "@/lib/data";
 import { cn } from "@/lib/utils";
+
+import { MessageToolbar } from "./message-toolbar";
 
 // Never trim the visitor's words to make room for added punctuation.
 const polishWithinLimit = (message: string) => {
@@ -99,6 +102,13 @@ function ContactForm() {
     setRefineState("idle");
     setField("message", message);
   }
+
+  const formatting = useTextFormatting({
+    ref: messageRef,
+    value: values.message,
+    onChange: handleMessageChange,
+    maxLength: contact.messageMaxLength,
+  });
 
   // Stand-in for a model call; the delay mirrors real latency so the loading state is exercised.
   function handleRefine() {
@@ -264,6 +274,11 @@ function ContactForm() {
             errors.message && "border-destructive",
           )}
         >
+          <MessageToolbar
+            controls={ids.message}
+            disabled={refining}
+            onAction={formatting.format}
+          />
           <Textarea
             ref={messageRef}
             id={ids.message}
@@ -272,6 +287,7 @@ function ContactForm() {
             maxLength={contact.messageMaxLength}
             value={values.message}
             onChange={(event) => handleMessageChange(event.target.value)}
+            onKeyDown={formatting.onKeyDown}
             aria-invalid={errors.message ? true : undefined}
             aria-describedby={
               errors.message ? `${ids.message}-error` : undefined

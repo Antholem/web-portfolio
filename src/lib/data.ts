@@ -48,6 +48,7 @@ export const techMarquee = [
   "Vercel",
   "Tailwind CSS",
   "shadcn/ui",
+  "Claude",
   "Gemini API",
 ];
 
@@ -86,36 +87,18 @@ export const about = {
   ] satisfies FocusArea[],
 };
 
-// TODO: fill companies and years from the résumé.
+// TODO: set the start year and refine the summary from the résumé.
 export const experience = {
   title: "Where I’ve shipped.",
   items: [
     {
       period: "[Year] — Present",
-      role: "Senior Software Engineer",
-      organization: "[Company name]",
-      details: ["SaaS", "Remote"],
-      summary:
-        "Lead a distributed team on a multi-tenant SaaS platform — owning architecture decisions, review standards and the release pipeline.",
-      tags: ["Next.js", "TypeScript", "PostgreSQL", "Docker"],
-    },
-    {
-      period: "[Year] — [Year]",
-      role: "Full-Stack Engineer",
-      organization: "[Company name]",
-      details: ["E-commerce"],
-      summary:
-        "Refactored a legacy monolith into modular services and rebuilt the storefront with server-rendered React for faster, more reliable checkout.",
-      tags: ["React", "Node.js", "Express", "MongoDB"],
-    },
-    {
-      period: "[Year] — [Year]",
       role: "Software Engineer",
-      organization: "[Company name]",
-      details: ["Fintech"],
+      organization: "Boomering",
+      details: [],
       summary:
-        "Delivered data-informed dashboards and reporting tools with a focus on observability, accessibility and reusable component libraries.",
-      tags: ["PHP", "MySQL", "Python", "Figma"],
+        "Build and maintain production web applications end to end — from the PostgreSQL data model to responsive, accessible Next.js interfaces.",
+      tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
     },
   ] satisfies ExperienceItem[],
 };
@@ -160,7 +143,7 @@ export const stack = {
     {
       title: "AI Integration",
       icon: Sparkles,
-      tools: ["Google Gemini", "Hugging Face"],
+      tools: ["Claude", "Google Gemini", "Hugging Face"],
     },
   ] satisfies StackGroup[],
 };
