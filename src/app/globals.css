@@ -327,6 +327,77 @@
     );
 }
 
+/* Greeting pill: two-tone hairline border and one soft shine on arrival. */
+@utility season-pill {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card), var(--card)) padding-box,
+    linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--season) 60%, transparent),
+        color-mix(in oklab, var(--season-2) 60%, transparent)
+      )
+      border-box;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      color-mix(in oklab, var(--season) 22%, transparent) 50%,
+      transparent 70%
+    );
+    transform: translateX(-110%);
+    animation: season-sheen 1.6s 0.9s ease-out 1 both;
+  }
+}
+
+@keyframes season-sheen {
+  to {
+    transform: translateX(110%);
+  }
+}
+
+/* Section dividers start with a short seasonal gradient. */
+@utility season-rule {
+  :root[data-season] & {
+    background: linear-gradient(
+      90deg,
+      var(--season),
+      color-mix(in oklab, var(--season-2) 55%, var(--border)) 72px,
+      var(--border) 200px
+    );
+  }
+}
+
+/* Footer wordmark: a whisper of two-tone fill inside the outline. */
+@utility season-wordmark {
+  :root[data-season] & {
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--season) 6%, transparent),
+      color-mix(in oklab, var(--season-2) 6%, transparent)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+/* The welcomed year, set before paint by the season boot script. */
+.season-year::after {
+  content: var(--season-year, "");
+}
+
+:root[data-season] ::selection {
+  background-color: var(--season);
+  color: var(--background);
+}
+
 /* Portrait frame picks up a faint accent edge. */
 @utility season-frame {
   :root[data-season] & {
@@ -393,6 +464,19 @@
   }
 }
 
+@keyframes season-flicker {
+  0%,
+  100% {
+    opacity: 0.95;
+  }
+  40% {
+    opacity: 0.7;
+  }
+  60% {
+    opacity: 0.9;
+  }
+}
+
 @keyframes season-bob {
   0%,
   100% {
@@ -413,7 +497,8 @@
   [data-season-ambient] {
     display: none !important;
   }
-  [data-season-decor] * {
+  [data-season-decor] *,
+  .season-pill::after {
     animation: none !important;
   }
 }

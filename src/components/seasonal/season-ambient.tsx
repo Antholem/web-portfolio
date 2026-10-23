@@ -61,6 +61,26 @@ const CONFETTI: Particle[] = [
 
 const CONFETTI_COLORS = ["var(--season)", "var(--season-2)", "#eab308"];
 
+// Plum-blossom petals: the spring-festival flower across East Asia.
+const PETALS: Particle[] = [
+  { left: 9, size: 7, duration: 22, delay: -4, drift: 40, spin: 220 },
+  { left: 24, size: 6, duration: 26, delay: -15, drift: -30, spin: -260 },
+  { left: 38, size: 8, duration: 24, delay: -9, drift: 36, spin: 300 },
+  { left: 63, size: 6, duration: 27, delay: -19, drift: -34, spin: -240 },
+  { left: 79, size: 7, duration: 23, delay: -2, drift: 30, spin: 280 },
+  { left: 94, size: 6, duration: 25, delay: -12, drift: -26, spin: -220 },
+];
+
+// Embers / fireflies drifting up through the dusk.
+const EMBERS: Particle[] = [
+  { left: 7, top: 94, size: 3, duration: 14, delay: -3, drift: 16 },
+  { left: 21, top: 98, size: 2, duration: 18, delay: -11, drift: -12 },
+  { left: 36, top: 96, size: 3, duration: 16, delay: -6, drift: 10 },
+  { left: 58, top: 99, size: 2, duration: 19, delay: -15, drift: -14 },
+  { left: 74, top: 95, size: 3, duration: 15, delay: -1, drift: 12 },
+  { left: 91, top: 97, size: 2, duration: 17, delay: -9, drift: -10 },
+];
+
 const motion = (p: Particle, animation: string): CSSProperties =>
   ({
     left: `${p.left}%`,
@@ -131,6 +151,37 @@ function SeasonAmbient() {
             size={p.size}
             fill="currentColor"
             strokeWidth={0}
+          />
+        ))}
+      </Layer>
+
+      <Layer season="lunar-new-year">
+        {PETALS.map((p, i) => (
+          <span
+            key={i}
+            className="season-particle rounded-[70%_0_70%_0] opacity-45"
+            style={{
+              ...motion(p, "season-fall linear"),
+              width: p.size,
+              height: p.size,
+              background: "color-mix(in oklab, var(--season-2) 55%, #ffd6dc)",
+            }}
+          />
+        ))}
+      </Layer>
+
+      <Layer season="halloween">
+        {EMBERS.map((p, i) => (
+          <span
+            key={i}
+            className="season-particle rounded-full bg-season"
+            style={{
+              ...motion(p, "season-rise ease-in-out"),
+              ["--peak" as string]: 0.55,
+              width: p.size,
+              height: p.size,
+              boxShadow: "0 0 6px var(--season)",
+            }}
           />
         ))}
       </Layer>

@@ -138,7 +138,7 @@ export const stack = {
     {
       title: "Design",
       icon: PenTool,
-      tools: ["Figma", "Adobe XD"],
+      tools: ["Figma", "Claude Design", "Adobe XD"],
     },
     {
       title: "AI Integration",

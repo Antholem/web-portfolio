@@ -89,8 +89,15 @@ export function bootSeason(
     // Storage can be blocked (private mode); fall back to the date.
   }
   if (season === undefined) season = resolve(config);
-  if (season) document.documentElement.setAttribute(attribute, season);
-  else document.documentElement.removeAttribute(attribute);
+  const root = document.documentElement;
+  if (season) root.setAttribute(attribute, season);
+  else root.removeAttribute(attribute);
+
+  // The year being welcomed (Jul–Dec → next year), for CSS `content` on a
+  // static page that cannot know the date at build time.
+  const now = new Date();
+  const welcomed = now.getFullYear() + (now.getMonth() >= 6 ? 1 : 0);
+  root.style.setProperty("--season-year", `"${welcomed}"`);
 }
 
 export function seasonBootScript(config: SeasonConfig) {

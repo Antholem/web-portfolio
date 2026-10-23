@@ -14,7 +14,7 @@ function SectionHeader({ index, label, className }: SectionHeaderProps) {
       <Eyebrow>
         {index} / {label}
       </Eyebrow>
-      <span aria-hidden className="h-px flex-1 bg-border" />
+      <span aria-hidden className="h-px flex-1 bg-border season-rule" />
     </div>
   );
 }

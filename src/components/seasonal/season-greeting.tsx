@@ -8,10 +8,15 @@ function SeasonGreeting() {
         <p
           key={id}
           data-season-only={id}
-          className="inline-flex h-8 items-center gap-2 rounded-full border border-season/35 bg-card px-3 text-[13px] text-season"
+          className="season-pill inline-flex h-8 items-center gap-2 rounded-full px-3 text-[13px] font-medium text-season"
         >
-          <Icon size={14} aria-hidden />
-          {greeting}
+          <Icon size={14} className="text-season-2" aria-hidden />
+          <span>
+            {greeting}
+            {id === "new-year" ? (
+              <span className="season-year before:content-['_']" />
+            ) : null}
+          </span>
         </p>
       ))}
     </>

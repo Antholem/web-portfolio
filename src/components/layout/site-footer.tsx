@@ -50,7 +50,7 @@ function SiteFooter() {
 
         <div
           aria-hidden
-          className="pointer-events-none text-center text-[clamp(76px,18.5vw,248px)] leading-[0.78] font-semibold tracking-[-0.065em] whitespace-nowrap text-outline select-none"
+          className="pointer-events-none season-wordmark text-center text-[clamp(76px,18.5vw,248px)] leading-[0.78] font-semibold tracking-[-0.065em] whitespace-nowrap text-outline select-none"
         >
           {footer.wordmark}
         </div>
