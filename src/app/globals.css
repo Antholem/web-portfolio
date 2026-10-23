@@ -119,6 +119,8 @@
   --color-tooltip-foreground: var(--tooltip-foreground);
   --color-nav: var(--nav);
   --color-grid-line: var(--grid-line);
+  --color-season: var(--season);
+  --color-season-2: var(--season-2);
 
   --font-sans:
     var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
@@ -226,7 +228,194 @@
 
 @utility text-outline {
   color: transparent;
-  -webkit-text-stroke: 1px var(--input);
+  -webkit-text-stroke: 1px var(--wordmark-stroke);
+}
+
+/* ------------------------------------------------------------------------ */
+/* Seasonal accents. <html data-season> is set before first paint by         */
+/* SeasonScript; with no season everything below is a no-op.                 */
+/* ------------------------------------------------------------------------ */
+
+:root {
+  --season: transparent;
+  --season-2: transparent;
+  --season-glow: 0%;
+  --wordmark-stroke: var(--input);
+}
+
+/*
+ * Two colours per season. --season is used for text (≥ 4.5:1 on the page in
+ * its theme); --season-2 is decorative only (gradients, ornaments).
+ */
+:root[data-season="new-year"] {
+  --season: #1d4ed8;
+  --season-2: #ca8a04;
+}
+:root.dark[data-season="new-year"] {
+  --season: #93c5fd;
+  --season-2: #facc15;
+}
+:root[data-season="lunar-new-year"] {
+  --season: #b45309;
+  --season-2: #dc2626;
+}
+:root.dark[data-season="lunar-new-year"] {
+  --season: #fbbf24;
+  --season-2: #f87171;
+}
+:root[data-season="valentines"] {
+  --season: #be123c;
+  --season-2: #ec4899;
+}
+:root.dark[data-season="valentines"] {
+  --season: #fb7185;
+  --season-2: #f9a8d4;
+}
+:root[data-season="halloween"] {
+  --season: #c2410c;
+  --season-2: #7e22ce;
+}
+:root.dark[data-season="halloween"] {
+  --season: #fb923c;
+  --season-2: #c084fc;
+}
+:root[data-season="christmas"] {
+  --season: #b91c1c;
+  --season-2: #15803d;
+}
+:root.dark[data-season="christmas"] {
+  --season: #f87171;
+  --season-2: #4ade80;
+}
+:root[data-season="birthday"] {
+  --season: #7c3aed;
+  --season-2: #db2777;
+}
+:root.dark[data-season="birthday"] {
+  --season: #c4b5fd;
+  --season-2: #f9a8d4;
+}
+
+:root[data-season] {
+  --season-glow: 9%;
+  --grid-line: color-mix(in oklab, var(--season) 9%, transparent);
+  --wordmark-stroke: color-mix(in oklab, var(--season) 45%, var(--input));
+}
+:root.dark[data-season] {
+  --season-glow: 13%;
+}
+
+/* Two-tone hairline across the top of the header. */
+@utility season-topline {
+  background-image: linear-gradient(90deg, var(--season), var(--season-2));
+  background-size: 100% 2px;
+  background-repeat: no-repeat;
+}
+
+/* Soft two-colour wash behind the hero; transparent with no season. */
+@utility season-glow {
+  background:
+    radial-gradient(
+      55% 60% at 78% 18%,
+      color-mix(in oklab, var(--season) var(--season-glow), transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      45% 50% at 12% 0%,
+      color-mix(in oklab, var(--season-2) var(--season-glow), transparent),
+      transparent 70%
+    );
+}
+
+/* Portrait frame picks up a faint accent edge. */
+@utility season-frame {
+  :root[data-season] & {
+    border-color: color-mix(in oklab, var(--season) 28%, var(--border));
+  }
+}
+
+/* Season-specific markup is server-rendered and shown by attribute, so
+   there is no hydration flash and no client JS involved. */
+:root:not([data-season="new-year"]) [data-season-only="new-year"],
+:root:not([data-season="lunar-new-year"]) [data-season-only="lunar-new-year"],
+:root:not([data-season="valentines"]) [data-season-only="valentines"],
+:root:not([data-season="halloween"]) [data-season-only="halloween"],
+:root:not([data-season="christmas"]) [data-season-only="christmas"],
+:root:not([data-season="birthday"]) [data-season-only="birthday"] {
+  display: none !important;
+}
+
+/* Gentle, compositor-only motion for seasonal ornaments. */
+@keyframes season-fall {
+  from {
+    transform: translate3d(0, -16px, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(var(--drift, 0px), 900px, 0)
+      rotate(var(--spin, 0deg));
+  }
+}
+
+@keyframes season-rise {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  15%,
+  70% {
+    opacity: var(--peak, 0.5);
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), -520px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes season-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes season-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes season-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -5px, 0);
+  }
+}
+
+@utility season-particle {
+  position: absolute;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Drifting particles go away; ornaments stay, but hold still. */
+  [data-season-ambient] {
+    display: none !important;
+  }
+  [data-season-decor] * {
+    animation: none !important;
+  }
 }
 
 /*

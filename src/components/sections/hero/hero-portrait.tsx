@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { SeasonDecor } from "@/components/seasonal/season-decor";
 import { Card } from "@/components/ui/card";
 import { siteConfig } from "@/constants/site";
 import { hero } from "@/lib/data";
@@ -44,7 +45,8 @@ function CodeCard() {
 function HeroPortrait() {
   return (
     <div className="relative">
-      <div className="relative aspect-4/5 overflow-hidden rounded-3xl border border-border shadow-elevated stage-backdrop">
+      <SeasonDecor />
+      <div className="relative aspect-4/5 overflow-hidden rounded-3xl border season-frame shadow-elevated stage-backdrop">
         <Image
           src="/images/portrait-hero.png"
           alt={hero.portraitAlt}

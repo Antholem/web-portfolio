@@ -3,6 +3,8 @@ import type { LucideIcon } from "lucide-react";
 import { ArrowRight, Clock, Download, Mail, MapPin } from "lucide-react";
 
 import { GitHubIcon, LinkedInIcon } from "@/components/icons/brand-icons";
+import { SeasonAmbient } from "@/components/seasonal/season-ambient";
+import { SeasonGreeting } from "@/components/seasonal/season-greeting";
 import { Container } from "@/components/shared/container";
 import { StatusDot } from "@/components/shared/status-dot";
 import { HighlightedText, Lead } from "@/components/shared/typography";
@@ -37,13 +39,17 @@ function HeroSection() {
         aria-hidden
         className="pointer-events-none absolute inset-0 grid-backdrop"
       />
+      <SeasonAmbient />
 
       <Container className="relative grid grid-cols-1 items-center gap-12 pt-22 pb-24 md:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] md:gap-18">
         <div className="flex flex-col gap-7">
-          <p className="inline-flex h-8 items-center gap-2.5 self-start rounded-full border border-border bg-card pr-3.5 pl-3 text-[13px] text-muted-foreground">
-            <StatusDot pulse />
-            {hero.availability}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="inline-flex h-8 items-center gap-2.5 rounded-full border border-border bg-card pr-3.5 pl-3 text-[13px] text-muted-foreground">
+              <StatusDot pulse />
+              {hero.availability}
+            </p>
+            <SeasonGreeting />
+          </div>
 
           <div className="flex flex-col gap-5">
             <h1 className="text-[clamp(46px,6.2vw,86px)] leading-[0.96] font-semibold tracking-tighter">

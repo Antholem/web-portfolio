@@ -46,7 +46,7 @@ function SiteHeader() {
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-nav backdrop-blur-[14px] backdrop-saturate-160">
+    <header className="sticky top-0 z-50 border-b border-border bg-nav season-topline backdrop-blur-[14px] backdrop-saturate-160">
       <Container className="flex h-17 items-center justify-between gap-4">
         {/* `#top` scrolls to the top of the document (HTML spec), no element needed. */}
         <a href="#top" className="flex items-center gap-2.5">

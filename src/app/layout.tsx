@@ -7,6 +7,7 @@ import { AnchorScrollSettler } from "@/components/layout/anchor-scroll-settler";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Providers } from "@/components/providers/providers";
+import { SeasonScript } from "@/components/seasonal/season-script";
 import { siteConfig } from "@/constants/site";
 import { DEFAULT_THEME, THEME_COLORS } from "@/constants/theme";
 import { cn } from "@/lib/utils";
@@ -40,6 +41,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(GeistSans.variable, GeistMono.variable)}
     >
+      <head>
+        <SeasonScript />
+      </head>
       <body>
         <Providers>
           <SiteHeader />
