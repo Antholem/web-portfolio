@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { cleanup } from "@testing-library/react";
+import { toast } from "sonner";
 import { afterEach, vi } from "vitest";
 
 // Tell React this is a test environment so act() works outside RTL helpers too.
@@ -31,6 +32,23 @@ vi.mock("nodemailer", () => {
   return { default: { createTransport }, createTransport };
 });
 
+// Snackbars: tests assert what was raised, not Sonner's rendering. Mocked here,
+// not per file: with `isolate: false` a component imported by an earlier file
+// keeps whatever `sonner` it loaded first, so a file-level mock can arrive late.
+// The same reason makes the mock a global singleton: this setup re-runs per
+// file, and fresh vi.fn()s would not be the ones those cached modules call.
+vi.mock("sonner", async (importOriginal) => {
+  const shared = globalThis as typeof globalThis & { __toastMock?: unknown };
+  shared.__toastMock ??= Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+  });
+  return {
+    ...(await importOriginal<typeof import("sonner")>()),
+    toast: shared.__toastMock,
+  };
+});
+
 // jsdom has no matchMedia; components (header, theme toggle) query it.
 if (typeof window !== "undefined" && !window.matchMedia) {
   Object.defineProperty(window, "matchMedia", {
@@ -51,6 +69,9 @@ if (typeof window !== "undefined" && !window.matchMedia) {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.mocked(toast).mockClear();
+  vi.mocked(toast.success).mockClear();
+  vi.mocked(toast.error).mockClear();
   // Pure-logic files opt into the faster `node` environment: no DOM to reset.
   if (typeof document === "undefined") return;
   cleanup();

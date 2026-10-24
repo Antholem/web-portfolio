@@ -1,56 +1,16 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 
 import { SeasonDecor } from "@/components/seasonal/season-decor";
-import { Card } from "@/components/ui/card";
-import { SEASONS } from "@/constants/seasons";
 import { siteConfig } from "@/constants/site";
 import { hero } from "@/lib/data";
 
-const str = (value: string) => (
-  <span className="text-foreground">{`"${value}"`}</span>
-);
-
-function CodeCard() {
-  return (
-    <Card
-      aria-hidden
-      className="relative z-20 mx-3.5 -mt-18 overflow-hidden rounded-[14px] font-mono shadow-elevated sm:absolute sm:bottom-4 sm:left-4 sm:mx-0 sm:mt-0 sm:w-76 lg:bottom-11 lg:-left-11"
-    >
-      <div className="flex h-8.5 items-center gap-1.5 border-b border-border bg-surface px-3">
-        <span className="size-2.25 rounded-full bg-input" />
-        <span className="size-2.25 rounded-full bg-input" />
-        <span className="size-2.25 rounded-full bg-input" />
-        <span className="ml-2 text-[11px] text-subtle-foreground">
-          sam.config.ts
-        </span>
-      </div>
-      <div className="px-4 py-3.5 text-[12.5px] leading-[1.75] text-muted-foreground">
-        <div>
-          <span className="text-subtle-foreground">export const</span>{" "}
-          <span className="text-foreground">sam</span> = {"{"}
-        </div>
-        <div className="pl-4">role: {str("Software Engineer")},</div>
-        <div className="pl-4">
-          stack: [{str("Next.js")}, {str("Node")}, {str("Postgres")}],
-        </div>
-        <div className="pl-4">focus: {str("scale × UX")},</div>
-        <div className="pl-4">
-          shipping: <span className="text-foreground">true</span>,
-        </div>
-        {SEASONS.map(({ id }) => (
-          <div key={id} data-season-only={id} className="pl-4">
-            season: <span className="text-season">{`"${id}"`}</span>,
-          </div>
-        ))}
-        <div>{"};"}</div>
-      </div>
-    </Card>
-  );
-}
-
 function HeroPortrait() {
   return (
-    <div className="relative">
+    <div
+      className="relative enter-fade"
+      style={{ "--enter-delay": "150ms" } as CSSProperties}
+    >
       <SeasonDecor />
       {/* overflow-clip, not hidden: the shifted photo overflows by a few px and
           a hidden-overflow box can still be scrolled (e.g. by scrollIntoView). */}
@@ -70,7 +30,6 @@ function HeroPortrait() {
           <span>{hero.portraitCaption}</span>
         </div>
       </div>
-      <CodeCard />
     </div>
   );
 }

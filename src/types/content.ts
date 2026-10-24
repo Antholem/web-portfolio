@@ -38,43 +38,16 @@ export type Service = {
   features: string[];
 };
 
-export type ProjectCategory = "web" | "ai" | "oss";
-
-export type ProjectFilter = {
-  value: ProjectCategory | "all";
-  label: string;
-};
-
-export type ProjectLink = {
-  label: string;
-  href: string;
-};
-
-export type ProjectPreviewKey = "ledgerline" | "merchly" | "relay" | "forge";
-
 export type Project = {
-  slug: ProjectPreviewKey;
   name: string;
   year: string;
-  category: ProjectCategory;
+  /** Short label shown next to the year, e.g. "AI". */
   kind: string;
-  summary: string;
-  tags: string[];
-  links: ProjectLink[];
-};
-
-export type FeaturedProject = Omit<Project, "links"> & {
   role: string;
   tagline: string;
+  summary: string;
   highlights: string[];
-  links: {
-    caseStudy: string;
-    demo: string;
-    source: string;
-  };
-};
-
-export type ContactTopic = {
-  value: string;
-  label: string;
+  tags: string[];
+  links: { live: string; source: string };
+  image: { src: string; alt: string; width: number; height: number };
 };

@@ -7,10 +7,10 @@ async function renderWholePage(page: Page) {
   await page.evaluate(async () => {
     const step = innerHeight * 0.8;
     for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
-      scrollTo(0, y);
+      scrollTo({ top: y, behavior: "instant" });
       await new Promise((r) => requestAnimationFrame(() => r(null)));
     }
-    scrollTo(0, 0);
+    scrollTo({ top: 0, behavior: "instant" });
   });
 }
 
@@ -132,7 +132,22 @@ test.describe("layout", () => {
         width,
         height: page.viewportSize()!.height,
       });
-      await nav.scrollIntoViewIfNeeded();
+      // Instant (a glide would leave stale positions), repeated until the nav
+      // is on screen: content-visibility sections render on approach and
+      // shift the target after the first jump.
+      await nav.evaluate(async (el) => {
+        let lastTop = NaN;
+        for (let i = 0; i < 8; i++) {
+          el.scrollIntoView({ block: "center", behavior: "instant" });
+          await new Promise((r) =>
+            requestAnimationFrame(() => requestAnimationFrame(r)),
+          );
+          const { top, bottom } = el.getBoundingClientRect();
+          // On screen and unmoved since the last pass = layout has settled.
+          if (top >= 0 && bottom <= innerHeight && top === lastTop) break;
+          lastTop = top;
+        }
+      });
       const covered = await nav.evaluate((el) =>
         [...el.querySelectorAll("a")]
           .filter((a) => {

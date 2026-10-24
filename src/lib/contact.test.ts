@@ -11,7 +11,7 @@ import {
 const valid: ContactFormValues = {
   name: "Jane Doe",
   email: "jane@example.com",
-  topic: "build",
+  subject: "New SaaS dashboard",
   message: "Hello there",
 };
 
@@ -22,10 +22,11 @@ describe("validateContactForm", () => {
 
   it("reports every missing field at once with user-facing copy", () => {
     expect(
-      validateContactForm({ name: "", email: "", topic: "", message: "" }),
+      validateContactForm({ name: "", email: "", subject: "", message: "" }),
     ).toEqual({
       name: "Tell me your name",
       email: "Enter a valid email address",
+      subject: "Add a subject",
       message: "Add a short message",
     });
   });
@@ -73,7 +74,12 @@ describe("validateContactForm", () => {
 
   describe("length limits", () => {
     it("exposes the limits shared by the form and the server action", () => {
-      expect(CONTACT_LIMITS).toEqual({ name: 100, email: 254, message: 1000 });
+      expect(CONTACT_LIMITS).toEqual({
+        name: 100,
+        email: 254,
+        subject: 120,
+        message: 1000,
+      });
     });
 
     it("accepts a name and message exactly at the limit", () => {
@@ -127,8 +133,22 @@ describe("validateContactForm", () => {
     });
   });
 
-  it("does not validate the topic (it always has a selection)", () => {
-    expect(validateContactForm({ ...valid, topic: "" })).toEqual({});
+  describe("subject", () => {
+    it("is required (whitespace does not count)", () => {
+      expect(validateContactForm({ ...valid, subject: " \t " })).toEqual({
+        subject: "Add a subject",
+      });
+    });
+
+    it("accepts exactly the limit after trimming and rejects one more", () => {
+      const max = "s".repeat(CONTACT_LIMITS.subject);
+      expect(validateContactForm({ ...valid, subject: ` ${max} ` })).toEqual(
+        {},
+      );
+      expect(validateContactForm({ ...valid, subject: `${max}s` })).toEqual({
+        subject: "Keep your subject under 120 characters",
+      });
+    });
   });
 
   it("does not mutate its input", () => {

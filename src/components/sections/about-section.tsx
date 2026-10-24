@@ -17,13 +17,13 @@ function AboutSection() {
     <Section id={id}>
       <SectionHeader index={index} label={eyebrow} />
       <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-18">
-        <div className="flex flex-col gap-5">
+        <div className="reveal flex flex-col gap-5">
           <SectionTitle>{about.title}</SectionTitle>
           <Lead>{about.lead}</Lead>
         </div>
 
         <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-4.5 text-[18px] leading-[1.7] text-pretty text-muted-foreground">
+          <div className="reveal flex flex-col gap-4.5 text-[18px] leading-[1.7] text-pretty text-muted-foreground">
             {about.paragraphs.map((paragraph) => (
               <p key={paragraph}>
                 <HighlightedText text={paragraph} />
@@ -37,7 +37,7 @@ function AboutSection() {
                 key={area.title}
                 asChild
                 interactive
-                className="flex flex-col gap-4 p-6"
+                className="reveal flex flex-col gap-4 p-6"
               >
                 <li>
                   <IconBox icon={area.icon} />

@@ -305,3 +305,72 @@ test.describe("robustness", () => {
     ).toBeVisible();
   });
 });
+
+test.describe("smooth scrolling", () => {
+  /** Distinct scroll positions seen over ~1.5s after `act` — 1–2 means a jump. */
+  async function scrollSteps(page: Page, act: () => Promise<void>) {
+    await page.evaluate(() => {
+      const w = window as unknown as { __steps: number[] };
+      w.__steps = [];
+      const start = performance.now();
+      const tick = () => {
+        w.__steps.push(Math.round(scrollY));
+        if (performance.now() - start < 1500) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    await act();
+    await page.waitForTimeout(1700);
+    const steps = await page.evaluate(
+      () => (window as unknown as { __steps: number[] }).__steps,
+    );
+    return steps.filter((v, i) => i === 0 || v !== steps[i - 1]).length - 1;
+  }
+
+  const sectionTop = (page: Page, id: string) =>
+    page
+      .locator(`#${id}`)
+      .evaluate((el) => Math.round(el.getBoundingClientRect().top) || 0); // avoid -0
+
+  test("nav links glide to the section and land aligned; the logo glides back to the top", async ({
+    page,
+  }) => {
+    test.skip(
+      isMobile(page),
+      "desktop nav; the mobile menu shares the same links",
+    );
+    await gotoHome(page);
+    const glide = await scrollSteps(page, () =>
+      page
+        .getByRole("navigation", { name: "Primary" })
+        .getByRole("link", { name: "Contact" })
+        .click(),
+    );
+    expect(glide).toBeGreaterThan(10);
+    await expect.poll(() => sectionTop(page, "contact")).toBe(0);
+
+    // With a settle still pending for #contact, #top must not be pulled back.
+    const back = await scrollSteps(page, () =>
+      page.getByRole("banner").getByRole("link", { name: /home$/ }).click(),
+    );
+    expect(back).toBeGreaterThan(10);
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  });
+
+  test.describe("with reduced motion", () => {
+    test.use({ reducedMotion: "reduce" });
+
+    test("jumps instantly instead of gliding", async ({ page }) => {
+      test.skip(isMobile(page), "desktop nav");
+      await gotoHome(page);
+      const steps = await scrollSteps(page, () =>
+        page
+          .getByRole("navigation", { name: "Primary" })
+          .getByRole("link", { name: "Contact" })
+          .click(),
+      );
+      expect(steps).toBeLessThanOrEqual(3);
+      await expect.poll(() => sectionTop(page, "contact")).toBe(0);
+    });
+  });
+});

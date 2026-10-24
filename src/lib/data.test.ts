@@ -1,6 +1,8 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { PROJECT_PREVIEWS } from "@/components/sections/work/previews/project-previews";
+import { CONTACT_LIMITS } from "./contact";
 
 import {
   about,
@@ -15,7 +17,7 @@ import {
 } from "./data";
 
 // Content integrity: these catch edits that would break rendering (duplicate
-// React keys, missing previews, empty filters) before they reach the page.
+// React keys, missing screenshots, broken links) before they reach the page.
 
 const unique = (values: readonly string[]) =>
   new Set(values).size === values.length;
@@ -60,43 +62,34 @@ describe("content data", () => {
   });
 
   describe("work", () => {
-    const all = [work.featured, ...work.projects];
+    const { project } = work;
 
-    it("has unique project slugs, each with a preview", () => {
-      expect(unique(all.map((p) => p.slug))).toBe(true);
-      for (const p of all)
-        expect(PROJECT_PREVIEWS[p.slug]).toBeTypeOf("function");
-    });
-
-    it("starts with an 'all' filter and has unique filter values", () => {
-      expect(work.filters[0].value).toBe("all");
-      expect(unique(work.filters.map((f) => f.value))).toBe(true);
-    });
-
-    it("never offers a filter that would show an empty gallery", () => {
-      for (const filter of work.filters.slice(1)) {
-        expect(all.some((p) => p.category === filter.value)).toBe(true);
+    it("links to a real live site and source over https", () => {
+      for (const href of [project.links.live, project.links.source]) {
+        expect(new URL(href).protocol).toBe("https:");
       }
     });
 
-    it("has a filter for every project category", () => {
-      const values = work.filters.map((f) => f.value as string);
-      for (const p of all) expect(values).toContain(p.category);
+    it("has a local screenshot with real dimensions and alt text", () => {
+      expect(project.image.src).toMatch(/^\/images\/projects\/.+\.(webp|png)$/);
+      expect(existsSync(join("public", project.image.src))).toBe(true);
+      expect(project.image.width).toBeGreaterThan(0);
+      expect(project.image.height).toBeGreaterThan(0);
+      expect(project.image.alt.trim()).not.toBe("");
     });
 
-    it("has unique tags and link labels per project", () => {
-      for (const p of all) expect(unique(p.tags)).toBe(true);
-      for (const p of work.projects) {
-        expect(unique(p.links.map((l) => l.label))).toBe(true);
-      }
+    it("has unique tags and highlights", () => {
+      expect(unique(project.tags)).toBe(true);
+      expect(unique(project.highlights)).toBe(true);
     });
   });
 
   describe("contact", () => {
-    it("has unique topic values and labels", () => {
-      expect(contact.topics.length).toBeGreaterThan(0);
-      expect(unique(contact.topics.map((t) => t.value))).toBe(true);
-      expect(unique(contact.topics.map((t) => t.label))).toBe(true);
+    it("has a subject placeholder that fits the subject limit", () => {
+      expect(contact.subjectPlaceholder.length).toBeGreaterThan(0);
+      expect(contact.subjectPlaceholder.length).toBeLessThanOrEqual(
+        CONTACT_LIMITS.subject,
+      );
     });
 
     it("has a positive message limit", () => {

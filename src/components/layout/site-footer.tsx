@@ -63,7 +63,7 @@ function SiteFooter() {
           <Button asChild variant="ghost" size="sm" className="px-2.5">
             <a href="#top">
               Back to top
-              <ArrowUp aria-hidden />
+              <ArrowUp aria-hidden className="nudge-up" />
             </a>
           </Button>
         </div>

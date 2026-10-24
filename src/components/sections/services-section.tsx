@@ -14,7 +14,7 @@ function ServicesSection() {
   return (
     <Section id={id} className="border-t border-border">
       <SectionHeader index={index} label={eyebrow} />
-      <SectionTitle className="mb-12 max-w-[20ch]">
+      <SectionTitle className="reveal mb-12 max-w-[20ch]">
         {services.title}
       </SectionTitle>
 
@@ -24,7 +24,7 @@ function ServicesSection() {
             key={service.title}
             asChild
             interactive
-            className="flex flex-col gap-7 p-8"
+            className="reveal flex flex-col gap-7 p-8"
           >
             <article>
               <div className="flex items-center justify-between">

@@ -14,7 +14,7 @@ function StackSection() {
   return (
     <Section id={id}>
       <SectionHeader index={index} label={eyebrow} />
-      <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+      <div className="reveal mb-12 flex flex-wrap items-end justify-between gap-6">
         <SectionTitle className="max-w-[18ch]">{stack.title}</SectionTitle>
         <Lead className="max-w-[40ch]">{stack.lead}</Lead>
       </div>
@@ -25,7 +25,7 @@ function StackSection() {
             key={group.title}
             asChild
             interactive
-            className="flex flex-col gap-6 p-7"
+            className="reveal flex flex-col gap-6 p-7"
           >
             <li>
               <div className="flex items-center justify-between">

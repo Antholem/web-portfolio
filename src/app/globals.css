@@ -15,6 +15,8 @@
   --subtle-foreground: #6b6b6b;
   --border: #e6e6e6;
   --input: #d4d4d4;
+  --scrollbar-thumb: #d4d4d4;
+  --scrollbar-thumb-hover: #a3a3a3;
   --primary: #0a0a0a;
   --primary-foreground: #fafafa;
   --primary-hover: #2a2a2a;
@@ -58,6 +60,8 @@
   --subtle-foreground: #8f8f8f;
   --border: #232323;
   --input: #363636;
+  --scrollbar-thumb: #363636;
+  --scrollbar-thumb-hover: #525252;
   --primary: #fafafa;
   --primary-foreground: #0a0a0a;
   --primary-hover: #e2e2e2;
@@ -197,6 +201,37 @@
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+
+  /* Slim pill thumb on a clear track, retinted with the theme. Chromium and
+     Safari take the pseudo-elements (setting scrollbar-color there would
+     disable them); Firefox only has the standard properties. */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-color: var(--scrollbar-thumb);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+    }
   }
 }
 
@@ -534,6 +569,107 @@
     clip-path: circle(
       var(--reveal-r, 150vmax) at var(--reveal-x, 50%) var(--reveal-y, 0)
     );
+  }
+}
+
+/* Smooth in-page navigation (nav links, logo, "Back to top"); instant for
+   anyone who prefers reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ------------------------------------------------------------------------ */
+/* Motion. Opacity/transform only; everything is off for reduced motion.     */
+/* Keyframes animate `transform` while hover lifts use Tailwind's separate   */
+/* `translate` property, so the two compose instead of fighting.             */
+/* ------------------------------------------------------------------------ */
+
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+/* Page-load entrance; stagger with --enter-delay. */
+@utility enter {
+  animation: enter-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+@utility enter-fade {
+  animation: enter-fade 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+/*
+ * Scroll reveal via scroll-driven animations: no JS, runs off the main
+ * thread. Browsers without support skip this block and show content as is.
+ */
+@supports (animation-timeline: view()) {
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+    }
+  }
+
+  .reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+}
+
+/* Icons nudge toward where their button goes (buttons are `group/btn`). */
+@utility nudge-x {
+  transition: translate 0.2s ease;
+  .group\/btn:hover & {
+    translate: 3px 0;
+  }
+}
+
+@utility nudge-diagonal {
+  transition: translate 0.2s ease;
+  .group\/btn:hover & {
+    translate: 2px -2px;
+  }
+}
+
+@utility nudge-up {
+  transition: translate 0.2s ease;
+  .group\/btn:hover & {
+    translate: 0 -2px;
+  }
+}
+
+@utility nudge-down {
+  transition: translate 0.2s ease;
+  .group\/btn:hover & {
+    translate: 0 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter,
+  .enter-fade,
+  .reveal {
+    animation: none !important;
+  }
+  .nudge-x,
+  .nudge-diagonal,
+  .nudge-up,
+  .nudge-down {
+    translate: none !important;
   }
 }
 

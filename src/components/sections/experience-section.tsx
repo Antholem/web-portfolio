@@ -15,12 +15,12 @@ function ExperienceSection() {
   return (
     <Section id={id} className="border-y border-border bg-card">
       <SectionHeader index={index} label={eyebrow} />
-      <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+      <div className="reveal mb-12 flex flex-wrap items-end justify-between gap-6">
         <SectionTitle className="max-w-[16ch]">{experience.title}</SectionTitle>
         <Button asChild variant="outline">
           <a href={siteConfig.links.resume}>
             Full résumé
-            <ArrowUpRight aria-hidden />
+            <ArrowUpRight aria-hidden className="nudge-diagonal" />
           </a>
         </Button>
       </div>
@@ -29,7 +29,7 @@ function ExperienceSection() {
         {experience.items.map((item) => (
           <li
             key={`${item.role}-${item.period}`}
-            className="grid grid-cols-1 gap-3 border-t border-border py-8 last:border-b md:grid-cols-[200px_minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10"
+            className="reveal grid grid-cols-1 gap-3 border-t border-border py-8 last:border-b md:grid-cols-[200px_minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10"
           >
             <p className="pt-1 font-mono text-[13px] text-subtle-foreground">
               {item.period}

@@ -236,3 +236,100 @@ describe("AnchorScrollSettler", () => {
     expect(() => render(<AnchorScrollSettler />)).not.toThrow();
   });
 });
+
+describe("AnchorScrollSettler with smooth scrolling", () => {
+  // jsdom delivers the click's hashchange via a (faked) timer; a browser
+  // delivers it right away, before the visitor could scroll.
+  const deliverHashChange = () => act(() => vi.advanceTimersByTime(1));
+
+  const scrollEnd = () =>
+    act(() => {
+      window.dispatchEvent(new Event("scrollend"));
+    });
+
+  beforeEach(() => {
+    // The suite above leaves rAF-only fake timers installed; re-install so
+    // setTimeout (the scrollend fallback) is faked too.
+    vi.useRealTimers();
+    vi.useFakeTimers({
+      toFake: [
+        "requestAnimationFrame",
+        "cancelAnimationFrame",
+        "setTimeout",
+        "clearTimeout",
+      ],
+    });
+    window.history.replaceState(null, "", "/");
+    document.documentElement.style.scrollBehavior = "smooth";
+    Object.defineProperty(document.documentElement, "scrollHeight", {
+      configurable: true,
+      value: 100_000,
+    });
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = "";
+    document.documentElement.style.scrollBehavior = "";
+    // @ts-expect-error -- drop the per-test override
+    delete document.documentElement.scrollHeight;
+    vi.useRealTimers();
+  });
+
+  it("does not interrupt the glide: waits for scrollend before correcting", () => {
+    render(<AnchorScrollSettler />);
+    const target = addTarget("contact", { top: 458 });
+    fireEvent.click(addLink("#contact").a);
+    frame(10);
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+    scrollEnd();
+    expect(target.scrollIntoView).toHaveBeenCalledTimes(1);
+  });
+
+  it("does nothing more once the glide lands aligned", () => {
+    render(<AnchorScrollSettler />);
+    const target = addTarget("about", { top: 0 });
+    fireEvent.click(addLink("#about").a);
+    scrollEnd();
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("corrects at most three times if the target keeps drifting", () => {
+    render(<AnchorScrollSettler />);
+    const target = addTarget("stack", { drift: true });
+    fireEvent.click(addLink("#stack").a);
+    for (let i = 0; i < 6; i++) scrollEnd();
+    expect(target.scrollIntoView).toHaveBeenCalledTimes(3);
+  });
+
+  it("falls back to a timer when scrollend never fires", () => {
+    render(<AnchorScrollSettler />);
+    const target = addTarget("work", { top: 300 });
+    fireEvent.click(addLink("#work").a);
+    deliverHashChange();
+    act(() => vi.advanceTimersByTime(1200));
+    expect(target.scrollIntoView).toHaveBeenCalledTimes(1);
+  });
+
+  it("a jump to #top cancels a pending settle instead of pulling back", () => {
+    render(<AnchorScrollSettler />);
+    const contact = addTarget("contact", { top: 300 });
+    fireEvent.click(addLink("#contact").a);
+    deliverHashChange();
+    fireEvent.click(addLink("#top").a);
+    deliverHashChange();
+    scrollEnd();
+    act(() => vi.advanceTimersByTime(2000));
+    expect(contact.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("stops waiting when the visitor scrolls themselves", () => {
+    render(<AnchorScrollSettler />);
+    const target = addTarget("services", { top: 300 });
+    fireEvent.click(addLink("#services").a);
+    deliverHashChange();
+    fireEvent.wheel(window);
+    scrollEnd();
+    act(() => vi.advanceTimersByTime(2000));
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+});

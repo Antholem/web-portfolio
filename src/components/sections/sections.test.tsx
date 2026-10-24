@@ -61,13 +61,10 @@ describe("HeroSection", () => {
     );
   });
 
-  it("describes the portrait and hides the decorative code card", () => {
+  it("describes the portrait, with nothing laid over it", () => {
     const { container } = render(<HeroSection />);
     expect(screen.getByRole("img", { name: hero.portraitAlt })).toBeVisible();
-    const codeCard = [...container.querySelectorAll("[aria-hidden]")].find(
-      (el) => el.textContent?.includes("sam.config.ts"),
-    );
-    expect(codeCard).toBeDefined();
+    expect(container).not.toHaveTextContent("sam.config.ts");
   });
 });
 

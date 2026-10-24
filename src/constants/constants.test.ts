@@ -68,7 +68,7 @@ describe("siteConfig", () => {
       validateContactForm({
         name: "x",
         email: siteConfig.email,
-        topic: "",
+        subject: "x",
         message: "x",
       }).email,
     ).toBeUndefined();

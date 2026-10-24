@@ -14,13 +14,10 @@ import {
 import { CONTACT_LIMITS } from "@/lib/contact";
 
 import type {
-  ContactTopic,
   ExperienceItem,
-  FeaturedProject,
   FocusArea,
   HighlightedText,
   Project,
-  ProjectFilter,
   Service,
   StackGroup,
 } from "@/types/content";
@@ -87,12 +84,12 @@ export const about = {
   ] satisfies FocusArea[],
 };
 
-// TODO: set the start year and refine the summary from the résumé.
+// TODO: refine the summary from the résumé.
 export const experience = {
   title: "Where I’ve shipped.",
   items: [
     {
-      period: "[Year] — Present",
+      period: "2023 — Present",
       role: "Software Engineer",
       organization: "Boomering",
       details: [],
@@ -187,92 +184,46 @@ export const services = {
   ] satisfies Service[],
 };
 
-// TODO: projects are mockup content — replace with real ones and real links.
 export const work = {
   title: "Scalable products built with precision.",
-  filters: [
-    { value: "all", label: "All" },
-    { value: "web", label: "Web apps" },
-    { value: "ai", label: "AI" },
-    { value: "oss", label: "Open source" },
-  ] satisfies ProjectFilter[],
-  featured: {
-    slug: "ledgerline",
-    name: "Ledgerline",
-    year: "2026",
-    category: "web",
-    kind: "Web app",
-    role: "Lead engineer",
-    tagline: "Real-time finance operations dashboard",
+  project: {
+    name: "Xeenapz",
+    year: "2025",
+    kind: "AI",
+    role: "Personal project",
+    tagline: "AI chat assistant powered by Google Gemini",
     summary:
-      "Unifies payouts, invoices and bank feeds into one event-sourced ledger, so finance teams reconcile accounts as transactions happen — not at month-end.",
+      "A conversational assistant built on Gemini 2.5 Flash Lite — real-time replies in a clean, responsive chat interface, with sign-in so conversations are kept.",
     highlights: [
-      "Event-sourced ledger with full audit trail",
-      "Live updates over WebSockets",
-      "Role-based access and SSO",
+      "Real-time conversations with Google’s Gemini models",
+      "Voice input and Markdown-formatted replies",
+      "Supabase sign-in and a virtualised history for long threads",
     ],
-    tags: ["Next.js", "TypeScript", "tRPC", "PostgreSQL", "Redis"],
+    tags: [
+      "Next.js",
+      "TypeScript",
+      "Chakra UI",
+      "Gemini API",
+      "Supabase",
+      "Zustand",
+    ],
     links: {
-      caseStudy: "#",
-      demo: "#",
-      source: "#",
+      live: "https://xeenapz.vercel.app",
+      source: "https://github.com/Antholem/xeenapz",
     },
-  } satisfies FeaturedProject,
-  projects: [
-    {
-      slug: "merchly",
-      name: "Merchly",
-      year: "2025",
-      category: "web",
-      kind: "Web app",
-      summary:
-        "A headless storefront and admin with server-rendered product pages, Stripe checkout and real-time inventory sync.",
-      tags: ["Next.js", "Stripe", "Supabase", "Tailwind"],
-      links: [
-        { label: "Case study", href: "#" },
-        { label: "Live demo ↗", href: "#" },
-      ],
+    image: {
+      src: "/images/projects/xeenapz.webp",
+      alt: "Xeenapz chat screen: the greeting “Hello, what can I help with?” above a message box",
+      width: 1920,
+      height: 1200,
     },
-    {
-      slug: "relay",
-      name: "Relay",
-      year: "2025",
-      category: "ai",
-      kind: "AI",
-      summary:
-        "A support copilot that drafts grounded replies from a team’s docs and past tickets, with citations agents can verify.",
-      tags: ["Next.js", "Gemini API", "pgvector", "AI SDK"],
-      links: [
-        { label: "Case study", href: "#" },
-        { label: "Live demo ↗", href: "#" },
-      ],
-    },
-    {
-      slug: "forge",
-      name: "Forge UI",
-      year: "2024",
-      category: "oss",
-      kind: "Open source",
-      summary:
-        "Accessible React primitives with design tokens, dark mode and documented patterns, built on Radix and Tailwind.",
-      tags: ["React", "Radix UI", "Tailwind", "Storybook"],
-      links: [
-        { label: "Docs", href: "#" },
-        { label: "GitHub ↗", href: "#" },
-      ],
-    },
-  ] satisfies Project[],
+  } satisfies Project,
 };
 
 export const contact = {
   title: "Let’s collaborate on your next project.",
   lead: "Have a product to build, a platform to scale or a team that needs another senior engineer? Send a note — I reply within two business days.",
-  topics: [
-    { value: "build", label: "Full-stack build" },
-    { value: "design-system", label: "Design system" },
-    { value: "ai", label: "AI integration" },
-    { value: "consulting", label: "Consulting" },
-  ] satisfies ContactTopic[],
+  subjectPlaceholder: "e.g. Full-stack build for a SaaS dashboard",
   messageMaxLength: CONTACT_LIMITS.message,
   messagePlaceholder:
     "Tell me about the product, timeline and what success looks like…",
@@ -280,7 +231,6 @@ export const contact = {
     title: "Message sent",
     description:
       "Thanks for reaching out — I’ll get back to you within two business days.",
-    reset: "Send another",
   },
   failure: {
     title: "Couldn’t send your message",

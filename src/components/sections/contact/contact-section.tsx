@@ -41,7 +41,7 @@ function ContactSection() {
     <Section id={id}>
       <SectionHeader index={index} label={eyebrow} />
       <div className="grid grid-cols-1 items-stretch gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-18">
-        <div className="flex flex-col gap-8">
+        <div className="reveal flex flex-col gap-8">
           <div className="flex flex-col gap-5">
             <SectionTitle>{contact.title}</SectionTitle>
             <Lead>{contact.lead}</Lead>
@@ -70,7 +70,7 @@ function ContactSection() {
           </ul>
         </div>
 
-        <Card className="p-8 shadow-elevated">
+        <Card className="reveal p-8 shadow-elevated">
           <ContactForm />
         </Card>
       </div>

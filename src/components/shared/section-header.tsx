@@ -10,7 +10,7 @@ type SectionHeaderProps = {
 
 function SectionHeader({ index, label, className }: SectionHeaderProps) {
   return (
-    <div className={cn("mb-14 flex items-center gap-4", className)}>
+    <div className={cn("reveal mb-14 flex items-center gap-4", className)}>
       <Eyebrow>
         {index} / {label}
       </Eyebrow>

@@ -22,7 +22,7 @@ function Card({
       className={cn(
         "rounded-2xl border border-border bg-card text-card-foreground",
         interactive &&
-          "transition-[border-color] duration-200 ease-[ease] hover:border-input",
+          "transition-[border-color,translate] duration-200 ease-[ease] hover:-translate-y-0.5 hover:border-input motion-reduce:hover:translate-y-0",
         className,
       )}
       {...props}

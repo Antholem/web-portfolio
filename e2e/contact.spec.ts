@@ -1,4 +1,4 @@
-import { expect, gotoHome, test } from "./fixtures";
+import { expect, gotoHome, snackbar, test } from "./fixtures";
 
 // Sending (success, pending, reset) lives in mail.spec.ts.
 
@@ -15,6 +15,7 @@ test.describe("contact form", () => {
     const form = page.getByRole("form", { name: "Contact form" });
     const name = form.getByRole("textbox", { name: "Name" });
     const email = form.getByRole("textbox", { name: "Email" });
+    const subject = form.getByRole("textbox", { name: "Subject" });
     const message = form.getByRole("textbox", { name: "Message" });
     const send = form.getByRole("button", { name: "Send message" });
 
@@ -25,6 +26,7 @@ test.describe("contact form", () => {
     await expect(email).toHaveAccessibleDescription(
       "Enter a valid email address",
     );
+    await expect(subject).toHaveAccessibleDescription("Add a subject");
     await expect(message).toHaveAccessibleDescription("Add a short message");
 
     await name.fill("Jane Doe");
@@ -36,28 +38,29 @@ test.describe("contact form", () => {
     await email.fill("jane@example.com");
     await expect(email).not.toHaveAttribute("aria-invalid");
     await send.click();
+    await expect(subject).toBeFocused();
+
+    await subject.fill("Platform rebuild");
+    await expect(subject).not.toHaveAttribute("aria-invalid");
+    await send.click();
     await expect(message).toBeFocused();
     await expect(message).toHaveAttribute("aria-invalid", "true");
     await expect(name).not.toHaveAttribute("aria-invalid");
     await expect(email).not.toHaveAttribute("aria-invalid");
   });
 
-  test("topic chips select exactly one topic and never clear", async ({
+  test("the subject is a free-text field, capped at 120 characters", async ({
     page,
   }) => {
     const form = page.getByRole("form", { name: "Contact form" });
-    const topics = form.getByRole("radiogroup", {
-      name: "What can I help with?",
-    });
-    const first = topics.getByRole("radio", { name: "Full-stack build" });
-    const ai = topics.getByRole("radio", { name: "AI integration" });
-    await expect(first).toHaveAttribute("aria-checked", "true");
-    await ai.click();
-    await expect(ai).toHaveAttribute("aria-checked", "true");
-    await expect(first).toHaveAttribute("aria-checked", "false");
-    await ai.click();
-    await expect(ai).toHaveAttribute("aria-checked", "true");
-    await expect(topics.locator('[aria-checked="true"]')).toHaveCount(1);
+    await expect(form.getByRole("radiogroup")).toHaveCount(0);
+    const subject = form.getByRole("textbox", { name: "Subject" });
+    await expect(subject).toHaveAttribute(
+      "placeholder",
+      "e.g. Full-stack build for a SaaS dashboard",
+    );
+    await subject.pressSequentially("s".repeat(125));
+    await expect(subject).toHaveValue("s".repeat(120));
   });
 
   test("the message counter tracks what is typed", async ({ page }) => {
@@ -115,7 +118,7 @@ test.describe("contact form", () => {
     await expect(
       page.getByRole("button", { name: "Email copied" }),
     ).toBeVisible();
-    await expect(page.getByText("Email copied to clipboard")).toBeAttached();
+    await expect(snackbar(page, "Email copied to clipboard")).toBeVisible();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       EMAIL,
     );

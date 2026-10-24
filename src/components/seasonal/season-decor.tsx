@@ -281,8 +281,7 @@ function SeasonDecor() {
         </div>
         <Bat className="-top-5 right-10" delay={0} />
         <Bat className="-top-9 right-22 w-5 opacity-70" delay={-1.6} />
-        {/* On phones the code card covers this corner, so the pumpkin waits for sm+. */}
-        <JackOLantern className="right-14 -bottom-3.5 hidden w-12 sm:block" />
+        <JackOLantern className="right-14 -bottom-3.5 w-12" />
       </Decor>
 
       <Decor season="valentines">

@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Providers } from "@/components/providers/providers";
 import { SeasonScript } from "@/components/seasonal/season-script";
+import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/constants/site";
 import { DEFAULT_THEME, THEME_COLORS } from "@/constants/theme";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // Lets Next keep our CSS smooth scrolling (it pauses it on route changes).
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={cn(GeistSans.variable, GeistMono.variable)}
     >
@@ -50,6 +53,7 @@ export default function RootLayout({
           {children}
           <SiteFooter />
           <AnchorScrollSettler />
+          <Toaster />
         </Providers>
       </body>
     </html>

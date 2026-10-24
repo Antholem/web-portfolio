@@ -1,12 +1,16 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { toast } from "sonner";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { siteConfig } from "@/constants/site";
 import { contact } from "@/lib/data";
 
 import { ContactSection } from "./contact-section";
 import { CopyEmailButton } from "./copy-email-button";
+
+// `sonner` is mocked for every unit test in vitest.setup.ts.
+const toastMock = vi.mocked(toast);
 
 function setupClipboard(writeText: (text: string) => Promise<void>) {
   // user-event installs its own clipboard stub in setup(); replace it afterwards.
@@ -20,13 +24,15 @@ function setupClipboard(writeText: (text: string) => Promise<void>) {
 }
 
 describe("CopyEmailButton", () => {
-  it("copies the address, confirms it and announces it politely", async () => {
+  beforeEach(() => {
+    toastMock.success.mockClear();
+    toastMock.error.mockClear();
+  });
+
+  it("copies the address and confirms it with a snackbar", async () => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const { user, writeText } = setupClipboard(() => Promise.resolve());
     render(<CopyEmailButton email="me@example.com" />);
-
-    const status = screen.getByRole("status");
-    expect(status).toBeEmptyDOMElement();
 
     await user.click(
       screen.getByRole("button", { name: "Copy email address" }),
@@ -35,13 +41,15 @@ describe("CopyEmailButton", () => {
     expect(
       await screen.findByRole("button", { name: "Email copied" }),
     ).toBeInTheDocument();
-    expect(status).toHaveTextContent("Email copied to clipboard");
+    expect(toastMock.success).toHaveBeenCalledExactlyOnceWith(
+      "Email copied to clipboard",
+    );
+    expect(toastMock.error).not.toHaveBeenCalled();
 
     act(() => vi.advanceTimersByTime(1600));
     expect(
       screen.getByRole("button", { name: "Copy email address" }),
     ).toBeInTheDocument();
-    expect(status).toBeEmptyDOMElement();
   });
 
   // Was QA-07: a failed copy used to be silent.
@@ -56,9 +64,11 @@ describe("CopyEmailButton", () => {
     const button = await screen.findByRole("button", {
       name: "Couldn’t copy email address",
     });
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Couldn’t copy — select the address instead",
+    expect(toastMock.error).toHaveBeenCalledExactlyOnceWith(
+      "Couldn’t copy email address",
+      { description: "Select the address and copy it instead." },
     );
+    expect(toastMock.success).not.toHaveBeenCalled();
     // Destructive alert icon, decorative to assistive tech.
     const icon = button.querySelector("svg")!;
     expect(icon).toHaveClass("lucide-circle-alert", "text-destructive");
@@ -68,7 +78,6 @@ describe("CopyEmailButton", () => {
     expect(
       screen.getByRole("button", { name: "Copy email address" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("status")).toBeEmptyDOMElement();
   });
 
   it("recovers from a failure on the next successful copy", async () => {
@@ -84,7 +93,8 @@ describe("CopyEmailButton", () => {
     expect(
       await screen.findByRole("button", { name: "Email copied" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent(
+    expect(toastMock.error).toHaveBeenCalledTimes(1);
+    expect(toastMock.success).toHaveBeenCalledExactlyOnceWith(
       "Email copied to clipboard",
     );
   });

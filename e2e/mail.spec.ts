@@ -6,7 +6,7 @@ import type { Page, Route } from "@playwright/test";
 
 import config, { E2E_SERVER_ENV } from "../playwright.config";
 
-import { expect, gotoHome, test } from "./fixtures";
+import { expect, gotoHome, snackbar, test } from "./fixtures";
 
 type GuardState = {
   runId: string;
@@ -28,7 +28,7 @@ async function fillValidForm(page: Page, name = "E2E Visitor") {
   await form
     .getByRole("textbox", { name: "Email" })
     .fill("visitor@example.test");
-  await form.getByRole("radio", { name: "Design system" }).click();
+  await form.getByRole("textbox", { name: "Subject" }).fill("Design system");
   await form
     .getByRole("textbox", { name: "Message" })
     .fill("Automated E2E message — must never be delivered.");
@@ -117,7 +117,7 @@ test.describe("sending a message", () => {
     expectNoSmtpAttempts();
   });
 
-  test("a valid message shows “Message sent” with the heading focused", async ({
+  test("a valid message raises a “Message sent” snackbar and clears the form", async ({
     page,
   }) => {
     const form = await fillValidForm(page);
@@ -129,42 +129,35 @@ test.describe("sending a message", () => {
     await form.getByRole("button", { name: "Send message" }).click();
     expect((await action).status()).toBe(200);
 
-    const status = page.getByRole("status").filter({ hasText: "Message sent" });
-    await expect(status).toBeVisible();
-    await expect(status).toContainText(
+    const toast = snackbar(page, "Message sent");
+    await expect(toast).toBeVisible();
+    await expect(toast).toContainText(
       "Thanks for reaching out — I’ll get back to you within two business days.",
     );
-    await expect(
-      page.getByRole("heading", { level: 3, name: "Message sent" }),
-    ).toBeFocused();
-    await expect(page.getByRole("form", { name: "Contact form" })).toHaveCount(
-      0,
+    // No success card replaces the form; it is simply ready again.
+    await expect(form).toBeVisible();
+    await expect(form.getByRole("textbox", { name: "Name" })).toHaveValue("");
+    await expect(form.getByRole("textbox", { name: "Email" })).toHaveValue("");
+    await expect(form.getByRole("textbox", { name: "Message" })).toHaveValue(
+      "",
     );
-    expect(new URL(page.url()).pathname).toBe("/");
-  });
-
-  test("“Send another” brings back a blank form", async ({ page }) => {
-    const form = await fillValidForm(page);
-    await form.getByRole("button", { name: "Send message" }).click();
-    await page.getByRole("button", { name: "Send another" }).click();
-
-    const fresh = page.getByRole("form", { name: "Contact form" });
-    await expect(fresh.getByRole("textbox", { name: "Name" })).toHaveValue("");
-    await expect(fresh.getByRole("textbox", { name: "Email" })).toHaveValue("");
-    await expect(fresh.getByRole("textbox", { name: "Message" })).toHaveValue(
+    await expect(form.getByRole("textbox", { name: "Subject" })).toHaveValue(
       "",
     );
     await expect(
-      fresh.getByRole("radio", { name: "Full-stack build" }),
-    ).toHaveAttribute("aria-checked", "true");
-    await expect(fresh.getByRole("alert")).toHaveCount(0);
-
-    // And it can send again.
-    await fillValidForm(page, "Second Visitor");
-    await fresh.getByRole("button", { name: "Send message" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Message sent" }),
+      form.getByRole("button", { name: "Send message" }),
     ).toBeFocused();
+    expect(new URL(page.url()).pathname).toBe("/");
+  });
+
+  test("can send a second message straight away", async ({ page }) => {
+    const form = await fillValidForm(page);
+    await form.getByRole("button", { name: "Send message" }).click();
+    await expect(form.getByRole("textbox", { name: "Name" })).toHaveValue("");
+
+    await fillValidForm(page, "Second Visitor");
+    await form.getByRole("button", { name: "Send message" }).click();
+    await expect(snackbar(page, "Message sent")).toHaveCount(2);
   });
 
   test("the button reads “Sending…”, busy and disabled, while the action is in flight", async ({
@@ -186,9 +179,7 @@ test.describe("sending a message", () => {
     expect(held.length).toBe(1);
 
     release();
-    await expect(
-      page.getByRole("heading", { name: "Message sent" }),
-    ).toBeFocused();
+    await expect(snackbar(page, "Message sent")).toBeVisible();
     expect(held.length).toBe(1);
   });
 
@@ -197,7 +188,7 @@ test.describe("sending a message", () => {
       allowedProblems: /ERR_INTERNET_DISCONNECTED|Failed to fetch/,
     });
 
-    test("shows the failure alert and keeps the message", async ({ page }) => {
+    test("raises an error snackbar and keeps the message", async ({ page }) => {
       await page.route("**/*", (route) =>
         route.request().headers()["next-action"]
           ? route.abort("internetdisconnected")
@@ -205,15 +196,16 @@ test.describe("sending a message", () => {
       );
       const form = await fillValidForm(page);
       await form.getByRole("button", { name: "Send message" }).click();
-      await expect(form.getByRole("alert")).toContainText(
-        "Couldn’t send your message",
-      );
+      await expect(
+        snackbar(page, "Couldn’t send your message"),
+      ).toContainText("Check your connection and try again.");
+      await expect(snackbar(page, "Message sent")).toHaveCount(0);
       await expect(form.getByRole("textbox", { name: "Message" })).toHaveValue(
         "Automated E2E message — must never be delivered.",
       );
       await expect(
         form.getByRole("button", { name: "Send message" }),
-      ).toBeEnabled();
+      ).toBeFocused();
     });
   });
 
@@ -226,9 +218,7 @@ test.describe("sending a message", () => {
       .evaluate((el: HTMLInputElement) => (el.value = "https://spam.example"));
     await expect(page.locator('input[name="website"]')).toBeHidden();
     await form.getByRole("button", { name: "Send message" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Message sent" }),
-    ).toBeFocused();
+    await expect(snackbar(page, "Message sent")).toBeVisible();
   });
 
   test("keeps the theme-color meta after a send (no metadata re-render)", async ({
@@ -239,9 +229,7 @@ test.describe("sending a message", () => {
     await expect(meta).toHaveAttribute("content", "#fafafa");
     const form = await fillValidForm(page);
     await form.getByRole("button", { name: "Send message" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Message sent" }),
-    ).toBeFocused();
+    await expect(snackbar(page, "Message sent")).toBeVisible();
     await expect(meta).toHaveAttribute("content", "#fafafa");
   });
 });

@@ -8,13 +8,8 @@ import {
   useTransition,
   type FormEvent,
 } from "react";
-import {
-  Check,
-  LoaderCircle,
-  Send,
-  Sparkles,
-  TriangleAlert,
-} from "lucide-react";
+import { LoaderCircle, Send, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 import { sendContactMessage } from "@/app/actions/contact";
 
@@ -23,7 +18,6 @@ import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   CONTACT_LIMITS,
   polishMessage,
@@ -48,7 +42,7 @@ type RefineState = "idle" | "refining" | "refined";
 const INITIAL_VALUES: ContactFormValues = {
   name: "",
   email: "",
-  topic: contact.topics[0].value,
+  subject: "",
   message: "",
 };
 
@@ -63,29 +57,35 @@ function ContactForm() {
   const ids = {
     name: `${id}-name`,
     email: `${id}-email`,
-    topic: `${id}-topic`,
+    subject: `${id}-subject`,
     message: `${id}-message`,
   };
 
   const [values, setValues] = useState(INITIAL_VALUES);
   const [errors, setErrors] = useState<ContactFormErrors>({});
   const [refineState, setRefineState] = useState<RefineState>("idle");
-  const [submitted, setSubmitted] = useState(false);
-  const [sendFailed, setSendFailed] = useState(false);
   const [sending, startSending] = useTransition();
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
+  const subjectRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
-  const successRef = useRef<HTMLHeadingElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
   const refineTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Set when a send ends on a snackbar. The submit button is still disabled
+  // inside the transition (focus() would be ignored), so focus is handed back
+  // once it re-enables: a disabled control drops focus to <body>.
+  const refocusSubmit = useRef(false);
 
   useEffect(() => () => clearTimeout(refineTimer.current), []);
 
   useEffect(() => {
-    if (submitted) successRef.current?.focus();
-  }, [submitted]);
+    if (sending || !refocusSubmit.current) return;
+    refocusSubmit.current = false;
+    submitRef.current?.focus();
+  }, [sending]);
 
   function setField<K extends keyof ContactFormValues>(
     field: K,
@@ -128,6 +128,7 @@ function ContactForm() {
     setErrors(nextErrors);
     if (nextErrors.name) nameRef.current?.focus();
     else if (nextErrors.email) emailRef.current?.focus();
+    else if (nextErrors.subject) subjectRef.current?.focus();
     else if (nextErrors.message) messageRef.current?.focus();
   }
 
@@ -142,7 +143,6 @@ function ContactForm() {
     }
 
     setErrors({});
-    setSendFailed(false);
     startSending(async () => {
       let result;
       try {
@@ -153,48 +153,34 @@ function ContactForm() {
       } catch {
         // Network or server failure: the action call itself rejects. Uncaught,
         // it would escape the transition and replace the page with an error.
-        setSendFailed(true);
+        notifyFailure();
         return;
       }
-      if (result.ok) setSubmitted(true);
-      else if ("errors" in result) showErrors(result.errors);
-      else setSendFailed(true);
+      if (result.ok) {
+        clearForm();
+        refocusSubmit.current = true;
+        toast.success(contact.success.title, {
+          description: contact.success.description,
+        });
+      } else if ("errors" in result) showErrors(result.errors);
+      else notifyFailure();
     });
   }
 
-  function handleReset() {
+  // The typed message is kept so the visitor can simply try again.
+  function notifyFailure() {
+    refocusSubmit.current = true;
+    toast.error(contact.failure.title, {
+      description: contact.failure.description,
+      duration: 6000,
+    });
+  }
+
+  function clearForm() {
     clearTimeout(refineTimer.current);
     setValues(INITIAL_VALUES);
     setErrors({});
     setRefineState("idle");
-    setSendFailed(false);
-    setSubmitted(false);
-  }
-
-  if (submitted) {
-    return (
-      <div
-        role="status"
-        className="flex min-h-115 flex-col items-center justify-center gap-4 text-center"
-      >
-        <span className="inline-flex size-14 items-center justify-center rounded-full border border-input">
-          <Check size={24} aria-hidden />
-        </span>
-        <h3
-          ref={successRef}
-          tabIndex={-1}
-          className="text-[22px] font-semibold tracking-[-0.02em] outline-none"
-        >
-          {contact.success.title}
-        </h3>
-        <p className="max-w-[32ch] text-[15px] leading-[1.6] text-muted-foreground">
-          {contact.success.description}
-        </p>
-        <Button type="button" variant="outline" onClick={handleReset}>
-          {contact.success.reset}
-        </Button>
-      </div>
-    );
   }
 
   const refining = refineState === "refining";
@@ -243,27 +229,22 @@ function ContactForm() {
       </div>
 
       <Field>
-        <span
-          id={ids.topic}
-          className="text-[13px] font-medium text-foreground"
-        >
-          What can I help with?
-        </span>
-        <ToggleGroup
-          type="single"
-          variant="chip"
-          aria-labelledby={ids.topic}
-          value={values.topic}
-          onValueChange={(value) => {
-            if (value) setField("topic", value);
-          }}
-        >
-          {contact.topics.map((topic) => (
-            <ToggleGroupItem key={topic.value} value={topic.value}>
-              {topic.label}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
+        <Label htmlFor={ids.subject}>Subject</Label>
+        <Input
+          ref={subjectRef}
+          id={ids.subject}
+          name="subject"
+          placeholder={contact.subjectPlaceholder}
+          autoComplete="off"
+          maxLength={CONTACT_LIMITS.subject}
+          value={values.subject}
+          onChange={(event) => setField("subject", event.target.value)}
+          aria-invalid={errors.subject ? true : undefined}
+          aria-describedby={
+            errors.subject ? `${ids.subject}-error` : undefined
+          }
+        />
+        <FieldError id={`${ids.subject}-error`}>{errors.subject}</FieldError>
       </Field>
 
       <Field>
@@ -336,28 +317,8 @@ function ContactForm() {
         </label>
       </div>
 
-      {sendFailed ? (
-        <div
-          role="alert"
-          className="flex gap-3 rounded-xl border border-destructive bg-card px-4 py-3.5"
-        >
-          <TriangleAlert
-            size={18}
-            className="mt-px shrink-0 text-destructive"
-            aria-hidden
-          />
-          <div className="flex flex-col gap-1">
-            <p className="text-[14px] font-semibold text-destructive">
-              {contact.failure.title}
-            </p>
-            <p className="text-[13.5px] leading-[1.55] text-muted-foreground">
-              {contact.failure.description}
-            </p>
-          </div>
-        </div>
-      ) : null}
-
       <Button
+        ref={submitRef}
         type="submit"
         size="lg"
         className="w-full"
@@ -376,7 +337,7 @@ function ContactForm() {
         ) : (
           <>
             Send message
-            <Send aria-hidden />
+            <Send aria-hidden className="nudge-diagonal" />
           </>
         )}
       </Button>

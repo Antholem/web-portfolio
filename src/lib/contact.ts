@@ -1,18 +1,19 @@
 export type ContactFormValues = {
   name: string;
   email: string;
-  topic: string;
+  subject: string;
   message: string;
 };
 
 export type ContactFormErrors = Partial<
-  Record<"name" | "email" | "message", string>
+  Record<"name" | "email" | "subject" | "message", string>
 >;
 
 export const CONTACT_LIMITS = {
   name: 100,
   // RFC 5321 caps a forward path at 256 octets, including the angle brackets.
   email: 254,
+  subject: 120,
   message: 1000,
 } as const;
 
@@ -25,6 +26,7 @@ export function validateContactForm(
   const errors: ContactFormErrors = {};
   const name = values.name.trim();
   const email = values.email.trim();
+  const subject = values.subject.trim();
   const message = values.message.trim();
 
   if (!name) errors.name = "Tell me your name";
@@ -33,6 +35,10 @@ export function validateContactForm(
 
   if (email.length > CONTACT_LIMITS.email || !EMAIL_PATTERN.test(email))
     errors.email = "Enter a valid email address";
+
+  if (!subject) errors.subject = "Add a subject";
+  else if (subject.length > CONTACT_LIMITS.subject)
+    errors.subject = `Keep your subject under ${CONTACT_LIMITS.subject} characters`;
 
   if (!message) errors.message = "Add a short message";
   else if (message.length > CONTACT_LIMITS.message)

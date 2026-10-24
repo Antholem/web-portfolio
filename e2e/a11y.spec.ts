@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
 
-import { expect, gotoHome, isMobile, test } from "./fixtures";
+import { expect, gotoHome, isMobile, snackbar, test } from "./fixtures";
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
@@ -20,10 +20,10 @@ async function scan(page: Page) {
       y < document.documentElement.scrollHeight;
       y += innerHeight
     ) {
-      scrollTo(0, y);
+      scrollTo({ top: y, behavior: "instant" });
       await new Promise((r) => requestAnimationFrame(r));
     }
-    scrollTo(0, 0);
+    scrollTo({ top: 0, behavior: "instant" });
     return document.documentElement.scrollHeight;
   });
   await page.setViewportSize({ width: original.width, height });
@@ -61,7 +61,9 @@ for (const theme of ["dark", "light"] as const) {
     test("contact form in its error state", async ({ page }) => {
       await setTheme(page, theme);
       const form = page.getByRole("form", { name: "Contact form" });
-      await form.scrollIntoViewIfNeeded();
+      await form.evaluate((el) =>
+        el.scrollIntoView({ block: "center", behavior: "instant" }),
+      );
       await form.getByRole("button", { name: "Send message" }).click();
       await expect(form.getByText("Tell me your name")).toBeVisible();
       const results = await new AxeBuilder({ page })
@@ -71,22 +73,30 @@ for (const theme of ["dark", "light"] as const) {
       expect(results.violations.map((v) => v.id)).toEqual([]);
     });
 
-    test("contact form success state", async ({ page }) => {
+    test("contact form after a send, with the snackbar showing", async ({
+      page,
+    }) => {
       await setTheme(page, theme);
       const form = page.getByRole("form", { name: "Contact form" });
-      await form.scrollIntoViewIfNeeded();
+      await form.evaluate((el) =>
+        el.scrollIntoView({ block: "center", behavior: "instant" }),
+      );
       await form.getByRole("textbox", { name: "Name" }).fill("Axe Visitor");
       await form
         .getByRole("textbox", { name: "Email" })
         .fill("axe@example.test");
+      await form.getByRole("textbox", { name: "Subject" }).fill("Axe check");
       await form.getByRole("textbox", { name: "Message" }).fill("Hello");
       await form.getByRole("button", { name: "Send message" }).click();
-      await expect(
-        page.getByRole("heading", { name: "Message sent" }),
-      ).toBeFocused();
+      const toast = snackbar(page, "Message sent");
+      await expect(toast).toBeVisible();
+      // Let the slide-in finish so contrast is measured at full opacity.
+      await expect(toast).toHaveAttribute("data-mounted", "true");
+      await expect(toast).toHaveCSS("opacity", "1");
       const results = await new AxeBuilder({ page })
         .withTags(WCAG_TAGS)
         .include("#contact")
+        .include("[data-sonner-toaster]")
         .analyze();
       expect(results.violations.map((v) => v.id)).toEqual([]);
     });
@@ -237,18 +247,8 @@ test.describe("keyboard", () => {
     await page.keyboard.type("jane@example.test");
 
     await tabTo(page);
-    await expect(
-      page.getByRole("radio", { name: "Full-stack build" }),
-    ).toBeFocused();
-    await page.keyboard.press("ArrowRight");
-    // Radix moves roving focus on a timer; act only once it has landed.
-    await expect(
-      page.getByRole("radio", { name: "Design system" }),
-    ).toBeFocused();
-    await page.keyboard.press("Space");
-    await expect(
-      page.getByRole("radio", { name: "Design system" }),
-    ).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("textbox", { name: "Subject" })).toBeFocused();
+    await page.keyboard.type("Design system");
 
     // The formatting toolbar is a single tab stop; arrows move within it.
     await tabTo(page);
@@ -268,15 +268,12 @@ test.describe("keyboard", () => {
       page.getByRole("button", { name: "Send message" }),
     ).toBeFocused();
     await page.keyboard.press("Enter");
-    // Focus lands on the confirmation, so screen readers announce it.
+    // The snackbar is announced by its live region; focus stays on Send so a
+    // keyboard user is not thrown elsewhere.
+    await expect(snackbar(page, "Message sent")).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Message sent" }),
+      page.getByRole("button", { name: "Send message" }),
     ).toBeFocused();
-    await tabTo(page);
-    await expect(
-      page.getByRole("button", { name: "Send another" }),
-    ).toBeFocused();
-    await page.keyboard.press("Enter");
     await expect(page.getByRole("textbox", { name: "Name" })).toHaveValue("");
   });
 

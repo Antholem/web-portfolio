@@ -5,7 +5,6 @@ import {
   type ContactFormErrors,
   type ContactFormValues,
 } from "@/lib/contact";
-import { contact } from "@/lib/data";
 import { sendContactEmail } from "@/server/mail";
 
 export type ContactSubmission = ContactFormValues & {
@@ -16,7 +15,7 @@ export type ContactSubmission = ContactFormValues & {
 export type SendContactResult =
   | { ok: true }
   | { ok: false; errors: ContactFormErrors }
-  | { ok: false; error: "invalid-topic" | "send-failed" };
+  | { ok: false; error: "send-failed" };
 
 const asString = (value: unknown) => (typeof value === "string" ? value : "");
 
@@ -29,21 +28,19 @@ export async function sendContactMessage(
   const values: ContactFormValues = {
     name: asString(input?.name).trim(),
     email: asString(input?.email).trim(),
-    topic: asString(input?.topic),
+    // One line: it becomes part of the email's Subject header.
+    subject: asString(input?.subject).replace(/\s+/g, " ").trim(),
     message: asString(input?.message).trim(),
   };
 
   const errors = validateContactForm(values);
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
-  const topic = contact.topics.find(({ value }) => value === values.topic);
-  if (!topic) return { ok: false, error: "invalid-topic" };
-
   try {
     await sendContactEmail({
       name: values.name,
       email: values.email,
-      topicLabel: topic.label,
+      subject: values.subject,
       message: values.message,
     });
     return { ok: true };

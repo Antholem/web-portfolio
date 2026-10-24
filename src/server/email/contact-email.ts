@@ -10,7 +10,7 @@ import {
 export type ContactEmailInput = {
   name: string;
   email: string;
-  topicLabel: string;
+  subject: string;
   message: string;
   receivedAt?: Date;
 };
@@ -86,14 +86,15 @@ function detailRow(label: string, valueHtml: string) {
 export function renderContactEmail({
   name,
   email,
-  topicLabel,
+  subject: visitorSubject,
   message,
   receivedAt = new Date(),
 }: ContactEmailInput) {
   const sender = singleLine(name);
   const firstName = sender.split(/\s+/)[0] || sender;
   const received = formatReceived(receivedAt);
-  const subject = `New inquiry from ${sender} — ${topicLabel}`;
+  const visitorLine = singleLine(visitorSubject);
+  const subject = `New inquiry from ${sender} — ${visitorLine}`;
   const replyHref = `mailto:${email}?subject=${encodeURIComponent(`Re: ${subject}`)}`;
   const preview = singleLine(message.replace(/[*_]/g, "")).slice(0, 120);
 
@@ -101,7 +102,7 @@ export function renderContactEmail({
     "New portfolio inquiry",
     "",
     `From:      ${sender} <${email}>`,
-    `Topic:     ${topicLabel}`,
+    `Subject:   ${visitorLine}`,
     `Received:  ${received}`,
     "",
     "Message",
@@ -134,7 +135,7 @@ export function renderContactEmail({
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;border-bottom:1px solid ${C.border};">
       ${detailRow("Name", escapeHtml(sender))}
       ${detailRow("Email", `<a href="mailto:${escapeHtml(email)}" style="color:${C.text};text-decoration:underline;">${escapeHtml(email)}</a>`)}
-      ${detailRow("Topic", escapeHtml(topicLabel))}
+      ${detailRow("Subject", escapeHtml(visitorLine))}
       ${detailRow("Received", escapeHtml(received))}
     </table>
     <p style="margin:0 0 12px;font-family:${C.mono};font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:${C.subtle};">Message</p>

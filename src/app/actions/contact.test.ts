@@ -2,7 +2,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CONTACT_LIMITS } from "@/lib/contact";
-import { contact } from "@/lib/data";
 import { sendContactEmail } from "@/server/mail";
 
 import { sendContactMessage, type ContactSubmission } from "./contact";
@@ -14,7 +13,7 @@ const send = vi.mocked(sendContactEmail);
 const valid: ContactSubmission = {
   name: "Jane Doe",
   email: "jane@example.com",
-  topic: "consulting",
+  subject: "Design system audit",
   message: "Let's work together.",
   website: "",
 };
@@ -25,34 +24,41 @@ describe("sendContactMessage (server action)", () => {
     send.mockResolvedValue(undefined);
   });
 
-  it("sends a valid message with the topic's label and reports success", async () => {
+  it("sends a valid message with its subject and reports success", async () => {
     await expect(sendContactMessage(valid)).resolves.toEqual({ ok: true });
     expect(send).toHaveBeenCalledExactlyOnceWith({
       name: "Jane Doe",
       email: "jane@example.com",
-      topicLabel: "Consulting",
+      subject: "Design system audit",
       message: "Let's work together.",
     });
   });
 
-  it.each(contact.topics)("maps topic $value to “$label”", async (topic) => {
-    await sendContactMessage({ ...valid, topic: topic.value });
-    expect(send.mock.calls[0][0].topicLabel).toBe(topic.label);
-  });
-
-  it("trims name, email and message before sending", async () => {
+  it("trims every field before sending", async () => {
     await sendContactMessage({
       ...valid,
       name: "  Jane  ",
       email: " jane@example.com\n",
+      subject: "  Hello  ",
       message: "\n  Hi!  \n",
     });
     expect(send).toHaveBeenCalledWith({
       name: "Jane",
       email: "jane@example.com",
-      topicLabel: "Consulting",
+      subject: "Hello",
       message: "Hi!",
     });
+  });
+
+  // The subject ends up in an email header: no line breaks may get through.
+  it("collapses whitespace and line breaks in the subject to single spaces", async () => {
+    await sendContactMessage({
+      ...valid,
+      subject: "Hi\r\nBcc: victim@example.com\t\tthere",
+    });
+    expect(send.mock.calls[0][0].subject).toBe(
+      "Hi Bcc: victim@example.com there",
+    );
   });
 
   it("works without the honeypot field at all", async () => {
@@ -75,7 +81,7 @@ describe("sendContactMessage (server action)", () => {
         sendContactMessage({
           name: "",
           email: "",
-          topic: "",
+          subject: "",
           message: "",
           website: "x",
         }),
@@ -104,6 +110,7 @@ describe("sendContactMessage (server action)", () => {
           errors: {
             name: "Tell me your name",
             email: "Enter a valid email address",
+            subject: "Add a subject",
             message: "Add a short message",
           },
         });
@@ -115,7 +122,7 @@ describe("sendContactMessage (server action)", () => {
       const result = await sendContactMessage({
         name: 123,
         email: { toString: () => "jane@example.com" },
-        topic: ["consulting"],
+        subject: ["Hello"],
         message: true,
       } as never);
       expect(result).toEqual({
@@ -123,16 +130,10 @@ describe("sendContactMessage (server action)", () => {
         errors: {
           name: "Tell me your name",
           email: "Enter a valid email address",
+          subject: "Add a subject",
           message: "Add a short message",
         },
       });
-      expect(send).not.toHaveBeenCalled();
-    });
-
-    it("rejects a non-string topic as an invalid topic", async () => {
-      await expect(
-        sendContactMessage({ ...valid, topic: 1 } as never),
-      ).resolves.toEqual({ ok: false, error: "invalid-topic" });
       expect(send).not.toHaveBeenCalled();
     });
   });
@@ -141,7 +142,12 @@ describe("sendContactMessage (server action)", () => {
     it.each([
       [{ name: "   " }, { name: "Tell me your name" }],
       [{ email: "jane@" }, { email: "Enter a valid email address" }],
+      [{ subject: " \t " }, { subject: "Add a subject" }],
       [{ message: " \n " }, { message: "Add a short message" }],
+      [
+        { subject: "s".repeat(CONTACT_LIMITS.subject + 1) },
+        { subject: "Keep your subject under 120 characters" },
+      ],
       [
         { name: "n".repeat(CONTACT_LIMITS.name + 1) },
         { name: "Keep your name under 100 characters" },
@@ -168,6 +174,7 @@ describe("sendContactMessage (server action)", () => {
           ...valid,
           name: "n".repeat(CONTACT_LIMITS.name),
           email: `${local}@x.io`,
+          subject: "s".repeat(CONTACT_LIMITS.subject),
           message: "m".repeat(CONTACT_LIMITS.message),
         }),
       ).resolves.toEqual({ ok: true });
@@ -181,23 +188,6 @@ describe("sendContactMessage (server action)", () => {
           message: `\n${"m".repeat(CONTACT_LIMITS.message)}\n`,
         }),
       ).resolves.toEqual({ ok: true });
-    });
-
-    it.each(["", "Consulting", "other", "CONSULTING", "__proto__"])(
-      "rejects unknown topic %j",
-      async (topic) => {
-        await expect(sendContactMessage({ ...valid, topic })).resolves.toEqual({
-          ok: false,
-          error: "invalid-topic",
-        });
-        expect(send).not.toHaveBeenCalled();
-      },
-    );
-
-    it("reports field errors before checking the topic", async () => {
-      await expect(
-        sendContactMessage({ ...valid, name: "", topic: "nope" }),
-      ).resolves.toEqual({ ok: false, errors: { name: "Tell me your name" } });
     });
   });
 

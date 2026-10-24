@@ -11,7 +11,7 @@ const createTransport = vi.mocked(nodemailer.createTransport);
 const email: ContactEmail = {
   name: "Jane Doe",
   email: "jane@example.com",
-  topicLabel: "AI integration",
+  subject: "AI integration",
   message: "Hello there.\n\nSecond paragraph.",
 };
 
@@ -135,6 +135,24 @@ describe("sendContactEmail", () => {
       expect(message.subject).not.toMatch(/[\r\n]/);
     },
   );
+
+  it("keeps the visitor's subject on one line and escapes it in the HTML", async () => {
+    const sendMail = fakeTransport();
+    const { sendContactEmail } = await loadMail();
+    await sendContactEmail({
+      ...email,
+      subject: "<b>Rates</b>\r\nBcc: evil@example.com",
+    });
+    const message = sendMail.mock.calls[0][0];
+    expect(message.subject).toBe(
+      "New inquiry from Jane Doe — <b>Rates</b> Bcc: evil@example.com",
+    );
+    expect(message.text).toContain(
+      "Subject:   <b>Rates</b> Bcc: evil@example.com",
+    );
+    expect(message.html).toContain("&lt;b&gt;Rates&lt;/b&gt;");
+    expect(message.html).not.toContain("<b>Rates");
+  });
 
   it("keeps the visitor's line breaks in the body", async () => {
     const sendMail = fakeTransport();

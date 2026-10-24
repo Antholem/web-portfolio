@@ -54,6 +54,13 @@ export async function gotoHome(page: Page, path = "/") {
   ).toBeVisible();
 }
 
+/** A Sonner snackbar (each toast is an `li` inside the polite live region). */
+export const snackbar = (page: Page, text: string | RegExp) =>
+  page
+    .getByRole("region", { name: /notifications/i })
+    .locator("[data-sonner-toast]")
+    .filter({ hasText: text });
+
 export async function getTheme(page: Page) {
   return page.evaluate(() => {
     const cls = document.documentElement.classList;
