@@ -638,6 +638,13 @@
   }
 }
 
+@utility nudge-x-back {
+  transition: translate 0.2s ease;
+  .group\/btn:hover & {
+    translate: -3px 0;
+  }
+}
+
 @utility nudge-diagonal {
   transition: translate 0.2s ease;
   .group\/btn:hover & {
@@ -666,6 +673,7 @@
     animation: none !important;
   }
   .nudge-x,
+  .nudge-x-back,
   .nudge-diagonal,
   .nudge-up,
   .nudge-down {

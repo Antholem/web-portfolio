@@ -44,15 +44,27 @@ describe("home page", () => {
 
   it("has only in-page fragment links that resolve (except documented placeholders)", () => {
     renderPage();
+    // "#id" (page content) and "/#id" (site chrome) both target this page.
     const fragments = [...document.querySelectorAll<HTMLAnchorElement>("a")]
       .map((a) => a.getAttribute("href")!)
-      .filter((href) => href.startsWith("#") && href.length > 1);
+      .filter((href) => /^\/?#./.test(href))
+      .map((href) => href.slice(href.indexOf("#") + 1));
     expect(fragments.length).toBeGreaterThan(NAV_ITEMS.length);
-    for (const href of new Set(fragments)) {
+    for (const id of new Set(fragments)) {
       // `#top` is the HTML-spec "top of the document" fragment.
-      if (href === "#top") continue;
-      expect(document.getElementById(href.slice(1)), href).not.toBeNull();
+      if (id === "top") continue;
+      expect(document.getElementById(id), id).not.toBeNull();
     }
+  });
+
+  it("embeds Person + WebSite structured data that parses as JSON", () => {
+    renderPage();
+    const script = document.querySelector('script[type="application/ld+json"]');
+    const data = JSON.parse(script!.textContent!);
+    expect(
+      data["@graph"].map((node: { "@type": string }) => node["@type"]),
+    ).toEqual(["Person", "WebSite"]);
+    expect(data["@graph"][0].name).toBe(siteConfig.name);
   });
 
   it("gives every link and button an accessible name", () => {
@@ -125,7 +137,10 @@ describe("home page", () => {
 describe("root layout metadata", () => {
   it("titles and describes the page from site config", async () => {
     const { metadata, viewport } = await import("./layout");
-    expect(metadata.title).toBe(siteConfig.title);
+    expect(metadata.title).toEqual({
+      default: siteConfig.title,
+      template: `%s · ${siteConfig.name}`,
+    });
     expect(metadata.description).toBe(siteConfig.description);
     expect(metadata.openGraph).toMatchObject({
       type: "website",
@@ -134,5 +149,23 @@ describe("root layout metadata", () => {
     });
     // One tag for the default (dark) theme; ThemeColorMeta retargets it.
     expect(viewport.themeColor).toBe("#0a0a0a");
+  });
+
+  it("sets a metadata base and a large-image social card", async () => {
+    const { metadata } = await import("./layout");
+    expect(metadata.metadataBase).toBeInstanceOf(URL);
+    expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
+  });
+
+  it("puts the canonical URL on the home page only, keeping the shared Open Graph fields", async () => {
+    const layout = await import("./layout");
+    const page = await import("./page");
+    expect(layout.metadata.alternates).toBeUndefined();
+    expect(page.metadata.alternates).toEqual({ canonical: "/" });
+    // Nested metadata objects replace the layout's, so the page must repeat them.
+    expect(page.metadata.openGraph).toEqual({
+      ...layout.metadata.openGraph,
+      url: "/",
+    });
   });
 });

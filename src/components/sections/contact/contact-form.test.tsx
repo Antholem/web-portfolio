@@ -62,8 +62,11 @@ const submitReady = () => screen.findByRole("button", { name: "Send message" });
 async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
   await user.type(fields.name(), "Jane Doe");
   await user.type(fields.email(), "jane@example.com");
-  await user.type(fields.subject(), "Consulting");
-  await user.type(fields.message(), "Let's work together");
+  // Pasted: real input events, far fewer of them, so long flows stay quick.
+  await user.click(fields.subject());
+  await user.paste("Consulting");
+  await user.click(fields.message());
+  await user.paste("Let's work together");
 }
 
 describe("ContactForm", () => {

@@ -112,10 +112,14 @@ function AnchorScrollSettler() {
         event.altKey
       )
         return;
+      // Site chrome links home sections as "/#id" so they also work from other
+      // routes (the 404); on "/" itself that is still an in-page jump.
       const href = (event.target as Element | null)
-        ?.closest?.('a[href^="#"]')
+        ?.closest?.('a[href^="#"], a[href^="/#"]')
         ?.getAttribute("href");
-      if (href) settle(decodeFragment(href.slice(1)));
+      if (!href || (href[0] === "/" && window.location.pathname !== "/"))
+        return;
+      settle(decodeFragment(href.slice(href.indexOf("#") + 1)));
     };
     const onHashChange = () =>
       settle(decodeFragment(window.location.hash.slice(1)));

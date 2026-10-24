@@ -63,7 +63,8 @@ describe("SiteHeader", () => {
     const home = screen.getByRole("link", {
       name: /^antholem\s*\/ software engineer\s*— home$/,
     });
-    expect(home).toHaveAttribute("href", "#top");
+    // Path + fragment: from another route (the 404) it goes home.
+    expect(home).toHaveAttribute("href", "/#top");
     expect(home).not.toHaveAttribute("aria-label");
     expect(home.querySelector(".sr-only")).toHaveTextContent("— home");
     // The logo image is decorative, so it does not pollute the name.
@@ -88,7 +89,7 @@ describe("SiteHeader", () => {
     ).toHaveAttribute("href", siteConfig.links.resume);
     expect(
       within(header).getByRole("link", { name: "Let’s talk" }),
-    ).toHaveAttribute("href", "#contact");
+    ).toHaveAttribute("href", "/#contact");
     expect(
       within(header).getByRole("button", { name: /switch to light mode/i }),
     ).toBeInTheDocument();
@@ -241,9 +242,9 @@ describe("SiteFooter", () => {
       screen.getByRole("navigation", { name: "Footer" }),
     ).getAllByRole("link");
     expect(links.map((a) => [a.textContent, a.getAttribute("href")])).toEqual([
-      ["About", "#about"],
-      ["Work", "#work"],
-      ["Contact", "#contact"],
+      ["About", "/#about"],
+      ["Work", "/#work"],
+      ["Contact", "/#contact"],
       ["GitHub", siteConfig.links.github],
       ["LinkedIn", siteConfig.links.linkedin],
     ]);

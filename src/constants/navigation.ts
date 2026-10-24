@@ -24,14 +24,23 @@ export const SECTIONS = {
   },
 } as const satisfies Record<string, SectionMeta>;
 
+/**
+ * Site chrome (header, footer) also renders on other routes such as the 404,
+ * so it links home sections by path: on "/" this is still an in-page jump.
+ */
+export const homeSection = (id: string) => `/#${id}`;
+
 export const NAV_ITEMS = Object.values(SECTIONS).map((section) => ({
   label: section.navLabel,
   index: section.index,
-  href: `#${section.id}`,
+  href: homeSection(section.id),
 }));
 
 export const FOOTER_SECTION_LINKS = [
   SECTIONS.about,
   SECTIONS.work,
   SECTIONS.contact,
-].map((section) => ({ label: section.navLabel, href: `#${section.id}` }));
+].map((section) => ({
+  label: section.navLabel,
+  href: homeSection(section.id),
+}));

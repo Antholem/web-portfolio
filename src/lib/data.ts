@@ -238,6 +238,17 @@ export const contact = {
   },
 };
 
+export const notFound = {
+  title: "Page not found",
+  code: "404",
+  eyebrow: "404 / Not found",
+  heading: "This page drifted off the map.",
+  body: "The link may be broken, or the page may have moved. Everything lives on the home page — start there or jump straight to a section.",
+  home: "Back to home",
+  contact: "Get in touch",
+  jumpTo: "Or jump to",
+};
+
 export const footer = {
   tagline:
     "Software engineer building scalable, accessible platforms — from architecture to interface.",

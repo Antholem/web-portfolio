@@ -35,14 +35,14 @@ describe("SECTIONS", () => {
 });
 
 describe("NAV_ITEMS", () => {
-  it("links to every section, in order, by fragment", () => {
+  it("links to every home section, in order, by path + fragment", () => {
     expect(NAV_ITEMS).toEqual([
-      { label: "About", index: "01", href: "#about" },
-      { label: "Experience", index: "02", href: "#experience" },
-      { label: "Stack", index: "03", href: "#stack" },
-      { label: "Services", index: "04", href: "#services" },
-      { label: "Work", index: "05", href: "#work" },
-      { label: "Contact", index: "06", href: "#contact" },
+      { label: "About", index: "01", href: "/#about" },
+      { label: "Experience", index: "02", href: "/#experience" },
+      { label: "Stack", index: "03", href: "/#stack" },
+      { label: "Services", index: "04", href: "/#services" },
+      { label: "Work", index: "05", href: "/#work" },
+      { label: "Contact", index: "06", href: "/#contact" },
     ]);
   });
 });
@@ -50,14 +50,14 @@ describe("NAV_ITEMS", () => {
 describe("FOOTER_SECTION_LINKS", () => {
   it("links to About, Work and Contact", () => {
     expect(FOOTER_SECTION_LINKS).toEqual([
-      { label: "About", href: "#about" },
-      { label: "Work", href: "#work" },
-      { label: "Contact", href: "#contact" },
+      { label: "About", href: "/#about" },
+      { label: "Work", href: "/#work" },
+      { label: "Contact", href: "/#contact" },
     ]);
   });
 
   it("only points at real section ids", () => {
-    const ids = Object.values(SECTIONS).map((s) => `#${s.id}`);
+    const ids = Object.values(SECTIONS).map((s) => `/#${s.id}`);
     for (const link of FOOTER_SECTION_LINKS) expect(ids).toContain(link.href);
   });
 });

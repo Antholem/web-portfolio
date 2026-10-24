@@ -100,6 +100,30 @@ describe("AnchorScrollSettler", () => {
     expect(target.scrollIntoView).toHaveBeenCalled();
   });
 
+  it("treats site-chrome links ('/#id') as in-page on the home page", () => {
+    render(<AnchorScrollSettler />);
+    const target = addTarget("work", { top: 300 });
+    fireEvent.click(addLink("/#work").a);
+    frame();
+    expect(target.scrollIntoView).toHaveBeenCalledExactlyOnceWith({
+      block: "start",
+    });
+  });
+
+  it("leaves '/#id' links alone on other routes (they navigate home)", () => {
+    window.history.replaceState(null, "", "/missing-page");
+    render(<AnchorScrollSettler />);
+    // Registered after the settler's listener: keeps jsdom from navigating
+    // without hiding the click from it.
+    const stop = (event: Event) => event.preventDefault();
+    document.addEventListener("click", stop);
+    const target = addTarget("work", { top: 300 });
+    fireEvent.click(addLink("/#work").a);
+    frame(5);
+    document.removeEventListener("click", stop);
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+
   it("gives up after 20 frames if the target never settles", () => {
     render(<AnchorScrollSettler />);
     const target = addTarget("stack", { drift: true });

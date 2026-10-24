@@ -7,7 +7,7 @@ import { Container } from "@/components/shared/container";
 import { SaMonogram } from "@/components/shared/logo";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { NAV_ITEMS, SECTIONS } from "@/constants/navigation";
+import { homeSection, NAV_ITEMS, SECTIONS } from "@/constants/navigation";
 import { siteConfig } from "@/constants/site";
 import { cn } from "@/lib/utils";
 
@@ -48,8 +48,8 @@ function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-nav season-topline backdrop-blur-[14px] backdrop-saturate-160">
       <Container className="flex h-17 items-center justify-between gap-4">
-        {/* `#top` scrolls to the top of the document (HTML spec), no element needed. */}
-        <a href="#top" className="flex items-center gap-2.5">
+        {/* `#top` is the top of the document (HTML spec), no element needed. */}
+        <a href={homeSection("top")} className="flex items-center gap-2.5">
           <SaMonogram height={30} />
           <span className="text-[15px] font-semibold tracking-[-0.02em]">
             {siteConfig.handle}
@@ -86,7 +86,7 @@ function SiteHeader() {
             </a>
           </Button>
           <Button asChild size="sm" className="hidden md:inline-flex">
-            <a href={`#${SECTIONS.contact.id}`}>Let’s talk</a>
+            <a href={homeSection(SECTIONS.contact.id)}>Let’s talk</a>
           </Button>
           <Button
             type="button"
@@ -134,7 +134,7 @@ function SiteHeader() {
                 </a>
               </Button>
               <Button asChild>
-                <a href={`#${SECTIONS.contact.id}`} onClick={closeMenu}>
+                <a href={homeSection(SECTIONS.contact.id)} onClick={closeMenu}>
                   Let’s talk
                 </a>
               </Button>
