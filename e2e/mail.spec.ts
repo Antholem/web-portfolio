@@ -196,9 +196,9 @@ test.describe("sending a message", () => {
       );
       const form = await fillValidForm(page);
       await form.getByRole("button", { name: "Send message" }).click();
-      await expect(
-        snackbar(page, "Couldn’t send your message"),
-      ).toContainText("Check your connection and try again.");
+      await expect(snackbar(page, "Couldn’t send your message")).toContainText(
+        "Check your connection and try again.",
+      );
       await expect(snackbar(page, "Message sent")).toHaveCount(0);
       await expect(form.getByRole("textbox", { name: "Message" })).toHaveValue(
         "Automated E2E message — must never be delivered.",
@@ -219,6 +219,37 @@ test.describe("sending a message", () => {
     await expect(page.locator('input[name="website"]')).toBeHidden();
     await form.getByRole("button", { name: "Send message" }).click();
     await expect(snackbar(page, "Message sent")).toBeVisible();
+  });
+
+  test("the sixth message in an hour is refused with a snackbar, not sent", async ({
+    page,
+  }) => {
+    test.slow(); // six full sends
+    const form = await fillValidForm(page);
+    const send = form.getByRole("button", { name: "Send message" });
+    // A send can take several seconds when the whole suite runs in parallel.
+    const sendTimeout = { timeout: 15_000 };
+    for (let i = 1; i <= 5; i++) {
+      await send.click();
+      // Success clears the form; fill it again for the next one.
+      await expect(form.getByRole("textbox", { name: "Name" })).toHaveValue(
+        "",
+        sendTimeout,
+      );
+      await fillValidForm(page, `Visitor ${i}`);
+    }
+    await send.click();
+
+    await expect(snackbar(page, "Too many messages")).toContainText(
+      // The window just opened, so ~60 minutes are left: "about 1 hour".
+      /try again in about (1 hour|\d+ minutes)/,
+      sendTimeout,
+    );
+    // Refused messages are kept, so nothing the visitor wrote is lost.
+    await expect(form.getByRole("textbox", { name: "Name" })).toHaveValue(
+      "Visitor 5",
+    );
+    await expect(send).toBeFocused();
   });
 
   test("keeps the theme-color meta after a send (no metadata re-render)", async ({

@@ -8,7 +8,7 @@ import {
   useTransition,
   type FormEvent,
 } from "react";
-import { LoaderCircle, Send, Sparkles } from "lucide-react";
+import { LoaderCircle, Send } from "lucide-react";
 import { toast } from "sonner";
 
 import { sendContactMessage } from "@/app/actions/contact";
@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   CONTACT_LIMITS,
-  polishMessage,
+  formatWait,
   validateContactForm,
   type ContactFormErrors,
   type ContactFormValues,
@@ -31,25 +31,11 @@ import { cn } from "@/lib/utils";
 
 import { MessageToolbar } from "./message-toolbar";
 
-// Never trim the visitor's words to make room for added punctuation.
-const polishWithinLimit = (message: string) => {
-  const polished = polishMessage(message);
-  return polished.length <= contact.messageMaxLength ? polished : message;
-};
-
-type RefineState = "idle" | "refining" | "refined";
-
 const INITIAL_VALUES: ContactFormValues = {
   name: "",
   email: "",
   subject: "",
   message: "",
-};
-
-const REFINE_LABELS: Record<RefineState, string> = {
-  idle: "Refine with AI",
-  refining: "Refining…",
-  refined: "Refined",
 };
 
 function ContactForm() {
@@ -63,7 +49,6 @@ function ContactForm() {
 
   const [values, setValues] = useState(INITIAL_VALUES);
   const [errors, setErrors] = useState<ContactFormErrors>({});
-  const [refineState, setRefineState] = useState<RefineState>("idle");
   const [sending, startSending] = useTransition();
 
   const nameRef = useRef<HTMLInputElement>(null);
@@ -72,14 +57,11 @@ function ContactForm() {
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
-  const refineTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Set when a send ends on a snackbar. The submit button is still disabled
   // inside the transition (focus() would be ignored), so focus is handed back
   // once it re-enables: a disabled control drops focus to <body>.
   const refocusSubmit = useRef(false);
-
-  useEffect(() => () => clearTimeout(refineTimer.current), []);
 
   useEffect(() => {
     if (sending || !refocusSubmit.current) return;
@@ -98,8 +80,6 @@ function ContactForm() {
   }
 
   function handleMessageChange(message: string) {
-    clearTimeout(refineTimer.current);
-    setRefineState("idle");
     setField("message", message);
   }
 
@@ -109,20 +89,6 @@ function ContactForm() {
     onChange: handleMessageChange,
     maxLength: contact.messageMaxLength,
   });
-
-  // Stand-in for a model call; the delay mirrors real latency so the loading state is exercised.
-  function handleRefine() {
-    if (!values.message.trim()) return;
-    setRefineState("refining");
-    clearTimeout(refineTimer.current);
-    refineTimer.current = setTimeout(() => {
-      setValues((current) => ({
-        ...current,
-        message: polishWithinLimit(current.message),
-      }));
-      setRefineState("refined");
-    }, 1100);
-  }
 
   function showErrors(nextErrors: ContactFormErrors) {
     setErrors(nextErrors);
@@ -163,7 +129,15 @@ function ContactForm() {
           description: contact.success.description,
         });
       } else if ("errors" in result) showErrors(result.errors);
-      else notifyFailure();
+      else if (result.error === "rate-limited") {
+        refocusSubmit.current = true;
+        toast.error(contact.rateLimited.title, {
+          description: contact.rateLimited.description(
+            formatWait(result.retryAfterSeconds),
+          ),
+          duration: 8000,
+        });
+      } else notifyFailure();
     });
   }
 
@@ -177,13 +151,9 @@ function ContactForm() {
   }
 
   function clearForm() {
-    clearTimeout(refineTimer.current);
     setValues(INITIAL_VALUES);
     setErrors({});
-    setRefineState("idle");
   }
-
-  const refining = refineState === "refining";
 
   return (
     <form
@@ -240,9 +210,7 @@ function ContactForm() {
           value={values.subject}
           onChange={(event) => setField("subject", event.target.value)}
           aria-invalid={errors.subject ? true : undefined}
-          aria-describedby={
-            errors.subject ? `${ids.subject}-error` : undefined
-          }
+          aria-describedby={errors.subject ? `${ids.subject}-error` : undefined}
         />
         <FieldError id={`${ids.subject}-error`}>{errors.subject}</FieldError>
       </Field>
@@ -255,11 +223,7 @@ function ContactForm() {
             errors.message && "border-destructive",
           )}
         >
-          <MessageToolbar
-            controls={ids.message}
-            disabled={refining}
-            onAction={formatting.format}
-          />
+          <MessageToolbar controls={ids.message} onAction={formatting.format} />
           <Textarea
             ref={messageRef}
             id={ids.message}
@@ -275,29 +239,8 @@ function ContactForm() {
             }
             className="min-h-33"
           />
-          <div className="flex items-center justify-between gap-2 border-t border-border py-1.5 pr-1.5 pl-3.5">
-            <span className="font-mono text-[11px] text-subtle-foreground">
-              {values.message.length} / {contact.messageMaxLength}
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-8 px-2.5"
-              disabled={refining || !values.message.trim()}
-              onClick={handleRefine}
-            >
-              {refining ? (
-                <LoaderCircle
-                  className="animate-spin motion-reduce:animate-none"
-                  strokeWidth={2}
-                  aria-hidden
-                />
-              ) : (
-                <Sparkles aria-hidden />
-              )}
-              {REFINE_LABELS[refineState]}
-            </Button>
+          <div className="border-t border-border px-3.5 py-2.5 font-mono text-[11px] text-subtle-foreground">
+            {values.message.length} / {contact.messageMaxLength}
           </div>
         </div>
         <FieldError id={`${ids.message}-error`}>{errors.message}</FieldError>

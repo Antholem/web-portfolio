@@ -1,11 +1,19 @@
 "use server";
 
+import { headers } from "next/headers";
+
 import {
   validateContactForm,
   type ContactFormErrors,
   type ContactFormValues,
 } from "@/lib/contact";
 import { sendContactEmail } from "@/server/mail";
+import {
+  checkRateLimit,
+  clientIdFromHeaders,
+  CONTACT_RATE_LIMITS,
+  storeFromEnv,
+} from "@/server/rate-limit";
 
 export type ContactSubmission = ContactFormValues & {
   /** Honeypot: hidden from people, filled in by naive bots. */
@@ -15,7 +23,8 @@ export type ContactSubmission = ContactFormValues & {
 export type SendContactResult =
   | { ok: true }
   | { ok: false; errors: ContactFormErrors }
-  | { ok: false; error: "send-failed" };
+  | { ok: false; error: "send-failed" }
+  | { ok: false; error: "rate-limited"; retryAfterSeconds: number };
 
 const asString = (value: unknown) => (typeof value === "string" ? value : "");
 
@@ -35,6 +44,20 @@ export async function sendContactMessage(
 
   const errors = validateContactForm(values);
   if (Object.keys(errors).length > 0) return { ok: false, errors };
+
+  // Only well-formed messages count, so fixing a typo never uses up a send.
+  const limit = await checkRateLimit(
+    clientIdFromHeaders(await headers()),
+    CONTACT_RATE_LIMITS,
+    storeFromEnv(),
+  );
+  if (!limit.allowed) {
+    return {
+      ok: false,
+      error: "rate-limited",
+      retryAfterSeconds: limit.retryAfterSeconds,
+    };
+  }
 
   try {
     await sendContactEmail({

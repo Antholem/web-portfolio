@@ -3,10 +3,22 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CONTACT_LIMITS } from "@/lib/contact";
 import { sendContactEmail } from "@/server/mail";
+import { createMemoryStore, type RateLimitStore } from "@/server/rate-limit";
 
 import { sendContactMessage, type ContactSubmission } from "./contact";
 
 vi.mock("@/server/mail", () => ({ sendContactEmail: vi.fn() }));
+
+// The visitor's IP and the limiter's store, both under the test's control.
+const limiter = vi.hoisted(() => ({
+  headers: new Headers({ "x-forwarded-for": "203.0.113.1" }),
+  store: undefined as RateLimitStore | undefined,
+}));
+vi.mock("next/headers", () => ({ headers: async () => limiter.headers }));
+vi.mock("@/server/rate-limit", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/server/rate-limit")>();
+  return { ...actual, storeFromEnv: () => limiter.store! };
+});
 
 const send = vi.mocked(sendContactEmail);
 
@@ -22,6 +34,8 @@ describe("sendContactMessage (server action)", () => {
   beforeEach(() => {
     send.mockReset();
     send.mockResolvedValue(undefined);
+    limiter.store = createMemoryStore();
+    limiter.headers = new Headers({ "x-forwarded-for": "203.0.113.1" });
   });
 
   it("sends a valid message with its subject and reports success", async () => {
@@ -188,6 +202,41 @@ describe("sendContactMessage (server action)", () => {
           message: `\n${"m".repeat(CONTACT_LIMITS.message)}\n`,
         }),
       ).resolves.toEqual({ ok: true });
+    });
+  });
+
+  describe("rate limiting", () => {
+    it("sends 5 messages an hour per visitor, then refuses with the wait", async () => {
+      for (let i = 0; i < 5; i++) {
+        await expect(sendContactMessage(valid)).resolves.toEqual({ ok: true });
+      }
+      const result = await sendContactMessage(valid);
+      expect(result).toMatchObject({ ok: false, error: "rate-limited" });
+      expect(
+        (result as { retryAfterSeconds: number }).retryAfterSeconds,
+      ).toBeGreaterThan(3500);
+      expect(send).toHaveBeenCalledTimes(5);
+    });
+
+    it("counts each visitor (by forwarded IP) separately", async () => {
+      for (let i = 0; i < 6; i++) await sendContactMessage(valid);
+      limiter.headers = new Headers({ "x-forwarded-for": "198.51.100.2" });
+      await expect(sendContactMessage(valid)).resolves.toEqual({ ok: true });
+    });
+
+    it("does not count invalid submissions or honeypot hits", async () => {
+      for (let i = 0; i < 10; i++) {
+        await sendContactMessage({ ...valid, email: "nope" });
+        await sendContactMessage({ ...valid, website: "spam" });
+      }
+      await expect(sendContactMessage(valid)).resolves.toEqual({ ok: true });
+    });
+
+    it("still sends when the limiter's store is down (fails open)", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      limiter.store = { hit: () => Promise.reject(new Error("down")) };
+      await expect(sendContactMessage(valid)).resolves.toEqual({ ok: true });
+      expect(send).toHaveBeenCalledOnce();
     });
   });
 

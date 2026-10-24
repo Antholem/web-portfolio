@@ -20,7 +20,16 @@ import { afterEach, vi } from "vitest";
 // process.env, and these are cleared anyway), and nodemailer itself is mocked
 // for every file: `mail.test.ts` drives this mock, anything else that reaches
 // it gets a rejected send.
-for (const key of ["APP_FROM_EMAIL", "APP_FROM_PASSWORD", "APP_TO_EMAIL"]) {
+// Same for the rate limiter's Redis: tests use the in-memory store or a fake.
+for (const key of [
+  "APP_FROM_EMAIL",
+  "APP_FROM_PASSWORD",
+  "APP_TO_EMAIL",
+  "UPSTASH_REDIS_REST_URL",
+  "UPSTASH_REDIS_REST_TOKEN",
+  "KV_REST_API_URL",
+  "KV_REST_API_TOKEN",
+]) {
   delete process.env[key];
 }
 vi.mock("nodemailer", () => {

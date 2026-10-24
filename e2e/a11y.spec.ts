@@ -89,7 +89,8 @@ for (const theme of ["dark", "light"] as const) {
       await form.getByRole("textbox", { name: "Message" }).fill("Hello");
       await form.getByRole("button", { name: "Send message" }).click();
       const toast = snackbar(page, "Message sent");
-      await expect(toast).toBeVisible();
+      // A send can take a while when the whole suite runs in parallel.
+      await expect(toast).toBeVisible({ timeout: 15_000 });
       // Let the slide-in finish so contrast is measured at full opacity.
       await expect(toast).toHaveAttribute("data-mounted", "true");
       await expect(toast).toHaveCSS("opacity", "1");
@@ -259,10 +260,6 @@ test.describe("keyboard", () => {
     await tabTo(page);
     await expect(page.getByRole("textbox", { name: "Message" })).toBeFocused();
     await page.keyboard.type("Hello");
-    await tabTo(page);
-    await expect(
-      page.getByRole("button", { name: "Refine with AI" }),
-    ).toBeFocused();
     await tabTo(page);
     await expect(
       page.getByRole("button", { name: "Send message" }),

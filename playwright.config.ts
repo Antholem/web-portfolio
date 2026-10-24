@@ -27,6 +27,12 @@ export const E2E_SERVER_ENV = {
   APP_FROM_EMAIL: "e2e-sender@example.test",
   APP_FROM_PASSWORD: "e2e-not-a-real-password",
   APP_TO_EMAIL: "e2e-inbox@example.test",
+  // Blank Redis settings: the rate limiter uses its in-memory store, which
+  // starts empty with each run's server (never a real shared counter).
+  UPSTASH_REDIS_REST_URL: "",
+  UPSTASH_REDIS_REST_TOKEN: "",
+  KV_REST_API_URL: "",
+  KV_REST_API_TOKEN: "",
   NODE_OPTIONS: `--require=${resolve("e2e/smtp-guard.cjs").replaceAll("\\", "/")}`,
   E2E_RUN_ID: process.env.E2E_RUN_ID,
   SMTP_GUARD_FILE: process.env.SMTP_GUARD_FILE,

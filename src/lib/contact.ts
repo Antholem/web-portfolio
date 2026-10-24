@@ -47,44 +47,10 @@ export function validateContactForm(
   return errors;
 }
 
-// Ends with . ! ? or …, optionally followed by closing quotes or brackets.
-const SENTENCE_END = /[.!?…]["'”’)\]]*$/;
-
-const LIST_LINE = /^(\s*(?:[-*•]|\d{1,3}[.)])\s+)(.*)$/;
-
-const capitalise = (text: string) =>
-  text.charAt(0).toUpperCase() + text.slice(1);
-
-const polishParagraph = (paragraph: string) => {
-  const lines = paragraph.split("\n");
-  // Lists keep their markers and get no trailing full stop.
-  if (lines.every((line) => LIST_LINE.test(line))) {
-    return lines
-      .map((line) =>
-        line.replace(LIST_LINE, (_, marker, item) => marker + capitalise(item)),
-      )
-      .join("\n");
-  }
-  const text = capitalise(paragraph);
-  return SENTENCE_END.test(text) ? text : `${text}.`;
-};
-
-/**
- * Local stand-in for "Refine with AI": tidies spacing inside lines, keeps the
- * visitor's line and paragraph breaks, capitalises and closes each paragraph.
- */
-export function polishMessage(message: string) {
-  return message
-    .replace(/\r\n?/g, "\n")
-    .split(/\n\s*\n/)
-    .map((paragraph) =>
-      paragraph
-        .split("\n")
-        .map((line) => line.replace(/[^\S\n]+/g, " ").trim())
-        .filter(Boolean)
-        .join("\n"),
-    )
-    .filter(Boolean)
-    .map(polishParagraph)
-    .join("\n\n");
+/** "about 20 minutes" / "about 1 hour", rounded up so a retry is never too early. */
+export function formatWait(seconds: number) {
+  const minutes = Math.max(1, Math.ceil(seconds / 60));
+  if (minutes < 60) return `about ${minutes} minute${minutes === 1 ? "" : "s"}`;
+  const hours = Math.ceil(minutes / 60);
+  return `about ${hours} hour${hours === 1 ? "" : "s"}`;
 }

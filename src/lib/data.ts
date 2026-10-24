@@ -236,6 +236,12 @@ export const contact = {
     title: "Couldn’t send your message",
     description: "Check your connection and try again.",
   },
+  rateLimited: {
+    title: "Too many messages",
+    /** `wait` reads like "about 20 minutes". */
+    description: (wait: string) =>
+      `You’ve sent a few already — try again in ${wait}, or email me directly.`,
+  },
 };
 
 export const notFound = {

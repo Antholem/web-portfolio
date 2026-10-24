@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   CONTACT_LIMITS,
-  polishMessage,
+  formatWait,
   validateContactForm,
   type ContactFormValues,
 } from "./contact";
@@ -159,75 +159,17 @@ describe("validateContactForm", () => {
   });
 });
 
-describe("polishMessage", () => {
+describe("formatWait", () => {
   it.each([
-    ["hello world", "Hello world."],
-    ["Hello world.", "Hello world."],
-    ["is this possible?", "Is this possible?"],
-    ["let's go!", "Let's go!"],
-    ["  spaced   out\ttext  ", "Spaced out text."],
-    ["élan", "Élan."],
-    ["3 things to discuss", "3 things to discuss."],
-    ["a", "A."],
-  ])("polishes %j to %j", (input, expected) => {
-    expect(polishMessage(input)).toBe(expected);
-  });
-
-  it.each(["", "   ", "\n\t"])("returns an empty string for %j", (input) => {
-    expect(polishMessage(input)).toBe("");
-  });
-
-  it("is idempotent", () => {
-    const once = polishMessage("  some   message without punctuation ");
-    expect(polishMessage(once)).toBe(once);
-  });
-
-  // Was QA-06: paragraphs used to be flattened into one line.
-  it("keeps the visitor's paragraph breaks, closing each paragraph", () => {
-    expect(polishMessage("first paragraph.\n\nsecond paragraph")).toBe(
-      "First paragraph.\n\nSecond paragraph.",
-    );
-  });
-
-  it("keeps single line breaks inside a paragraph", () => {
-    expect(polishMessage("dear sam,\nwe need help\nsoon")).toBe(
-      "Dear sam,\nwe need help\nsoon.",
-    );
-  });
-
-  it("collapses runs of blank and whitespace-only lines to one paragraph break", () => {
-    expect(polishMessage("one\n\n\n  \t \n\ntwo")).toBe("One.\n\nTwo.");
-  });
-
-  it("normalises Windows and old-Mac line endings", () => {
-    expect(polishMessage("one\r\n\r\ntwo\rthree")).toBe("One.\n\nTwo\nthree.");
-  });
-
-  it("tidies spacing inside lines without joining them", () => {
-    expect(polishMessage("  a   b \t c  \n   d   ")).toBe("A b c\nd.");
-  });
-
-  // Was QA-09: a period used to be appended after "…" and closing quotes.
-  it.each([
-    ["more soon…", "More soon…"],
-    ['they said "ship it."', 'They said "ship it."'],
-    ["they said “ship it!”", "They said “ship it!”"],
-    ["(see the brief.)", "(see the brief.)"],
-    ["is it 'done?'", "Is it 'done?'"],
-    ["list [a, b.]", "List [a, b.]"],
-  ])("treats %j as already finished", (input, expected) => {
-    expect(polishMessage(input)).toBe(expected);
-  });
-
-  it.each([
-    ['a quote "unfinished"', 'A quote "unfinished".'],
-    ["(aside)", "(aside)."],
-  ])("still closes %j", (input, expected) => {
-    expect(polishMessage(input)).toBe(expected);
-  });
-
-  it("is idempotent on multi-paragraph text", () => {
-    const once = polishMessage("hi there\n\n  how are   you\nall good…");
-    expect(polishMessage(once)).toBe(once);
+    [0, "about 1 minute"],
+    [59, "about 1 minute"],
+    [61, "about 2 minutes"],
+    [1130, "about 19 minutes"],
+    [3540, "about 59 minutes"],
+    [3541, "about 1 hour"],
+    [3601, "about 2 hours"],
+    [86_400, "about 24 hours"],
+  ])("%is reads as %j (rounded up)", (seconds, text) => {
+    expect(formatWait(seconds)).toBe(text);
   });
 });

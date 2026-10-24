@@ -70,30 +70,9 @@ test.describe("contact form", () => {
     await expect(form.getByText(`${text.length} / 1000`)).toBeVisible();
   });
 
-  test("refine polishes the draft after its loading state", async ({
-    page,
-  }) => {
-    // The clock must be installed before the page's scripts run.
-    await page.clock.install();
-    await gotoHome(page, "/#contact");
+  test("has no AI refine button", async ({ page }) => {
     const form = page.getByRole("form", { name: "Contact form" });
-    const message = form.getByRole("textbox", { name: "Message" });
-    const refine = form.getByRole("button", { name: "Refine with AI" });
-
-    await expect(refine).toBeDisabled();
-    await message.fill("  hello   there  ");
-    // Freeze time so the 1.1s stand-in latency is fully under test control.
-    await page.clock.pauseAt(Date.now() + 60_000);
-    await refine.click();
-    const refining = form.getByRole("button", { name: "Refining…" });
-    await expect(refining).toBeDisabled();
-
-    await page.clock.runFor(1099);
-    await expect(message).toHaveValue("  hello   there  ");
-    await expect(refining).toBeVisible();
-    await page.clock.runFor(1);
-    await expect(message).toHaveValue("Hello there.");
-    await expect(form.getByRole("button", { name: "Refined" })).toBeEnabled();
+    await expect(form.getByRole("button", { name: /refine/i })).toHaveCount(0);
   });
 
   test("the message is capped at 1000 characters", async ({ page }) => {

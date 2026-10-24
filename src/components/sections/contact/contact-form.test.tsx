@@ -40,15 +40,11 @@ const fields = {
   email: () => screen.getByRole("textbox", { name: "Email" }),
   message: () => screen.getByRole("textbox", { name: "Message" }),
   submit: () => screen.getByRole("button", { name: "Send message" }),
-  refine: () => screen.getByRole("button", { name: /refine|refining/i }),
   subject: () => screen.getByRole("textbox", { name: "Subject" }),
 };
 
-function setup(options?: { fakeTimers?: boolean }) {
-  if (options?.fakeTimers) {
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
-  }
-  const user = userEvent.setup(options?.fakeTimers ? { delay: null } : {});
+function setup() {
+  const user = userEvent.setup();
   render(<ContactForm />);
   return user;
 }
@@ -75,7 +71,7 @@ describe("ContactForm", () => {
     sendAction.mockResolvedValue({ ok: true });
   });
 
-  it("renders labelled fields and a disabled refine action", () => {
+  it("renders labelled fields", () => {
     setup();
     expect(screen.getByRole("form", { name: "Contact form" })).toHaveAttribute(
       "novalidate",
@@ -101,7 +97,6 @@ describe("ContactForm", () => {
       contact.subjectPlaceholder,
     );
     expect(screen.queryByRole("radiogroup")).not.toBeInTheDocument();
-    expect(fields.refine()).toBeDisabled();
     expect(
       screen.getByText(`0 / ${contact.messageMaxLength}`),
     ).toBeInTheDocument();
@@ -171,82 +166,14 @@ describe("ContactForm", () => {
     expect(fields.subject()).toHaveValue("s".repeat(120));
   });
 
-  it("counts message characters", async () => {
+  it("counts message characters, up to the limit", async () => {
     const user = setup();
     await user.type(fields.message(), "Hello");
     expect(
       screen.getByText(`5 / ${contact.messageMaxLength}`),
     ).toBeInTheDocument();
-    expect(fields.refine()).toBeEnabled();
-  });
-
-  it("keeps refine disabled for a whitespace-only message", async () => {
-    const user = setup();
-    await user.type(fields.message(), "   ");
-    expect(fields.refine()).toBeDisabled();
-  });
-
-  it("refines the message after the simulated latency", async () => {
-    const user = setup({ fakeTimers: true });
-    await user.type(fields.message(), "  hello    there ");
-    await user.click(fields.refine());
-
-    expect(fields.refine()).toHaveAccessibleName("Refining…");
-    expect(fields.refine()).toBeDisabled();
-    act(() => vi.advanceTimersByTime(1099));
-    expect(fields.message()).toHaveValue("  hello    there ");
-
-    act(() => vi.advanceTimersByTime(1));
-    expect(fields.message()).toHaveValue("Hello there.");
-    expect(fields.refine()).toHaveAccessibleName("Refined");
-    expect(
-      screen.getByText(`12 / ${contact.messageMaxLength}`),
-    ).toBeInTheDocument();
-  });
-
-  it("cancels a pending refine when the visitor keeps typing", async () => {
-    const user = setup({ fakeTimers: true });
-    await user.type(fields.message(), "hello");
-    await user.click(fields.refine());
-    await user.type(fields.message(), " world");
-    act(() => vi.advanceTimersByTime(2000));
-    expect(fields.message()).toHaveValue("hello world");
-    expect(fields.refine()).toHaveAccessibleName("Refine with AI");
-  });
-
-  it("returns to the idle label when a refined message is edited", async () => {
-    const user = setup({ fakeTimers: true });
-    await user.type(fields.message(), "hi");
-    await user.click(fields.refine());
-    act(() => vi.advanceTimersByTime(1100));
-    expect(fields.refine()).toHaveAccessibleName("Refined");
-    await user.type(fields.message(), "!");
-    expect(fields.refine()).toHaveAccessibleName("Refine with AI");
-  });
-
-  it("clears the refine timer on unmount", async () => {
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
-    const user = userEvent.setup({ delay: null });
-    const { unmount } = render(<ContactForm />);
-    await user.type(fields.message(), "hello");
-    await user.click(fields.refine());
-    expect(vi.getTimerCount()).toBe(1);
-    unmount();
-    expect(vi.getTimerCount()).toBe(0);
-  });
-
-  // Was QA-08: refine used to push a full message to 1001 / 1000.
-  it("never lets refine push the message past the character limit", async () => {
-    const user = setup({ fakeTimers: true });
-    const atLimit = "a".repeat(contact.messageMaxLength);
     await user.click(fields.message());
-    await user.paste(atLimit);
-    expect(fields.message()).toHaveValue(atLimit);
-    await user.click(fields.refine());
-    act(() => vi.advanceTimersByTime(1100));
-    expect(
-      (fields.message() as HTMLTextAreaElement).value.length,
-    ).toBeLessThanOrEqual(contact.messageMaxLength);
+    await user.paste("a".repeat(contact.messageMaxLength));
     expect(
       screen.getByText(
         `${contact.messageMaxLength} / ${contact.messageMaxLength}`,
@@ -254,27 +181,11 @@ describe("ContactForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps paragraph breaks when refining", async () => {
-    const user = setup({ fakeTimers: true });
-    await user.click(fields.message());
-    await user.paste("hi sam\n\nwe need   help");
-    await user.click(fields.refine());
-    act(() => vi.advanceTimersByTime(1100));
-    expect(fields.message()).toHaveValue("Hi sam.\n\nWe need help.");
-  });
-
-  it("never deletes the visitor's own words to fit the limit", async () => {
-    const user = setup({ fakeTimers: true });
-    // Two unpunctuated paragraphs, exactly at the limit: refine adds 2 periods.
-    const first = "x".repeat(495);
-    const second = `${"y".repeat(498)}final`;
-    const message = `${first}\n\n${second}`;
-    expect(message).toHaveLength(contact.messageMaxLength);
-    await user.click(fields.message());
-    await user.paste(message);
-    await user.click(fields.refine());
-    act(() => vi.advanceTimersByTime(1100));
-    expect((fields.message() as HTMLTextAreaElement).value).toContain("final");
+  it("has no AI refine action", () => {
+    setup();
+    expect(
+      screen.queryByRole("button", { name: /refine/i }),
+    ).not.toBeInTheDocument();
   });
 });
 
@@ -348,7 +259,6 @@ describe("ContactForm submission (server action mocked)", () => {
     expect(fields.email()).toHaveValue("");
     expect(fields.message()).toHaveValue("");
     expect(fields.subject()).toHaveValue("");
-    expect(fields.refine()).toHaveAccessibleName("Refine with AI");
     expect(fields.submit()).toBeEnabled();
   });
 
@@ -433,6 +343,27 @@ describe("ContactForm submission (server action mocked)", () => {
     expect(await submitReady()).toBeEnabled();
   });
 
+  it("explains a rate limit with the wait, keeping the message for later", async () => {
+    sendAction.mockResolvedValueOnce({
+      ok: false,
+      error: "rate-limited",
+      retryAfterSeconds: 1130,
+    });
+    const user = setup();
+    await fillValidForm(user);
+    await user.click(fields.submit());
+
+    await vi.waitFor(() => expect(toastMock.error).toHaveBeenCalledOnce());
+    expect(toastMock.error).toHaveBeenCalledWith("Too many messages", {
+      description:
+        "You’ve sent a few already — try again in about 19 minutes, or email me directly.",
+      duration: 8000,
+    });
+    expect(toastMock.success).not.toHaveBeenCalled();
+    expect(fields.message()).toHaveValue("Let's work together");
+    await vi.waitFor(() => expect(fields.submit()).toHaveFocus());
+  });
+
   it("raises a fresh snackbar for each failed attempt", async () => {
     sendAction.mockResolvedValue({ ok: false, error: "send-failed" });
     const user = setup();
@@ -460,7 +391,6 @@ describe("ContactForm submission (server action mocked)", () => {
     expect(toastMock.success).toHaveBeenCalledOnce();
     expect(fields.message()).toHaveValue("");
   });
-
 
   it("passes a filled honeypot through to the action", async () => {
     const user = setup();

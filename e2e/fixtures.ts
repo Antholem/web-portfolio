@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import { test as base, expect, type Page } from "@playwright/test";
 
 type Fixtures = {
@@ -13,6 +15,18 @@ type Fixtures = {
 
 export const test = base.extend<Fixtures>({
   allowedProblems: [null, { option: true }],
+
+  // Each test is its own "visitor" to the contact rate limit (5 an hour per
+  // IP), so tests that send never use up each other's budget. The local
+  // server trusts this header; on Vercel the edge overwrites it.
+  extraHTTPHeaders: async ({}, provide, testInfo) => {
+    const [a, b, c] = createHash("sha256")
+      .update(
+        `${testInfo.testId}:${testInfo.retry}:${testInfo.repeatEachIndex}`,
+      )
+      .digest();
+    await provide({ "x-forwarded-for": `10.${a}.${b}.${c}` });
+  },
 
   pageProblems: [
     async ({ page, baseURL, allowedProblems }, use) => {
