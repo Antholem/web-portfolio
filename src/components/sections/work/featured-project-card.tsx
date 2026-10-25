@@ -12,7 +12,6 @@ import type { Project } from "@/types/content";
 const external = { target: "_blank", rel: "noopener noreferrer" } as const;
 const NewTab = () => <span className="sr-only"> (opens in a new tab)</span>;
 
-/** The project, text beside a framed screenshot of the live app; stacks below 960px. */
 function FeaturedProjectCard({ project }: { project: Project }) {
   const host = new URL(project.links.live).host;
 

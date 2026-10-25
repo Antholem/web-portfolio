@@ -118,7 +118,6 @@ describe("SiteHeader", () => {
     expect(
       links.slice(0, NAV_ITEMS.length).map((a) => a.getAttribute("href")),
     ).toEqual(NAV_ITEMS.map((i) => i.href));
-    // Each item shows its section number.
     expect(links[0]).toHaveTextContent("About01");
 
     await user.click(menuButton());

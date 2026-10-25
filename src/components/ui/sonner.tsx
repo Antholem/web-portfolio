@@ -4,7 +4,6 @@ import { CircleCheck, Info, LoaderCircle, TriangleAlert } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
-/** Snackbars styled as the design system's toast: monochrome card, hairline, soft shadow. */
 function Toaster(props: ToasterProps) {
   const { resolvedTheme } = useTheme();
 

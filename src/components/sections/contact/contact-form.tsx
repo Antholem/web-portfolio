@@ -141,7 +141,6 @@ function ContactForm() {
     });
   }
 
-  // The typed message is kept so the visitor can simply try again.
   function notifyFailure() {
     refocusSubmit.current = true;
     toast.error(contact.failure.title, {

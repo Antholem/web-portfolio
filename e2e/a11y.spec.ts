@@ -133,7 +133,6 @@ test("visible link text is part of the accessible name (WCAG 2.5.3)", async ({
   ).toEqual([]);
 });
 
-/** Asserts the focused element shows a visible focus indicator. */
 async function expectFocusVisible(page: Page) {
   const style = await page.evaluate(() => {
     const el = document.activeElement as HTMLElement;
@@ -182,7 +181,6 @@ test.describe("keyboard", () => {
       const focused = page.locator(":focus");
       await expect(focused).toHaveAccessibleName(name);
     }
-    // Then straight into the page content.
     await tabTo(page);
     await expect(page.locator(":focus")).toHaveAccessibleName("View projects");
   });

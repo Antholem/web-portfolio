@@ -101,7 +101,6 @@ test.describe("contact form", () => {
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       EMAIL,
     );
-    // Resets on its own.
     await expect(
       page.getByRole("button", { name: "Copy email address" }),
     ).toBeVisible();

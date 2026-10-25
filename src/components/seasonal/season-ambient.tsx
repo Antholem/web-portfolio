@@ -2,7 +2,6 @@ import type { CSSProperties, ReactNode } from "react";
 import { Heart, Sparkle } from "lucide-react";
 
 // Fixed values (not Math.random) so server and client markup always match.
-// Kept sparse and faint: the season should register, never pull focus.
 
 type Particle = {
   left: number; // %
@@ -61,7 +60,6 @@ const CONFETTI: Particle[] = [
 
 const CONFETTI_COLORS = ["var(--season)", "var(--season-2)", "#eab308"];
 
-// Plum-blossom petals: the spring-festival flower across East Asia.
 const PETALS: Particle[] = [
   { left: 9, size: 7, duration: 22, delay: -4, drift: 40, spin: 220 },
   { left: 24, size: 6, duration: 26, delay: -15, drift: -30, spin: -260 },
@@ -71,7 +69,6 @@ const PETALS: Particle[] = [
   { left: 94, size: 6, duration: 25, delay: -12, drift: -26, spin: -220 },
 ];
 
-// Embers / fireflies drifting up through the dusk.
 const EMBERS: Particle[] = [
   { left: 7, top: 94, size: 3, duration: 14, delay: -3, drift: 16 },
   { left: 21, top: 98, size: 2, duration: 18, delay: -11, drift: -12 },
@@ -103,7 +100,6 @@ function Layer({ season, children }: { season: string; children: ReactNode }) {
   );
 }
 
-/** Hero background: an accent glow for every season, plus faint drifting particles for some. */
 function SeasonAmbient() {
   return (
     <>

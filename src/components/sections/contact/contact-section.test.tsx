@@ -69,7 +69,6 @@ describe("CopyEmailButton", () => {
       { description: "Select the address and copy it instead." },
     );
     expect(toastMock.success).not.toHaveBeenCalled();
-    // Destructive alert icon, decorative to assistive tech.
     const icon = button.querySelector("svg")!;
     expect(icon).toHaveClass("lucide-circle-alert", "text-destructive");
     expect(icon).toHaveAttribute("aria-hidden", "true");

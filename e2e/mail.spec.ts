@@ -134,7 +134,6 @@ test.describe("sending a message", () => {
     await expect(toast).toContainText(
       "Thanks for reaching out — I’ll get back to you within two business days.",
     );
-    // No success card replaces the form; it is simply ready again.
     await expect(form).toBeVisible();
     await expect(form.getByRole("textbox", { name: "Name" })).toHaveValue("");
     await expect(form.getByRole("textbox", { name: "Email" })).toHaveValue("");
@@ -231,7 +230,6 @@ test.describe("sending a message", () => {
     const sendTimeout = { timeout: 15_000 };
     for (let i = 1; i <= 5; i++) {
       await send.click();
-      // Success clears the form; fill it again for the next one.
       await expect(form.getByRole("textbox", { name: "Name" })).toHaveValue(
         "",
         sendTimeout,
@@ -245,7 +243,6 @@ test.describe("sending a message", () => {
       /try again in about (1 hour|\d+ minutes)/,
       sendTimeout,
     );
-    // Refused messages are kept, so nothing the visitor wrote is lost.
     await expect(form.getByRole("textbox", { name: "Name" })).toHaveValue(
       "Visitor 5",
     );

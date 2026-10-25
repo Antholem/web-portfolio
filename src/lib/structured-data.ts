@@ -4,7 +4,6 @@ import { SITE_URL } from "@/lib/site-url";
 
 const isRealUrl = (href: string) => /^https?:\/\//.test(href);
 
-/** schema.org Person + WebSite graph for the home page (search engines, AI crawlers). */
 export function buildStructuredData(origin: URL = SITE_URL) {
   const home = origin.href;
   const current = experience.items[0];

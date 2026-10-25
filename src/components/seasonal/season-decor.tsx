@@ -1,11 +1,6 @@
 import type { ReactNode } from "react";
 import { Heart, Sparkle } from "lucide-react";
 
-/**
- * Small ornaments anchored to the hero portrait card — the one place each
- * season is unmistakable, away from the text people read. Decorative only.
- */
-
 function Decor({ season, children }: { season: string; children: ReactNode }) {
   return (
     <div

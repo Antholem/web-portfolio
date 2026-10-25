@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  // Resolves relative URLs below and the generated opengraph-image.
   metadataBase: SITE_URL,
   title: { default: siteConfig.title, template: `%s · ${siteConfig.name}` },
   description: siteConfig.description,

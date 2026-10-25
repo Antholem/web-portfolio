@@ -3,7 +3,6 @@ import "server-only";
 import { createHash } from "node:crypto";
 
 export type RateLimitRule = {
-  /** Namespaces the counter, e.g. "contact:ip". */
   name: string;
   /** Counted per visitor, or once for the whole site. */
   scope: "client" | "site";

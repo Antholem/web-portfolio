@@ -1,6 +1,5 @@
 import { BULLET_ITEM, ORDERED_ITEM } from "./rich-text";
 
-/** A textarea's value plus its selection — the unit every edit maps to. */
 export type TextEdit = {
   value: string;
   selectionStart: number;
@@ -116,7 +115,6 @@ export function continueList({
 
   const itemText = bullet ? bullet[3] : ordered![4];
   if (!itemText.trim()) {
-    // Empty item: drop its marker and leave the list.
     return {
       value: value.slice(0, lineStart) + value.slice(start),
       selectionStart: lineStart,

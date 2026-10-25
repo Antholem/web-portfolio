@@ -9,7 +9,6 @@ import { sendContactMessage, type ContactSubmission } from "./contact";
 
 vi.mock("@/server/mail", () => ({ sendContactEmail: vi.fn() }));
 
-// The visitor's IP and the limiter's store, both under the test's control.
 const limiter = vi.hoisted(() => ({
   headers: new Headers({ "x-forwarded-for": "203.0.113.1" }),
   store: undefined as RateLimitStore | undefined,

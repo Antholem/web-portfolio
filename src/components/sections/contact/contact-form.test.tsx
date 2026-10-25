@@ -18,7 +18,6 @@ const sendAction = vi.mocked(sendContactMessage);
 // `sonner` is mocked for every unit test in vitest.setup.ts.
 const toastMock = vi.mocked(toast);
 
-/** A pending action result the test settles explicitly. */
 function deferredResult() {
   let settle!: (result: SendContactResult) => void;
   let fail!: (error: Error) => void;
@@ -252,7 +251,6 @@ describe("ContactForm submission (server action mocked)", () => {
         "Thanks for reaching out — I’ll get back to you within two business days.",
     });
     expect(toastMock.error).not.toHaveBeenCalled();
-    // No separate success card: the form stays, ready for another message.
     expect(screen.getByRole("form", { name: "Contact form" })).toBeVisible();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(fields.name()).toHaveValue("");
