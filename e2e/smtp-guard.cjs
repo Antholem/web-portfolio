@@ -64,10 +64,22 @@ net.connect = guard("net.connect", net.connect);
 net.createConnection = guard("net.createConnection", net.createConnection);
 tls.connect = guard("tls.connect", tls.connect);
 
+// On Linux `node_modules/.bin/next` is a symlink and argv keeps the link path;
+// on Windows it is a shim that already points at the real file. Resolve it so
+// the record names the same script on every OS.
+function scriptPath(file) {
+  try {
+    return fs.realpathSync(file);
+  } catch {
+    return file;
+  }
+}
+
 record((s) => {
+  const [script, ...args] = process.argv.slice(1, 3);
   s.armed.push({
     pid: process.pid,
     mailTransport: process.env.MAIL_TRANSPORT ?? null,
-    argv: process.argv.slice(1, 3).join(" "),
+    argv: [script && scriptPath(script), ...args].join(" "),
   });
 });
