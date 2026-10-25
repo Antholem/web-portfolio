@@ -45,7 +45,11 @@ export default defineConfig({
   // One retry on shared CI runners, where a slow send can miss a timeout;
   // Playwright reports any test that needed it as flaky.
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
+  // `github` turns each failure into a run annotation, readable without
+  // downloading the logs or the report artifact.
+  reporter: process.env.CI
+    ? [["list"], ["github"], ["html", { open: "never" }]]
+    : "list",
   use: {
     baseURL,
     // System Chrome: no Playwright browser download needed.
