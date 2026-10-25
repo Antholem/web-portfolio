@@ -47,7 +47,10 @@ function ThemeToggle() {
     root.setProperty("--reveal-y", `${y}px`);
     root.setProperty("--reveal-r", `${radius}px`);
 
-    document.startViewTransition(apply);
+    // A second toggle mid-reveal supersedes this transition, whose `ready` then
+    // rejects with an AbortError ("Transition was skipped"). That is expected;
+    // unhandled, it surfaces as an uncaught page error.
+    document.startViewTransition(apply).ready.catch(() => {});
   }
 
   return (

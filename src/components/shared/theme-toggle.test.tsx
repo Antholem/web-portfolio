@@ -100,7 +100,7 @@ describe("ThemeToggle", () => {
     let update: (() => void) | undefined;
     const startViewTransition = vi.fn((cb: () => void) => {
       update = cb;
-      return {} as ViewTransition;
+      return { ready: Promise.resolve() } as ViewTransition;
     });
     Object.assign(document, { startViewTransition });
     mockReducedMotion(false);
@@ -128,6 +128,29 @@ describe("ThemeToggle", () => {
     act(() => update!());
     expect(html).toHaveClass("light");
     expect(html).not.toHaveClass("dark");
+  });
+
+  // Seen on CI: toggling again mid-reveal left an uncaught "Transition was skipped".
+  it("handles a superseded transition (fast double toggle) without an uncaught error", async () => {
+    const user = userEvent.setup({ delay: null });
+    const ready = Promise.reject(
+      new DOMException("Transition was skipped", "AbortError"),
+    );
+    const handled = vi.spyOn(ready, "catch");
+    Object.assign(document, {
+      startViewTransition: vi.fn((cb: () => void) => {
+        cb();
+        return { ready } as unknown as ViewTransition;
+      }),
+    });
+    mockReducedMotion(false);
+
+    renderToggle();
+    await user.click(
+      screen.getByRole("button", { name: "Switch to light mode" }),
+    );
+    expect(handled).toHaveBeenCalledOnce();
+    await expect(ready).rejects.toThrow("Transition was skipped");
   });
 
   it("skips the View Transition when the user prefers reduced motion", async () => {
