@@ -255,6 +255,18 @@ export const notFound = {
   jumpTo: "Or jump to",
 };
 
+export const errorPage = {
+  title: "Something went wrong",
+  code: "500",
+  eyebrow: "500 / Unexpected error",
+  heading: "Something broke on my end.",
+  body: "An unexpected error stopped this page from loading. Try again — if it keeps happening, email me and I’ll look into it.",
+  retry: "Try again",
+  home: "Back to home",
+  email: "Email me",
+  reference: "Reference",
+};
+
 export const footer = {
   tagline:
     "Software engineer building scalable, accessible platforms — from architecture to interface.",
